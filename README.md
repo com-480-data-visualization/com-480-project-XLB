@@ -97,9 +97,3 @@ Please, fill the following sections about your project.
 
 
 ---
-
-### 4. Launch Jupyter
-```bash
-jupyter notebook
-# Open eda/eda_movies.ipynb
-```
