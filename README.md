@@ -41,16 +41,15 @@ Verify it worked:
 ```bash
 ls -lh data/raw/
 # Should show 7 CSV files
-
+```
 ### Alternative: Manual Download
 1. Go to https://www.kaggle.com/datasets/rounakbanik/the-movies-dataset
 2. Click **Download** (requires free Kaggle account)
 3. Unzip the downloaded file
 4. Move all CSV files into `data/raw/`:
 ```bash
-
-```
 mv ~/Downloads/archive/* data/raw/
+```
 
 See `data/README.md` for details on each file.
 
