@@ -23,24 +23,20 @@ pip install kaggle pandas matplotlib seaborn jupyter
 ```
 
 ### 3. Download the dataset
-Get your Kaggle API token:
-1. Go to https://www.kaggle.com/settings
-2. Scroll to **API** → click **Generate New Token** → `kaggle.json` downloads
+### Option 1 — Kaggle CLI (recommended)
 
-Then run:
+Install the Kaggle CLI:
 ```bash
-mkdir -p ~/.kaggle
-mv ~/Downloads/kaggle.json ~/.kaggle/
-chmod 600 ~/.kaggle/kaggle.json
+pip install kaggle
+```
 
-# Download and unzip all files into data/raw/
+```bash
 kaggle datasets download -d rounakbanik/the-movies-dataset -p data/raw/ --unzip
 ```
 
-Verify it worked:
+Verify the download:
 ```bash
 ls -lh data/raw/
-# Should show 7 CSV files
 ```
 ### Alternative: Manual Download
 1. Go to https://www.kaggle.com/datasets/rounakbanik/the-movies-dataset
