@@ -25,7 +25,7 @@ pip install kaggle pandas matplotlib seaborn jupyter
 ### 3. Download the dataset
 Get your Kaggle API token:
 1. Go to https://www.kaggle.com/settings
-2. Scroll to **API** → click **Create New Token** → `kaggle.json` downloads
+2. Scroll to **API** → click **Generate New Token** → `kaggle.json` downloads
 
 Then run:
 ```bash
