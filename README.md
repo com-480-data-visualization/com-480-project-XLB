@@ -25,11 +25,6 @@ pip install kaggle pandas matplotlib seaborn jupyter
 ### 3. Download the dataset
 ### Option 1 — Kaggle CLI (recommended)
 
-Install the Kaggle CLI:
-```bash
-pip install kaggle
-```
-
 ```bash
 kaggle datasets download -d rounakbanik/the-movies-dataset -p data/raw/ --unzip
 ```
