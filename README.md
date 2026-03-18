@@ -7,6 +7,44 @@
 |Ziad Chentouf | 344912 |
 |Salma EL YADOUNI | 340859 |
 
+## Getting Started
+
+### 1. Clone the repository
+```bash
+git clone git@github.com:com-480-data-visualization/com-480-project-XLB.git
+cd com-480-project-XLB
+```
+
+### 2. Create and activate the conda environment
+```bash
+conda create -n movies-viz python=3.11 -y
+conda activate movies-viz
+pip install kaggle pandas matplotlib seaborn jupyter
+```
+
+### 3. Download the dataset
+Get your Kaggle API token:
+1. Go to https://www.kaggle.com/settings
+2. Scroll to **API** → click **Create New Token** → `kaggle.json` downloads
+
+Then run:
+```bash
+mkdir -p ~/.kaggle
+mv ~/Downloads/kaggle.json ~/.kaggle/
+chmod 600 ~/.kaggle/kaggle.json
+
+# Download and unzip all files into data/raw/
+kaggle datasets download -d rounakbanik/the-movies-dataset -p data/raw/ --unzip
+```
+
+Verify it worked:
+```bash
+ls -lh data/raw/
+# Should show 7 CSV files
+```
+
+See `data/README.md` for details on each file.
+
 [Milestone 1](#milestone-1) • [Milestone 2](#milestone-2) • [Milestone 3](#milestone-3)
 
 ## Milestone 1 (20th March, 5pm)
@@ -60,44 +98,6 @@ Please, fill the following sections about your project.
 
 
 ---
-
-## Getting Started
-
-### 1. Clone the repository
-```bash
-git clone git@github.com:com-480-data-visualization/com-480-project-XLB.git
-cd com-480-project-XLB
-```
-
-### 2. Create and activate the conda environment
-```bash
-conda create -n movies-viz python=3.11 -y
-conda activate movies-viz
-pip install kaggle pandas matplotlib seaborn jupyter
-```
-
-### 3. Download the dataset
-Get your Kaggle API token:
-1. Go to https://www.kaggle.com/settings
-2. Scroll to **API** → click **Create New Token** → `kaggle.json` downloads
-
-Then run:
-```bash
-mkdir -p ~/.kaggle
-mv ~/Downloads/kaggle.json ~/.kaggle/
-chmod 600 ~/.kaggle/kaggle.json
-
-# Download and unzip all files into data/raw/
-kaggle datasets download -d rounakbanik/the-movies-dataset -p data/raw/ --unzip
-```
-
-Verify it worked:
-```bash
-ls -lh data/raw/
-# Should show 7 CSV files
-```
-
-See `data/README.md` for details on each file.
 
 ### 4. Launch Jupyter
 ```bash
