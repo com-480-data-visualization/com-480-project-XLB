@@ -99,7 +99,7 @@ The core file `movies_metadata.csv` contains **45,466 entries** and 24 columns. 
 ### Genre Distribution
 After parsing the nested JSON genre field, **Drama (20%)**, **Comedy (13%)**, and **Thriller (9%)** are the three most frequent genres. Genre composition shifts noticeably across decades — Westerns dominated the 1950s–60s, while Action and Science Fiction surged from the 1980s onward.
 
-![Genre Frequency](eda/figures/genre_vs_rating.png)
+![Genre Frequency](eda/figures/genre_frequency.png)
 
 ### Temporal Distribution
 The dataset is heavily skewed toward recent decades, with over 60% of films released after 1990, reflecting both the growth of the industry and increased data availability.
