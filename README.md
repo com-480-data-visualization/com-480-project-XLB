@@ -41,8 +41,15 @@ ls -lh data/raw/
 ```bash
 mv ~/Downloads/archive/* data/raw/
 ```
-
 See `data/README.md` for details on each file.
+
+### 4. Run the preprocessing notebook
+Open and run all cells in `eda/preprocessing.ipynb`.
+This generates `data/processed/movies.csv` and `data/processed/ratings_enriched.csv`.
+
+### 5. Run the EDA notebook
+Open and run all cells in `eda/eda.ipynb`.
+This generates all figures in `eda/figures/`.
 
 [Milestone 1](#milestone-1) • [Milestone 2](#milestone-2) • [Milestone 3](#milestone-3)
 
