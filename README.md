@@ -136,6 +136,7 @@ The website prototype is live at [CineScope](https://com-480-data-visualization.
 CineScope is our interactive explorer structured around four coordinated views. Selecting a genre or decade in any view filters the others, allowing users to pursue one hypothesis across multiple perspectives simultaneously.
 
 The four views are the Dossier Board (budget vs revenue scatter with quadrant annotations and film hover cards), The Flow (Sankey diagram mapping budget tiers through genres to financial outcomes, with path highlighting on hover), The Profitability Matrix (genre × budget tier heatmap showing median ROI with a decade slider and drill-down violin plot), and Dynasties (original vs sequel revenue scatter with radial franchise drill-down, added in direct response to Milestone 1 feedback on sequel impact).
+
 ---
 
 ## Milestone 3 (29th May, 5pm)
