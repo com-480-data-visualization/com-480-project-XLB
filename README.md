@@ -1,4 +1,5 @@
 The website prototype is live at [CineScope](https://com-480-data-visualization.github.io/com-480-project-XLB/).
+See [MS2_XLB.pdf](MS2_XLB.pdf) for the full project description, visualization sketches, tools and work breakdown.
 
 # Project of Data Visualization (COM-480)
 
