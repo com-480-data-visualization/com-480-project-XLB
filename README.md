@@ -1,6 +1,6 @@
-# Project of Data Visualization (COM-480)
-
 The website prototype is live at [CineScope](https://com-480-data-visualization.github.io/com-480-project-XLB/).
+
+# Project of Data Visualization (COM-480)
 
 | Student's name | SCIPER |
 | --- | --- |
