@@ -131,7 +131,7 @@ For inspiration we draw on the Pudding's essay-style scrollytelling pieces, the 
 
 See [MS2_XLB.pdf](MS2_XLB.pdf) for the full project description, visualization sketches, tools and work breakdown.
 
-The website prototype is live at [com-480-data-visualization.github.io/com-480-project-XLB](https://com-480-data-visualization.github.io/com-480-project-XLB).
+The website prototype is live at [CineScope](https://com-480-data-visualization.github.io/com-480-project-XLB).
 
 **CineScope** is our interactive explorer structured around four coordinated views. Selecting a genre or decade in any view filters the others, allowing users to pursue one hypothesis across multiple perspectives simultaneously.
 
