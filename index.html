@@ -9,26 +9,40 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:        #f5f0e6;
-  --surface:   #ede7d9;
-  --card:      #e8e0ce;
-  --border:    #c8b898;
-  --border2:   #b8a880;
-  --gold:      #8b6410;
-  --gold2:     #6b4c08;
-  --gold-dim:  #a07828;
-  --red:       #8b3a2a;
-  --cream:     #1a1410;
-  --muted:     #6b5a40;
-  --muted2:    #4a3a24;
-  --text:      #2a1e10;
-  --serif:     'Playfair Display', Georgia, serif;
-  --mono:      'DM Mono', monospace;
-  --sans:      'DM Sans', system-ui, sans-serif;
+  /* ── Content section palette (warm parchment) ── */
+  --bg:        #f2ebe0;
+  --surface:   #e8dfd0;
+  --card:      #dfd5c2;
+  --border:    #c4aa84;
+  --border2:   #b09870;
+
+  /* ── Gold accent (richer, more cinematic) ── */
+  --gold:        #a0720c;
+  --gold2:       #7a5408;
+  --gold-dim:    #b8882a;
+  --gold-bright: #d4a830;
+
+  /* ── Hero / dark surface palette ── */
+  --hero-bg:     #0d0b08;
+  --hero-border: #3a2e1e;
+
+  /* ── Text ── */
+  --text:       #1e1408;
+  --text-hero:  #f0e6d0;
+  --muted:      #6b5a3a;
+  --muted-hero: #a89070;
+  --muted2:     #4a3820;
+
+  /* ── Semantic ── */
+  --red:   #9b3a28;
+  --green: #4a8a5a;
+
+  --serif: 'Playfair Display', Georgia, serif;
+  --mono:  'DM Mono', monospace;
+  --sans:  'DM Sans', system-ui, sans-serif;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 html { scroll-behavior: smooth; }
 
 body {
@@ -40,7 +54,7 @@ body {
   overflow-x: hidden;
 }
 
-/* grain overlay */
+/* ── grain overlay ── */
 body::before {
   content: '';
   position: fixed;
@@ -48,7 +62,7 @@ body::before {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
   pointer-events: none;
   z-index: 1000;
-  opacity: 0.18;
+  opacity: 0.22;
 }
 
 /* ── NAV ── */
@@ -60,21 +74,20 @@ nav {
   display: flex;
   align-items: center;
   padding: 0 40px;
-  gap: 0;
-  background: rgba(245,240,230,0.95);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
+  background: rgba(13, 11, 8, 0.88);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--hero-border);
 }
 
 .logo {
   font-family: var(--mono);
   font-size: 13px;
   letter-spacing: 4px;
-  color: var(--cream);
+  color: var(--text-hero);
   margin-right: 48px;
   flex-shrink: 0;
 }
-.logo em { color: var(--gold); font-style: normal; }
+.logo em { color: var(--gold-bright); font-style: normal; }
 
 .nav-links { display: flex; gap: 0; flex: 1; }
 
@@ -82,24 +95,24 @@ nav {
   font-family: var(--mono);
   font-size: 10px;
   letter-spacing: 2px;
-  color: var(--muted);
+  color: var(--muted-hero);
   text-decoration: none;
   padding: 0 18px;
   height: 56px;
   display: flex;
   align-items: center;
-  border-right: 1px solid var(--border);
+  border-right: 1px solid var(--hero-border);
   transition: color 0.2s, background 0.2s;
 }
-.nav-links a:first-child { border-left: 1px solid var(--border); }
-.nav-links a:hover { color: var(--gold); background: rgba(201,168,76,0.05); }
-.nav-links a.active { color: var(--gold2); }
+.nav-links a:first-child { border-left: 1px solid var(--hero-border); }
+.nav-links a:hover  { color: var(--gold-bright); background: rgba(212,168,48,0.07); }
+.nav-links a.active { color: var(--gold-bright); }
 
 .nav-right {
   margin-left: auto;
   font-family: var(--mono);
   font-size: 10px;
-  color: var(--muted);
+  color: var(--muted-hero);
   letter-spacing: 1px;
 }
 
@@ -112,20 +125,24 @@ nav {
   padding: 0 40px 80px;
   position: relative;
   overflow: hidden;
+  /* cover.png sits in the same folder as index.html */
   background-image: url('cover.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  background-color: var(--hero-bg); /* fallback if image missing */
 }
 
+/* dark gradient overlay — keeps text readable over any photo */
 .hero-bg {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(20, 15, 8, 0.45) 0%,
-    rgba(10, 8, 4, 0.75) 100%
-  );
+  background:
+    linear-gradient(to bottom,
+      rgba(8, 6, 3, 0.50) 0%,
+      rgba(8, 6, 3, 0.25) 40%,
+      rgba(8, 6, 3, 0.82) 100%
+    );
   z-index: 1;
 }
 
@@ -135,10 +152,11 @@ nav {
   height: 4px;
   background: repeating-linear-gradient(
     to right,
-    #a07828 0px, #a07828 20px,
+    var(--gold-bright) 0px, var(--gold-bright) 20px,
     transparent 20px, transparent 28px
   );
-  opacity: 0.6;
+  opacity: 0.7;
+  z-index: 3;
 }
 
 .hero-content { position: relative; z-index: 2; max-width: 800px; }
@@ -147,7 +165,7 @@ nav {
   font-family: var(--mono);
   font-size: 10px;
   letter-spacing: 4px;
-  color: var(--gold);
+  color: var(--gold-bright);
   margin-bottom: 20px;
   opacity: 0;
   animation: fadeUp 0.8s 0.3s forwards;
@@ -157,21 +175,17 @@ h1 {
   font-family: var(--serif);
   font-size: clamp(42px, 6vw, 72px);
   font-weight: 700;
-  color: #1a1410;
+  color: var(--text-hero);   /* ← light cream, readable on dark photo */
   line-height: 1.05;
   margin-bottom: 24px;
   opacity: 0;
   animation: fadeUp 0.8s 0.5s forwards;
 }
-
-h1 em {
-  color: var(--gold);
-  font-style: italic;
-}
+h1 em { color: var(--gold-bright); font-style: italic; }
 
 .hero-sub {
   font-size: 15px;
-  color: var(--muted2);
+  color: var(--muted-hero);  /* ← warm muted, readable on dark */
   max-width: 480px;
   line-height: 1.8;
   opacity: 0;
@@ -186,18 +200,17 @@ h1 em {
   animation: fadeUp 0.8s 0.9s forwards;
 }
 
-.hero-stat {}
 .hero-stat-n {
   font-family: var(--serif);
   font-size: 32px;
-  color: #1a1410;
+  color: var(--text-hero);   /* ← light on dark */
   line-height: 1;
 }
 .hero-stat-label {
   font-family: var(--mono);
   font-size: 9px;
   letter-spacing: 2px;
-  color: var(--muted);
+  color: var(--muted-hero);
   margin-top: 4px;
 }
 
@@ -207,19 +220,20 @@ h1 em {
   font-family: var(--mono);
   font-size: 9px;
   letter-spacing: 2px;
-  color: var(--muted);
+  color: var(--muted-hero);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 8px;
   opacity: 0;
   animation: fadeIn 1s 1.4s forwards;
+  z-index: 2;
 }
 .scroll-hint::after {
   content: '';
   width: 1px;
   height: 40px;
-  background: linear-gradient(to bottom, #a07828, transparent);
+  background: linear-gradient(to bottom, var(--gold-bright), transparent);
 }
 
 /* ── SECTION COMMON ── */
@@ -249,7 +263,7 @@ h2 {
   font-family: var(--serif);
   font-size: 32px;
   font-weight: 700;
-  color: #1a1410;
+  color: var(--text);
   margin-bottom: 6px;
 }
 
@@ -289,25 +303,25 @@ h2 {
   cursor: pointer;
   transition: all 0.15s;
 }
-.pill:hover { border-color: var(--gold-dim); color: var(--gold); }
-.pill.active { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.08); }
+.pill:hover  { border-color: var(--gold-dim); color: var(--gold); }
+.pill.active { border-color: var(--gold); color: var(--gold); background: rgba(160,114,12,0.08); }
 
 .divider { width: 1px; height: 20px; background: var(--border2); margin: 0 4px; }
 
 /* ── VIZ FRAME ── */
 .viz-frame {
-  background: #f0ead8;
+  background: var(--surface);
   border: 1px solid var(--border);
   position: relative;
   overflow: hidden;
 }
-
 .viz-frame::before {
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 1px;
   background: linear-gradient(to right, transparent, var(--gold-dim), transparent);
+  z-index: 1;
 }
 
 .viz-corner {
@@ -317,47 +331,11 @@ h2 {
   color: var(--muted);
   letter-spacing: 1px;
   padding: 8px 12px;
+  z-index: 2;
 }
 .viz-corner.tl { top: 0; left: 0; }
 .viz-corner.tr { top: 0; right: 0; }
 .viz-corner.bl { bottom: 0; left: 0; }
-
-.coming-soon {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 400px;
-  gap: 12px;
-}
-.coming-soon-icon {
-  font-family: var(--mono);
-  font-size: 32px;
-  color: var(--border2);
-}
-.coming-soon-text {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 3px;
-  color: var(--muted);
-}
-.coming-soon-sub {
-  font-size: 12px;
-  color: var(--muted);
-  max-width: 360px;
-  text-align: center;
-  line-height: 1.7;
-}
-
-.sketch-preview-bar {
-  font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: 2px;
-  color: #8b6410;
-  padding: 6px 12px;
-  border-bottom: 1px solid var(--border);
-  background: rgba(139,100,16,0.06);
-}
 
 /* ── TOOLTIP ── */
 #tooltip {
@@ -367,44 +345,40 @@ h2 {
   opacity: 0;
   transition: opacity 0.15s;
 }
-
 .tt-inner {
-  background: #faf6ec;
+  background: #1e180e;
   border: 1px solid var(--gold-dim);
   padding: 14px 16px;
-  min-width: 180px;
+  min-width: 200px;
   position: relative;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
 }
-
 .tt-inner::before {
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 2px;
-  background: linear-gradient(to right, var(--gold-dim), var(--gold));
+  background: linear-gradient(to right, var(--gold-dim), var(--gold-bright));
 }
-
 .tt-title {
   font-family: var(--serif);
   font-size: 14px;
-  color: #1a1410;
+  color: var(--text-hero);
   margin-bottom: 8px;
   font-style: italic;
 }
-
 .tt-row {
   display: flex;
   justify-content: space-between;
   gap: 24px;
   font-family: var(--mono);
   font-size: 10px;
-  color: var(--muted);
+  color: var(--muted-hero);
   padding: 2px 0;
 }
-.tt-row span { color: #2a1e10; }
-.tt-row .gold { color: var(--gold); }
-.tt-row .green { color: #6aaa7a; }
-.tt-row .red { color: #c06060; }
+.tt-row span  { color: var(--text-hero); }
+.tt-row .gold { color: var(--gold-bright); }
+.tt-row .red  { color: #d07060; }
 
 /* ── LEGEND ── */
 .legend {
@@ -420,51 +394,14 @@ h2 {
   font-family: var(--mono);
   font-size: 9px;
   letter-spacing: 1px;
-  color: #4a3a24;
-}
-.legend-dot {
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-/* ── SCENE 02 Sankey placeholder ── */
-.sankey-sketch {
-  padding: 40px;
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-}
-.flow-row {
-  display: flex;
-  align-items: center;
-  gap: 0;
-}
-.flow-nodes {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.flow-node {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 1px;
   color: var(--muted2);
-  padding: 8px 14px;
-  border: 1px solid var(--border2);
-  cursor: pointer;
-  transition: all 0.2s;
-  white-space: nowrap;
 }
-.flow-node:hover { border-color: var(--gold-dim); color: var(--gold); }
-
-/* ── SCENE 03 heatmap ── */
-.heatmap-wrap { padding: 40px; }
+.legend-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
 
 /* ── FOOTER ── */
 footer {
-  border-top: 1px solid var(--border);
-  background: #ede7d9;
+  border-top: 1px solid var(--hero-border);
+  background: var(--hero-bg);
   padding: 40px;
   display: flex;
   justify-content: space-between;
@@ -472,8 +409,8 @@ footer {
   flex-wrap: wrap;
   gap: 16px;
 }
-.footer-left { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 1px; }
-.footer-right { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+.footer-left  { font-family: var(--mono); font-size: 10px; color: var(--muted-hero); letter-spacing: 1px; }
+.footer-right { font-family: var(--mono); font-size: 10px; color: var(--muted-hero); }
 
 /* ── ANIMATIONS ── */
 @keyframes fadeUp {
@@ -485,17 +422,17 @@ footer {
   to   { opacity: 1; }
 }
 
-/* ── AXIS ── */
-.tick line { stroke: #c8b898 !important; }
-.tick text { fill: #5a4a2a !important; font-family: 'DM Mono', monospace !important; font-size: 10px !important; }
-.domain { display: none; }
+/* ── D3 AXIS ── */
+.tick line  { stroke: var(--border) !important; }
+.tick text  { fill: var(--muted2) !important; font-family: 'DM Mono', monospace !important; font-size: 10px !important; }
+.domain     { display: none; }
 
-/* ── SCATTER annotation ── */
+/* ── scatter quadrant labels ── */
 .quadrant-label {
   font-family: 'DM Mono', monospace;
   font-size: 9px;
   letter-spacing: 1.5px;
-  fill: #b8a060;
+  fill: var(--gold-dim);
   text-transform: uppercase;
 }
 </style>
@@ -516,16 +453,16 @@ footer {
 
 <!-- TOOLTIP -->
 <div id="tooltip"><div class="tt-inner">
-  <div class="tt-title" id="tt-title"></div>
-  <div class="tt-row">Year <span id="tt-year"></span></div>
-  <div class="tt-row">Budget <span id="tt-budget"></span></div>
-  <div class="tt-row">Revenue <span id="tt-revenue"></span></div>
-  <div class="tt-row">ROI <span id="tt-roi" class="gold"></span></div>
-  <div class="tt-row">Rating <span id="tt-rating"></span></div>
+  <div class="tt-title"   id="tt-title"></div>
+  <div class="tt-row">Year     <span id="tt-year"></span></div>
+  <div class="tt-row">Budget   <span id="tt-budget"></span></div>
+  <div class="tt-row">Revenue  <span id="tt-revenue"></span></div>
+  <div class="tt-row">ROI      <span id="tt-roi" class="gold"></span></div>
+  <div class="tt-row">Rating   <span id="tt-rating"></span></div>
   <div class="tt-row">Director <span id="tt-director"></span></div>
 </div></div>
 
-<!-- HERO -->
+<!-- ═══ HERO ════════════════════════════════════════════════════════════════ -->
 <section id="hero">
   <div class="hero-bg"></div>
   <div class="hero-filmstrip"></div>
@@ -555,7 +492,7 @@ footer {
   <div class="scroll-hint">SCROLL</div>
 </section>
 
-<!-- SCENE 01: DOSSIER BOARD -->
+<!-- ═══ SCENE 01: DOSSIER BOARD ═════════════════════════════════════════════ -->
 <section id="galaxy">
   <div class="scene-header">
     <div class="scene-tag">01</div>
@@ -587,7 +524,7 @@ footer {
   <div class="legend" id="genre-legend"></div>
 </section>
 
-<!-- SCENE 02: THE FLOW -->
+<!-- ═══ SCENE 02: THE FLOW ══════════════════════════════════════════════════ -->
 <section id="flow">
   <div class="scene-header">
     <div class="scene-tag">02</div>
@@ -601,7 +538,7 @@ footer {
   </div>
 </section>
 
-<!-- SCENE 03: PROFITABILITY MATRIX -->
+<!-- ═══ SCENE 03: PROFITABILITY MATRIX ══════════════════════════════════════ -->
 <section id="matrix">
   <div class="scene-header">
     <div class="scene-tag">03</div>
@@ -629,7 +566,7 @@ footer {
   </div>
 </section>
 
-<!-- SCENE 04: SEQUELS -->
+<!-- ═══ SCENE 04: DYNASTIES ══════════════════════════════════════════════════ -->
 <section id="sequels">
   <div class="scene-header">
     <div class="scene-tag">04</div>
@@ -643,7 +580,7 @@ footer {
   </div>
 </section>
 
-<!-- FOOTER -->
+<!-- ═══ FOOTER ════════════════════════════════════════════════════════════════ -->
 <footer>
   <div class="footer-left">CINESCOPE &nbsp;·&nbsp; COM-480 Data Visualization &nbsp;·&nbsp; EPFL 2025 &nbsp;·&nbsp; Team XLB</div>
   <div class="footer-right">Barrada · Lakrami · Chentouf · El Yadouni</div>
@@ -652,31 +589,31 @@ footer {
 <script>
 // ── DATA ──────────────────────────────────────────────────────────────────────
 const FILMS = [
-  { title:'The Dark Knight',       year:2008, budget:185e6, revenue:1005e6, roi:5.4,   rating:4.4, genre:'Action',    director:'C. Nolan' },
-  { title:'Parasite',              year:2019, budget:11e6,  revenue:258e6,  roi:23.5,  rating:4.1, genre:'Thriller',  director:'B. Joon-ho' },
-  { title:'Toy Story',             year:1995, budget:30e6,  revenue:362e6,  roi:12.1,  rating:3.9, genre:'Animation', director:'J. Lasseter' },
-  { title:'The Blair Witch',       year:1999, budget:60e3,  revenue:248e6,  roi:4133,  rating:2.9, genre:'Horror',    director:'D. Myrick' },
-  { title:'Forrest Gump',          year:1994, budget:55e6,  revenue:678e6,  roi:12.3,  rating:4.1, genre:'Drama',     director:'R. Zemeckis' },
-  { title:'The Avengers',          year:2012, budget:220e6, revenue:1519e6, roi:6.9,   rating:3.8, genre:'Action',    director:'J. Whedon' },
-  { title:'Pulp Fiction',          year:1994, budget:8e6,   revenue:213e6,  roi:26.6,  rating:4.2, genre:'Drama',     director:'Q. Tarantino' },
-  { title:'Get Out',               year:2017, budget:4.5e6, revenue:255e6,  roi:56.7,  rating:3.9, genre:'Horror',    director:'J. Peele' },
-  { title:'Titanic',               year:1997, budget:200e6, revenue:2187e6, roi:10.9,  rating:3.9, genre:'Drama',     director:'J. Cameron' },
-  { title:'Shrek',                 year:2001, budget:60e6,  revenue:484e6,  roi:8.1,   rating:3.7, genre:'Animation', director:'A. Adamson' },
-  { title:'Inception',             year:2010, budget:160e6, revenue:836e6,  roi:5.2,   rating:4.1, genre:'Action',    director:'C. Nolan' },
-  { title:'Mad Max: Fury Road',    year:2015, budget:150e6, revenue:375e6,  roi:2.5,   rating:4.0, genre:'Action',    director:'G. Miller' },
-  { title:'Moonlight',             year:2016, budget:1.5e6, revenue:65e6,   roi:43.3,  rating:3.8, genre:'Drama',     director:'B. Jenkins' },
-  { title:'Home Alone',            year:1990, budget:18e6,  revenue:476e6,  roi:26.4,  rating:3.6, genre:'Comedy',    director:'C. Columbus' },
-  { title:'The Hangover',          year:2009, budget:35e6,  revenue:467e6,  roi:13.3,  rating:3.5, genre:'Comedy',    director:'T. Phillips' },
-  { title:'Hereditary',            year:2018, budget:10e6,  revenue:80e6,   roi:8.0,   rating:3.5, genre:'Horror',    director:'A. Aster' },
-  { title:'Whiplash',              year:2014, budget:3.3e6, revenue:49e6,   roi:14.8,  rating:4.2, genre:'Drama',     director:'D. Chazelle' },
-  { title:'Black Panther',         year:2018, budget:200e6, revenue:1347e6, roi:6.7,   rating:3.8, genre:'Action',    director:'R. Coogler' },
-  { title:'Spirited Away',         year:2001, budget:19e6,  revenue:395e6,  roi:20.8,  rating:4.3, genre:'Animation', director:'H. Miyazaki' },
-  { title:'The Room',              year:2003, budget:6e6,   revenue:1.8e6,  roi:0.3,   rating:1.8, genre:'Drama',     director:'T. Wiseau' },
-  { title:'Avatar',                year:2009, budget:237e6, revenue:2788e6, roi:11.8,  rating:3.4, genre:'Action',    director:'J. Cameron' },
-  { title:'Borat',                 year:2006, budget:18e6,  revenue:262e6,  roi:14.6,  rating:3.6, genre:'Comedy',    director:'L. Charles' },
-  { title:'The Witch',             year:2015, budget:3.5e6, revenue:40e6,   roi:11.4,  rating:3.4, genre:'Horror',    director:'R. Eggers' },
-  { title:'Gravity',               year:2013, budget:100e6, revenue:723e6,  roi:7.2,   rating:3.8, genre:'Thriller',  director:'A. Cuaron' },
-  { title:'Finding Nemo',          year:2003, budget:94e6,  revenue:940e6,  roi:10.0,  rating:4.1, genre:'Animation', director:'A. Stanton' },
+  { title:'The Dark Knight',    year:2008, budget:185e6, revenue:1005e6, roi:5.4,  rating:4.4, genre:'Action',    director:'C. Nolan' },
+  { title:'Parasite',           year:2019, budget:11e6,  revenue:258e6,  roi:23.5, rating:4.1, genre:'Thriller',  director:'B. Joon-ho' },
+  { title:'Toy Story',          year:1995, budget:30e6,  revenue:362e6,  roi:12.1, rating:3.9, genre:'Animation', director:'J. Lasseter' },
+  { title:'The Blair Witch',    year:1999, budget:60e3,  revenue:248e6,  roi:4133, rating:2.9, genre:'Horror',    director:'D. Myrick' },
+  { title:'Forrest Gump',       year:1994, budget:55e6,  revenue:678e6,  roi:12.3, rating:4.1, genre:'Drama',     director:'R. Zemeckis' },
+  { title:'The Avengers',       year:2012, budget:220e6, revenue:1519e6, roi:6.9,  rating:3.8, genre:'Action',    director:'J. Whedon' },
+  { title:'Pulp Fiction',       year:1994, budget:8e6,   revenue:213e6,  roi:26.6, rating:4.2, genre:'Drama',     director:'Q. Tarantino' },
+  { title:'Get Out',            year:2017, budget:4.5e6, revenue:255e6,  roi:56.7, rating:3.9, genre:'Horror',    director:'J. Peele' },
+  { title:'Titanic',            year:1997, budget:200e6, revenue:2187e6, roi:10.9, rating:3.9, genre:'Drama',     director:'J. Cameron' },
+  { title:'Shrek',              year:2001, budget:60e6,  revenue:484e6,  roi:8.1,  rating:3.7, genre:'Animation', director:'A. Adamson' },
+  { title:'Inception',          year:2010, budget:160e6, revenue:836e6,  roi:5.2,  rating:4.1, genre:'Action',    director:'C. Nolan' },
+  { title:'Mad Max: Fury Road', year:2015, budget:150e6, revenue:375e6,  roi:2.5,  rating:4.0, genre:'Action',    director:'G. Miller' },
+  { title:'Moonlight',          year:2016, budget:1.5e6, revenue:65e6,   roi:43.3, rating:3.8, genre:'Drama',     director:'B. Jenkins' },
+  { title:'Home Alone',         year:1990, budget:18e6,  revenue:476e6,  roi:26.4, rating:3.6, genre:'Comedy',    director:'C. Columbus' },
+  { title:'The Hangover',       year:2009, budget:35e6,  revenue:467e6,  roi:13.3, rating:3.5, genre:'Comedy',    director:'T. Phillips' },
+  { title:'Hereditary',         year:2018, budget:10e6,  revenue:80e6,   roi:8.0,  rating:3.5, genre:'Horror',    director:'A. Aster' },
+  { title:'Whiplash',           year:2014, budget:3.3e6, revenue:49e6,   roi:14.8, rating:4.2, genre:'Drama',     director:'D. Chazelle' },
+  { title:'Black Panther',      year:2018, budget:200e6, revenue:1347e6, roi:6.7,  rating:3.8, genre:'Action',    director:'R. Coogler' },
+  { title:'Spirited Away',      year:2001, budget:19e6,  revenue:395e6,  roi:20.8, rating:4.3, genre:'Animation', director:'H. Miyazaki' },
+  { title:'The Room',           year:2003, budget:6e6,   revenue:1.8e6,  roi:0.3,  rating:1.8, genre:'Drama',     director:'T. Wiseau' },
+  { title:'Avatar',             year:2009, budget:237e6, revenue:2788e6, roi:11.8, rating:3.4, genre:'Action',    director:'J. Cameron' },
+  { title:'Borat',              year:2006, budget:18e6,  revenue:262e6,  roi:14.6, rating:3.6, genre:'Comedy',    director:'L. Charles' },
+  { title:'The Witch',          year:2015, budget:3.5e6, revenue:40e6,   roi:11.4, rating:3.4, genre:'Horror',    director:'R. Eggers' },
+  { title:'Gravity',            year:2013, budget:100e6, revenue:723e6,  roi:7.2,  rating:3.8, genre:'Thriller',  director:'A. Cuaron' },
+  { title:'Finding Nemo',       year:2003, budget:94e6,  revenue:940e6,  roi:10.0, rating:4.1, genre:'Animation', director:'A. Stanton' },
 ];
 
 const COLORS = {
@@ -691,9 +628,9 @@ function fmt(n) {
   return '$' + Math.round(n/1e3) + 'K';
 }
 
-// ── SCENE 01: DOSSIER BOARD ────────────────────────────────────────────────
+// ── SCENE 01: DOSSIER BOARD ───────────────────────────────────────────────────
 let currentGenre = 'all';
-let currentY = 'revenue';
+let currentY     = 'revenue';
 
 function renderGalaxy() {
   const frame = document.getElementById('galaxy-frame');
@@ -705,122 +642,86 @@ function renderGalaxy() {
 
   const data = FILMS.filter(d => {
     if (currentGenre !== 'all' && d.genre !== currentGenre) return false;
-    if (currentY === 'roi') return d.roi < 200; // clip extreme outliers for roi axis
+    if (currentY === 'roi') return d.roi < 200;
     return true;
   });
 
   document.getElementById('galaxy-count').textContent = data.length + ' films';
 
-  const svg = d3.select('#galaxy-viz')
-    .append('svg').attr('width', W).attr('height', H);
-
-  const x = d3.scaleLog().domain([3e4, 5e9]).range([M.left, W - M.right]).clamp(true);
+  const svg = d3.select('#galaxy-viz').append('svg').attr('width', W).attr('height', H);
+  const x    = d3.scaleLog().domain([3e4, 5e9]).range([M.left, W - M.right]).clamp(true);
   const yDom = currentY === 'revenue' ? [1e5, 5e9] : [0.1, 200];
-  const y = d3.scaleLog().domain(yDom).range([H - M.bottom, M.top]).clamp(true);
+  const y    = d3.scaleLog().domain(yDom).range([H - M.bottom, M.top]).clamp(true);
 
   // grid lines
-  const xTicks = [1e5,1e6,1e7,1e8,1e9];
-  svg.selectAll('.xgrid').data(xTicks).join('line')
-    .attr('class','xgrid')
-    .attr('x1', d => x(d)).attr('x2', d => x(d))
-    .attr('y1', M.top).attr('y2', H - M.bottom)
-    .attr('stroke','#ddd0b0').attr('stroke-width',1);
+  [1e5,1e6,1e7,1e8,1e9].forEach(v => {
+    svg.append('line').attr('x1',x(v)).attr('x2',x(v)).attr('y1',M.top).attr('y2',H-M.bottom)
+      .attr('stroke','#c4aa84').attr('stroke-width',0.8).attr('stroke-opacity',0.5);
+  });
+  (currentY==='revenue'?[1e6,1e7,1e8,1e9]:[0.5,1,5,10,50,100]).forEach(v => {
+    svg.append('line').attr('x1',M.left).attr('x2',W-M.right).attr('y1',y(v)).attr('y2',y(v))
+      .attr('stroke','#c4aa84').attr('stroke-width',0.8).attr('stroke-opacity',0.5);
+  });
 
-  const yTicks = currentY === 'revenue' ? [1e6,1e7,1e8,1e9] : [0.5,1,5,10,50,100];
-  svg.selectAll('.ygrid').data(yTicks).join('line')
-    .attr('class','ygrid')
-    .attr('x1', M.left).attr('x2', W - M.right)
-    .attr('y1', d => y(d)).attr('y2', d => y(d))
-    .attr('stroke','#ddd0b0').attr('stroke-width',1);
-
-  // break-even line (only for revenue)
   if (currentY === 'revenue') {
     svg.append('line')
-      .attr('x1', x(3e4)).attr('y1', y(3e4))
-      .attr('x2', x(5e9)).attr('y2', y(5e9))
-      .attr('stroke','#c0a870').attr('stroke-width',1.5)
-      .attr('stroke-dasharray','6 4');
+      .attr('x1',x(3e4)).attr('y1',y(3e4)).attr('x2',x(5e9)).attr('y2',y(5e9))
+      .attr('stroke','#b8882a').attr('stroke-width',1.5).attr('stroke-dasharray','6 4');
+    svg.append('text').attr('class','quadrant-label').attr('x',x(3e8)+8).attr('y',y(3e8)-8).text('BREAK-EVEN');
 
-    svg.append('text').attr('class','quadrant-label')
-      .attr('x', x(3e8) + 8).attr('y', y(3e8) - 8)
-      .text('BREAK-EVEN');
-
-    // quadrant labels
-    const qlabels = [
-      { x:2e6,  y:8e8, t:'MICRO-BUDGET\nBREAKOUTS' },
-      { x:3e8,  y:3e9, t:'BLOCKBUSTERS' },
-      { x:4e7,  y:3e6, t:'CULT LOSSES' },
-      { x:2e8,  y:1e7, t:'BIG-BUDGET\nDISAPPOINTMENTS' },
-    ];
-    qlabels.forEach(q => {
-      svg.append('text').attr('class','quadrant-label')
-        .attr('x', x(q.x)).attr('y', y(q.y))
-        .attr('text-anchor','middle')
+    [
+      {x:2e6, y:8e8, t:'MICRO-BUDGET\nBREAKOUTS'},
+      {x:3e8, y:3e9, t:'BLOCKBUSTERS'},
+      {x:4e7, y:3e6, t:'CULT LOSSES'},
+      {x:2e8, y:1e7, t:'BIG-BUDGET\nDISAPPOINTMENTS'},
+    ].forEach(q => {
+      svg.append('text').attr('class','quadrant-label').attr('x',x(q.x)).attr('y',y(q.y)).attr('text-anchor','middle')
         .selectAll('tspan').data(q.t.split('\n')).join('tspan')
-        .attr('x', x(q.x)).attr('dy', (_, i) => i === 0 ? 0 : '1.2em')
-        .text(d => d);
+        .attr('x',x(q.x)).attr('dy',(_,i)=>i===0?0:'1.2em').text(d=>d);
     });
   }
 
-  // axes
-  const xFmt = d => { const v=[1e5,1e6,1e7,1e8,1e9]; return v.includes(d) ? fmt(d) : ''; };
-  const yFmt = currentY === 'revenue'
-    ? d => [1e6,1e7,1e8,1e9].includes(d) ? fmt(d) : ''
-    : d => [0.5,1,5,10,50,100].includes(d) ? d+'x' : '';
+  const xTicks = [1e5,1e6,1e7,1e8,1e9];
+  const yTicks = currentY==='revenue'?[1e6,1e7,1e8,1e9]:[0.5,1,5,10,50,100];
+  svg.append('g').attr('transform',`translate(0,${H-M.bottom})`).call(d3.axisBottom(x).tickValues(xTicks).tickFormat(d=>xTicks.includes(d)?fmt(d):''));
+  svg.append('g').attr('transform',`translate(${M.left},0)`).call(d3.axisLeft(y).tickValues(yTicks).tickFormat(d=>yTicks.includes(d)?(currentY==='revenue'?fmt(d):d+'x'):''));
 
-  svg.append('g').attr('transform',`translate(0,${H-M.bottom})`).call(d3.axisBottom(x).tickValues(xTicks).tickFormat(xFmt));
-  svg.append('g').attr('transform',`translate(${M.left},0)`).call(d3.axisLeft(y).tickValues(yTicks).tickFormat(yFmt));
-
-  svg.append('text').attr('x',W/2).attr('y',H-10)
-    .attr('text-anchor','middle').attr('font-size',10).attr('fill','#7a6040')
-    .attr('font-family','DM Mono, monospace').attr('letter-spacing',2)
-    .text('PRODUCTION BUDGET');
-
-  svg.append('text').attr('transform','rotate(-90)').attr('x',-H/2).attr('y',18)
-    .attr('text-anchor','middle').attr('font-size',10).attr('fill','#7a6040')
-    .attr('font-family','DM Mono, monospace').attr('letter-spacing',2)
-    .text(currentY === 'revenue' ? 'BOX OFFICE REVENUE' : 'RETURN ON INVESTMENT');
+  svg.append('text').attr('x',W/2).attr('y',H-10).attr('text-anchor','middle').attr('font-size',10).attr('fill','#6b5a3a').attr('font-family','DM Mono, monospace').attr('letter-spacing',2).text('PRODUCTION BUDGET');
+  svg.append('text').attr('transform','rotate(-90)').attr('x',-H/2).attr('y',18).attr('text-anchor','middle').attr('font-size',10).attr('fill','#6b5a3a').attr('font-family','DM Mono, monospace').attr('letter-spacing',2).text(currentY==='revenue'?'BOX OFFICE REVENUE':'RETURN ON INVESTMENT');
 
   const tooltip = document.getElementById('tooltip');
 
-  // bubbles
-  const circles = svg.selectAll('circle').data(data).join('circle')
+  svg.selectAll('circle').data(data).join('circle')
     .attr('cx', d => x(Math.max(3e4, d.budget)))
-    .attr('cy', d => y(Math.max(yDom[0], currentY === 'revenue' ? d.revenue : d.roi)))
-    .attr('r',  d => Math.max(5, Math.min(18, Math.sqrt(d.budget / 6e6) * 5)))
-    .attr('fill', d => COLORS[d.genre] || COLORS.Other)
-    .attr('opacity', 0.7)
-    .attr('stroke','none')
-    .style('cursor','pointer')
+    .attr('cy', d => y(Math.max(yDom[0], currentY==='revenue'?d.revenue:d.roi)))
+    .attr('r',  d => Math.max(5, Math.min(18, Math.sqrt(d.budget/6e6)*5)))
+    .attr('fill', d => COLORS[d.genre]||COLORS.Other)
+    .attr('opacity', 0.75).attr('stroke','none').style('cursor','pointer')
     .on('mouseover', function(event, d) {
-      d3.select(this).raise().attr('opacity',1).attr('stroke', COLORS[d.genre] || COLORS.Other).attr('stroke-width',2).attr('stroke-opacity',0.5).attr('r', d => Math.max(7, Math.min(20, Math.sqrt(d.budget / 6e6) * 5 + 2)));
-      document.getElementById('tt-title').textContent = d.title;
-      document.getElementById('tt-year').textContent = d.year;
-      document.getElementById('tt-budget').textContent = fmt(d.budget);
+      d3.select(this).raise().attr('opacity',1).attr('stroke',COLORS[d.genre]||COLORS.Other).attr('stroke-width',2).attr('stroke-opacity',0.6).attr('r',Math.max(7,Math.min(20,Math.sqrt(d.budget/6e6)*5+2)));
+      document.getElementById('tt-title').textContent   = d.title;
+      document.getElementById('tt-year').textContent    = d.year;
+      document.getElementById('tt-budget').textContent  = fmt(d.budget);
       document.getElementById('tt-revenue').textContent = fmt(d.revenue);
       const roiEl = document.getElementById('tt-roi');
-      roiEl.textContent = d.roi.toFixed(1) + '×';
-      roiEl.className = d.roi >= 2 ? 'gold' : 'red';
-      document.getElementById('tt-rating').textContent = d.rating.toFixed(1) + ' / 5';
+      roiEl.textContent = d.roi.toFixed(1)+'×';
+      roiEl.className   = d.roi>=2?'gold':'red';
+      document.getElementById('tt-rating').textContent   = d.rating.toFixed(1)+' / 5';
       document.getElementById('tt-director').textContent = d.director;
       tooltip.style.opacity = 1;
     })
     .on('mousemove', function(event) {
-      const tx = event.clientX + 16;
-      const ty = event.clientY - 80;
-      tooltip.style.left = Math.min(tx, window.innerWidth - 220) + 'px';
-      tooltip.style.top  = Math.max(ty, 10) + 'px';
+      tooltip.style.left = Math.min(event.clientX+16, window.innerWidth-230)+'px';
+      tooltip.style.top  = Math.max(event.clientY-80, 10)+'px';
     })
     .on('mouseout', function(event, d) {
-      d3.select(this).attr('opacity',0.7).attr('stroke','none').attr('r', Math.max(5, Math.min(18, Math.sqrt(d.budget / 6e6) * 5)));
+      d3.select(this).attr('opacity',0.75).attr('stroke','none').attr('r',Math.max(5,Math.min(18,Math.sqrt(d.budget/6e6)*5)));
       tooltip.style.opacity = 0;
     });
 
-  // legend
   const legendEl = document.getElementById('genre-legend');
   legendEl.innerHTML = '';
-  const genres = [...new Set(FILMS.map(d => d.genre))];
-  genres.forEach(g => {
+  [...new Set(FILMS.map(d=>d.genre))].forEach(g=>{
     const item = document.createElement('div');
     item.className = 'legend-item';
     item.innerHTML = `<div class="legend-dot" style="background:${COLORS[g]}"></div>${g}`;
@@ -828,42 +729,35 @@ function renderGalaxy() {
   });
 }
 
-// genre filter
-document.querySelectorAll('[data-genre]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('[data-genre]').forEach(b => b.classList.remove('active'));
+document.querySelectorAll('[data-genre]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('[data-genre]').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
     currentGenre = btn.dataset.genre;
     renderGalaxy();
   });
 });
-
-// y-axis toggle
-document.getElementById('y-revenue').addEventListener('click', () => {
-  currentY = 'revenue';
+document.getElementById('y-revenue').addEventListener('click',()=>{
+  currentY='revenue';
   document.getElementById('y-revenue').classList.add('active');
   document.getElementById('y-roi').classList.remove('active');
   renderGalaxy();
 });
-document.getElementById('y-roi').addEventListener('click', () => {
-  currentY = 'roi';
+document.getElementById('y-roi').addEventListener('click',()=>{
+  currentY='roi';
   document.getElementById('y-roi').classList.add('active');
   document.getElementById('y-revenue').classList.remove('active');
   renderGalaxy();
 });
 
-// ── SCENE 03: PROFITABILITY MATRIX ────────────────────────────────────────
+// ── SCENE 03: PROFITABILITY MATRIX ───────────────────────────────────────────
 const GENRES_MATRIX = ['Action','Animation','Comedy','Drama','Horror','Thriller'];
-const BUDGETS = ['Micro\n<$5M','Low\n$5–20M','Mid\n$20–60M','Block\n>$60M'];
-
-const MATRIX_DATA = {
-  all: {
-    Action:    [1.8, 2.4, 3.1, 4.2],
-    Animation: [2.1, 4.8, 7.2, 8.1],
-    Comedy:    [2.8, 3.5, 3.0, 2.4],
-    Drama:     [3.2, 4.1, 3.8, 2.9],
-    Horror:    [8.4, 6.2, 4.1, 2.8],
-    Thriller:  [2.2, 3.0, 3.5, 3.2],
+const BUDGETS       = ['Micro\n<$5M','Low\n$5–20M','Mid\n$20–60M','Block\n>$60M'];
+const MATRIX_DATA   = {
+  all:{
+    Action:[1.8,2.4,3.1,4.2], Animation:[2.1,4.8,7.2,8.1],
+    Comedy:[2.8,3.5,3.0,2.4], Drama:[3.2,4.1,3.8,2.9],
+    Horror:[8.4,6.2,4.1,2.8], Thriller:[2.2,3.0,3.5,3.2],
   }
 };
 
@@ -874,109 +768,87 @@ function renderMatrix() {
   const M = { top:30, right:20, bottom:60, left:90 };
 
   d3.select('#matrix-viz').selectAll('*').remove();
+  const svg = d3.select('#matrix-viz').append('svg').attr('width',W).attr('height',H);
 
-  const svg = d3.select('#matrix-viz')
-    .append('svg').attr('width', W).attr('height', H);
+  const data   = MATRIX_DATA['all'];
+  const maxVal = d3.max(GENRES_MATRIX.flatMap(g=>data[g]));
+  const cellW  = (W-M.left-M.right)/BUDGETS.length;
+  const cellH  = (H-M.top-M.bottom)/GENRES_MATRIX.length;
 
-  const data = MATRIX_DATA['all'];
-  const allVals = GENRES_MATRIX.flatMap(g => data[g]);
-  const maxVal = d3.max(allVals);
+  const colorScale = d3.scaleSequential().domain([0,maxVal]).interpolator(d3.interpolate('#1e180e','#d4a830'));
 
-  const cellW = (W - M.left - M.right) / BUDGETS.length;
-  const cellH = (H - M.top - M.bottom) / GENRES_MATRIX.length;
-
-  const colorScale = d3.scaleSequential()
-    .domain([0, maxVal])
-    .interpolator(d3.interpolate('#1a1510', '#c9843a'));
-
-  GENRES_MATRIX.forEach((genre, gi) => {
-    BUDGETS.forEach((budget, bi) => {
-      const val = data[genre][bi];
-      const cx = M.left + bi * cellW;
-      const cy = M.top + gi * cellH;
-
-      svg.append('rect')
-        .attr('x', cx + 1).attr('y', cy + 1)
-        .attr('width', cellW - 2).attr('height', cellH - 2)
-        .attr('fill', colorScale(val))
-        .attr('rx', 2)
-        .style('cursor','pointer')
-        .on('mouseover', function() {
-          d3.select(this).attr('stroke', '#c9843a').attr('stroke-width', 1.5);
-        })
-        .on('mouseout', function() {
-          d3.select(this).attr('stroke', 'none');
-        });
-
-      svg.append('text')
-        .attr('x', cx + cellW/2).attr('y', cy + cellH/2 + 4)
-        .attr('text-anchor','middle')
-        .attr('font-family','DM Mono, monospace')
-        .attr('font-size', 11)
-        .attr('fill', val > maxVal * 0.5 ? '#faf6ec' : '#4a3a24')
-        .text(val.toFixed(1) + '×');
+  GENRES_MATRIX.forEach((genre,gi)=>{
+    BUDGETS.forEach((budget,bi)=>{
+      const val=data[genre][bi], cx=M.left+bi*cellW, cy=M.top+gi*cellH;
+      svg.append('rect').attr('x',cx+1).attr('y',cy+1).attr('width',cellW-2).attr('height',cellH-2)
+        .attr('fill',colorScale(val)).attr('rx',2).style('cursor','pointer')
+        .on('mouseover',function(){d3.select(this).attr('stroke','#d4a830').attr('stroke-width',1.5);})
+        .on('mouseout', function(){d3.select(this).attr('stroke','none');});
+      svg.append('text').attr('x',cx+cellW/2).attr('y',cy+cellH/2+4).attr('text-anchor','middle')
+        .attr('font-family','DM Mono, monospace').attr('font-size',11)
+        .attr('fill',val>maxVal*0.45?'#f0e6d0':'#4a3820').text(val.toFixed(1)+'×');
     });
   });
 
-  // y labels
-  GENRES_MATRIX.forEach((g, i) => {
-    svg.append('text')
-      .attr('x', M.left - 10).attr('y', M.top + i * cellH + cellH/2 + 4)
-      .attr('text-anchor','end')
-      .attr('font-family','DM Mono, monospace')
-      .attr('font-size', 10).attr('fill','#4a3a24').attr('letter-spacing',1)
-      .text(g.toUpperCase());
+  GENRES_MATRIX.forEach((g,i)=>{
+    svg.append('text').attr('x',M.left-10).attr('y',M.top+i*cellH+cellH/2+4)
+      .attr('text-anchor','end').attr('font-family','DM Mono, monospace')
+      .attr('font-size',10).attr('fill','#4a3820').attr('letter-spacing',1).text(g.toUpperCase());
   });
-
-  // x labels
-  BUDGETS.forEach((b, i) => {
-    b.split('\n').forEach((line, li) => {
-      svg.append('text')
-        .attr('x', M.left + i * cellW + cellW/2)
-        .attr('y', H - M.bottom + 18 + li * 13)
-        .attr('text-anchor','middle')
-        .attr('font-family','DM Mono, monospace')
-        .attr('font-size', 9).attr('fill','#4a3a24').attr('letter-spacing',1)
-        .text(line.toUpperCase());
+  BUDGETS.forEach((b,i)=>{
+    b.split('\n').forEach((line,li)=>{
+      svg.append('text').attr('x',M.left+i*cellW+cellW/2).attr('y',H-M.bottom+18+li*13)
+        .attr('text-anchor','middle').attr('font-family','DM Mono, monospace')
+        .attr('font-size',9).attr('fill','#4a3820').attr('letter-spacing',1).text(line.toUpperCase());
     });
   });
 
-  // color legend bar
-  const lgW = 120;
-  const lgX = W - M.right - lgW;
-  const lgY = M.top - 20;
+  const lgW=120, lgX=W-M.right-lgW, lgY=M.top-20;
   const lgGrad = svg.append('defs').append('linearGradient').attr('id','lg-grad').attr('x1','0%').attr('x2','100%');
-  lgGrad.append('stop').attr('offset','0%').attr('stop-color','#f0ead8');
-  lgGrad.append('stop').attr('offset','100%').attr('stop-color','#c9843a');
+  lgGrad.append('stop').attr('offset','0%').attr('stop-color','#1e180e');
+  lgGrad.append('stop').attr('offset','100%').attr('stop-color','#d4a830');
   svg.append('rect').attr('x',lgX).attr('y',lgY).attr('width',lgW).attr('height',6).attr('fill','url(#lg-grad)');
-  svg.append('text').attr('x',lgX).attr('y',lgY-4).attr('font-family','DM Mono, monospace').attr('font-size',8).attr('fill','#7a6040').text('LOW ROI');
-  svg.append('text').attr('x',lgX+lgW).attr('y',lgY-4).attr('text-anchor','end').attr('font-family','DM Mono, monospace').attr('font-size',8).attr('fill','#8b6410').text('HIGH ROI');
+  svg.append('text').attr('x',lgX).attr('y',lgY-4).attr('font-family','DM Mono, monospace').attr('font-size',8).attr('fill','#6b5a3a').text('LOW ROI');
+  svg.append('text').attr('x',lgX+lgW).attr('y',lgY-4).attr('text-anchor','end').attr('font-family','DM Mono, monospace').attr('font-size',8).attr('fill','#a0720c').text('HIGH ROI');
 }
 
-// ── NAV ACTIVE STATE ──────────────────────────────────────────────────────────
-const sections = ['hero','galaxy','flow','matrix','sequels'];
-const navLinks = document.querySelectorAll('.nav-links a');
+// decade pills — wired up, ready for real data
+document.querySelectorAll('[data-decade]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('[data-decade]').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    renderMatrix();
+  });
+});
+document.getElementById('m-roi').addEventListener('click',()=>{
+  document.getElementById('m-roi').classList.add('active');
+  document.getElementById('m-profit').classList.remove('active');
+  renderMatrix();
+});
+document.getElementById('m-profit').addEventListener('click',()=>{
+  document.getElementById('m-profit').classList.add('active');
+  document.getElementById('m-roi').classList.remove('active');
+  renderMatrix();
+});
 
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      const id = e.target.id;
-      navLinks.forEach(a => {
-        a.classList.toggle('active', a.getAttribute('href') === '#' + id);
-      });
+// ── NAV ACTIVE STATE ──────────────────────────────────────────────────────────
+const navLinks = document.querySelectorAll('.nav-links a');
+const observer = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const id=e.target.id;
+      navLinks.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+id));
     }
   });
-}, { threshold: 0.4 });
-
-sections.forEach(id => {
-  const el = document.getElementById(id);
-  if (el) observer.observe(el);
+},{threshold:0.4});
+['hero','galaxy','flow','matrix','sequels'].forEach(id=>{
+  const el=document.getElementById(id); if(el) observer.observe(el);
 });
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 renderGalaxy();
 renderMatrix();
-window.addEventListener('resize', () => { renderGalaxy(); renderMatrix(); });
+window.addEventListener('resize',()=>{ renderGalaxy(); renderMatrix(); });
 </script>
 </body>
 </html>
