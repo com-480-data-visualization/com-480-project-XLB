@@ -129,7 +129,13 @@ For inspiration we draw on the Pudding's essay-style scrollytelling pieces, the 
 
 ## Milestone 2 (17th April, 5pm)
 
-*To be completed.*
+See [MS2_XLB.pdf](MS2_XLB.pdf) for the full project description, visualization sketches, tools and work breakdown.
+
+The website prototype is live at [com-480-data-visualization.github.io/com-480-project-XLB](https://com-480-data-visualization.github.io/com-480-project-XLB).
+
+**CineScope** is our interactive explorer structured around four coordinated views. Selecting a genre or decade in any view filters the others, allowing users to pursue one hypothesis across multiple perspectives simultaneously.
+
+The four views are the Bubble Galaxy (budget vs revenue scatter with genre clustering and quadrant annotations), The Flow (Sankey diagram mapping budget tiers through genres to financial outcomes), The Profitability Matrix (genre × budget heatmap showing median ROI with a decade slider), and Sequels Under the Spotlight (original vs sequel revenue scatter with radial franchise drill-down).
 
 ---
 

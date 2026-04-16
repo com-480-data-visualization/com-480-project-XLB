@@ -1,0 +1,126 @@
+<svg viewBox="0 0 720 460" xmlns="http://www.w3.org/2000/svg" font-family="'DM Mono', monospace">
+  <rect width="720" height="460" fill="#f5f0e6" rx="4"/>
+  <rect width="720" height="32" fill="#ede7d9" rx="4"/>
+  <rect y="28" width="720" height="4" fill="#ede7d9"/>
+  <line x1="0" y1="32" x2="720" y2="32" stroke="#c8b898" stroke-width="0.5"/>
+  <text x="16" y="20" font-size="9" fill="#8b6410" letter-spacing="2">VIEW 04 — DYNASTIES</text>
+  <text x="400" y="20" font-size="9" fill="#b8a060" letter-spacing="1">ORIGINAL REVENUE → SEQUEL REVENUE</text>
+  <rect x="450" y="36" width="54" height="14" rx="2" fill="#8b6410" opacity="0.15" stroke="#8b6410" stroke-width="0.8"/><text x="477" y="46" font-size="7" fill="#8b6410" text-anchor="middle">REVENUE</text>
+  <rect x="510" y="36" width="28" height="14" rx="2" fill="none" stroke="#c8b898" stroke-width="0.5"/><text x="524" y="46" font-size="7" fill="#6b5a40" text-anchor="middle">ROI</text>
+  <rect x="544" y="36" width="36" height="14" rx="2" fill="none" stroke="#c8b898" stroke-width="0.5"/><text x="562" y="46" font-size="7" fill="#6b5a40" text-anchor="middle">RATING</text>
+
+  <!-- plot area -->
+  <rect x="54" y="58" width="360" height="340" fill="#f5f0e6"/>
+  <line x1="54" y1="58" x2="54" y2="398" stroke="#c8b898" stroke-width="1"/>
+  <line x1="54" y1="398" x2="414" y2="398" stroke="#c8b898" stroke-width="1"/>
+  <line x1="124" y1="58" x2="124" y2="398" stroke="#ddd0b0" stroke-width="0.5"/>
+  <line x1="194" y1="58" x2="194" y2="398" stroke="#ddd0b0" stroke-width="0.5"/>
+  <line x1="264" y1="58" x2="264" y2="398" stroke="#ddd0b0" stroke-width="0.5"/>
+  <line x1="334" y1="58" x2="334" y2="398" stroke="#ddd0b0" stroke-width="0.5"/>
+  <line x1="54" y1="328" x2="414" y2="328" stroke="#ddd0b0" stroke-width="0.5"/>
+  <line x1="54" y1="258" x2="414" y2="258" stroke="#ddd0b0" stroke-width="0.5"/>
+  <line x1="54" y1="188" x2="414" y2="188" stroke="#ddd0b0" stroke-width="0.5"/>
+  <line x1="54" y1="118" x2="414" y2="118" stroke="#ddd0b0" stroke-width="0.5"/>
+
+  <!-- diagonal equal line -->
+  <line x1="54" y1="398" x2="414" y2="58" stroke="#c0a870" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="368" y="72" font-size="7" fill="#b8a060" letter-spacing="1">EQUAL</text>
+
+  <!-- zone labels -->
+  <text x="72" y="102" font-size="7" fill="#c0a870" letter-spacing="1">SEQUEL</text>
+  <text x="72" y="113" font-size="7" fill="#c0a870" letter-spacing="1">IMPROVED</text>
+  <text x="260" y="385" font-size="7" fill="#c0a870" letter-spacing="1">SEQUEL DECLINED</text>
+
+  <!-- axis labels -->
+  <text x="44" y="401" font-size="7" fill="#7a6040" text-anchor="end">$10M</text>
+  <text x="44" y="331" font-size="7" fill="#7a6040" text-anchor="end">$100M</text>
+  <text x="44" y="261" font-size="7" fill="#7a6040" text-anchor="end">$500M</text>
+  <text x="44" y="191" font-size="7" fill="#7a6040" text-anchor="end">$1B</text>
+  <text x="44" y="121" font-size="7" fill="#7a6040" text-anchor="end">$3B</text>
+  <text x="54" y="412" font-size="7" fill="#7a6040">$10M</text>
+  <text x="124" y="412" font-size="7" fill="#7a6040" text-anchor="middle">$100M</text>
+  <text x="194" y="412" font-size="7" fill="#7a6040" text-anchor="middle">$500M</text>
+  <text x="264" y="412" font-size="7" fill="#7a6040" text-anchor="middle">$1B</text>
+  <text x="334" y="412" font-size="7" fill="#7a6040" text-anchor="middle">$3B</text>
+  <text x="234" y="432" font-size="8" fill="#7a6040" text-anchor="middle" letter-spacing="2">ORIGINAL REVENUE</text>
+  <text transform="rotate(-90 18 228)" x="18" y="228" font-size="8" fill="#7a6040" text-anchor="middle" letter-spacing="2">SEQUEL REVENUE</text>
+
+  <!-- POINTS on light bg: green=improved, red=declined -->
+  <circle cx="255" cy="185" r="14" fill="#4a9e78" opacity="0.7"/><text x="255" y="189" font-size="6" fill="white" text-anchor="middle">MCU</text>
+  <circle cx="282" cy="135" r="11" fill="#4a9e78" opacity="0.65"/><text x="282" y="139" font-size="5" fill="white" text-anchor="middle">SW</text>
+  <circle cx="304" cy="165" r="9" fill="#4a9e78" opacity="0.6"/><text x="304" y="169" font-size="5" fill="white" text-anchor="middle">JP</text>
+  <circle cx="302" cy="193" r="10" fill="#b54a3a" opacity="0.65"/><text x="302" y="197" font-size="5" fill="white" text-anchor="middle">HP</text>
+  <circle cx="228" cy="251" r="7" fill="#b54a3a" opacity="0.65"/><text x="228" y="255" font-size="5" fill="white" text-anchor="middle">HO</text>
+  <circle cx="207" cy="223" r="8" fill="#4a9e78" opacity="0.65"/><text x="207" y="227" font-size="5" fill="white" text-anchor="middle">TS</text>
+  <circle cx="226" cy="198" r="8" fill="#4a9e78" opacity="0.6"/><text x="226" y="202" font-size="5" fill="white" text-anchor="middle">MX</text>
+  <circle cx="212" cy="178" r="8" fill="#4a9e78" opacity="0.65"/><text x="212" y="182" font-size="5" fill="white" text-anchor="middle">BM</text>
+  <circle cx="233" cy="183" r="9" fill="#4a9e78" opacity="0.6"/><text x="233" y="187" font-size="5" fill="white" text-anchor="middle">SK</text>
+  <circle cx="157" cy="166" r="8" fill="#4a9e78" opacity="0.7"/><text x="157" y="170" font-size="5" fill="white" text-anchor="middle">T2</text>
+  <circle cx="203" cy="328" r="6" fill="#b54a3a" opacity="0.75"/><text x="203" y="332" font-size="5" fill="white" text-anchor="middle">SP</text>
+  <circle cx="120" cy="186" r="5" fill="#4a9e78" opacity="0.5"/>
+  <circle cx="135" cy="212" r="4" fill="#b54a3a" opacity="0.5"/>
+  <circle cx="175" cy="228" r="5" fill="#4a9e78" opacity="0.45"/>
+  <circle cx="248" cy="320" r="5" fill="#b54a3a" opacity="0.4"/>
+  <circle cx="286" cy="302" r="6" fill="#b54a3a" opacity="0.5"/>
+  <circle cx="325" cy="228" r="7" fill="#4a9e78" opacity="0.5"/>
+
+  <!-- MCU selected ring -->
+  <circle cx="255" cy="185" r="14" fill="none" stroke="#8b6410" stroke-width="1.8"/>
+
+  <!-- Radial drill-down panel - parchment style -->
+  <rect x="430" y="58" width="276" height="340" rx="3" fill="#faf6ec" stroke="#c8b898" stroke-width="1"/>
+  <rect x="430" y="58" width="276" height="3" fill="#8b6410"/>
+  <text x="568" y="74" font-size="8" fill="#1a1410" text-anchor="middle" letter-spacing="1">MARVEL CINEMATIC UNIVERSE</text>
+  <text x="568" y="85" font-size="7" fill="#7a6040" text-anchor="middle">radial franchise drill-down</text>
+
+  <!-- center node -->
+  <circle cx="568" cy="225" r="20" fill="#c9843a" opacity="0.9"/>
+  <text x="568" y="222" font-size="6" fill="white" text-anchor="middle">Iron</text>
+  <text x="568" y="231" font-size="6" fill="white" text-anchor="middle">Man</text>
+  <text x="568" y="240" font-size="5" fill="white" text-anchor="middle">$585M</text>
+
+  <!-- branches -->
+  <line x1="568" y1="205" x2="568" y2="142" stroke="#4a9e78" stroke-width="2.5"/>
+  <circle cx="568" cy="132" r="17" fill="#4a9e78" opacity="0.85"/>
+  <text x="568" y="129" font-size="5" fill="white" text-anchor="middle">Avengers</text>
+  <text x="568" y="137" font-size="5" fill="white" text-anchor="middle">$1.52B</text>
+  <text x="568" y="145" font-size="5" fill="white" text-anchor="middle">+160%</text>
+
+  <line x1="582" y1="210" x2="626" y2="152" stroke="#4a9e78" stroke-width="2"/>
+  <circle cx="637" cy="145" r="15" fill="#4a9e78" opacity="0.8"/>
+  <text x="637" y="142" font-size="5" fill="white" text-anchor="middle">Inf. War</text>
+  <text x="637" y="150" font-size="5" fill="white" text-anchor="middle">$2.05B</text>
+
+  <line x1="588" y1="222" x2="646" y2="214" stroke="#8b6410" stroke-width="3"/>
+  <circle cx="660" cy="214" r="18" fill="#8b6410" opacity="0.85"/>
+  <text x="660" y="211" font-size="5" fill="white" text-anchor="middle">Endgame</text>
+  <text x="660" y="219" font-size="5" fill="white" text-anchor="middle">$2.79B</text>
+  <text x="660" y="227" font-size="5" fill="white" text-anchor="middle">+377%</text>
+
+  <line x1="582" y1="237" x2="624" y2="278" stroke="#4a9e78" stroke-width="1.5"/>
+  <circle cx="635" cy="287" r="13" fill="#4a9e78" opacity="0.7"/>
+  <text x="635" y="284" font-size="5" fill="white" text-anchor="middle">Cap Am.</text>
+  <text x="635" y="292" font-size="5" fill="white" text-anchor="middle">$714M</text>
+
+  <line x1="552" y1="238" x2="516" y2="278" stroke="#4a9e78" stroke-width="1.5"/>
+  <circle cx="505" cy="287" r="12" fill="#4a9e78" opacity="0.7"/>
+  <text x="505" y="284" font-size="5" fill="white" text-anchor="middle">Thor</text>
+  <text x="505" y="292" font-size="5" fill="white" text-anchor="middle">$449M</text>
+
+  <line x1="552" y1="210" x2="510" y2="158" stroke="#c9843a" stroke-width="1.5"/>
+  <circle cx="499" cy="150" r="14" fill="#c9843a" opacity="0.75"/>
+  <text x="499" y="147" font-size="5" fill="white" text-anchor="middle">Iron Man 2</text>
+  <text x="499" y="155" font-size="5" fill="white" text-anchor="middle">$623M</text>
+
+  <!-- legend in panel -->
+  <line x1="440" y1="320" x2="698" y2="320" stroke="#c8b898" stroke-width="0.5"/>
+  <circle cx="448" cy="332" r="5" fill="#8b6410" opacity="0.85"/><text x="457" y="335" font-size="7" fill="#4a3a24">franchise peak</text>
+  <circle cx="448" cy="346" r="5" fill="#4a9e78" opacity="0.8"/><text x="457" y="349" font-size="7" fill="#4a3a24">grew vs original</text>
+  <circle cx="545" cy="332" r="5" fill="#b54a3a" opacity="0.7"/><text x="554" y="335" font-size="7" fill="#4a3a24">declined</text>
+  <text x="440" y="363" font-size="7" fill="#b8a060">node size = revenue · click point to open</text>
+
+  <!-- scatter legend -->
+  <circle cx="58" cy="447" r="5" fill="#4a9e78" opacity="0.75"/><text x="67" y="450" font-size="7" fill="#4a9e78">sequel improved</text>
+  <circle cx="158" cy="447" r="5" fill="#b54a3a" opacity="0.75"/><text x="167" y="450" font-size="7" fill="#b54a3a">sequel declined</text>
+  <text x="300" y="450" font-size="7" fill="#b8a060">point size = original revenue</text>
+</svg>
