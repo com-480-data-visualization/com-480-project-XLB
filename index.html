@@ -181,6 +181,30 @@ section{position:relative}.story-lobby{padding-top:88px;padding-bottom:88px}.sto
 @media(max-width:760px){nav{height:auto;min-height:56px;padding:0 14px;flex-wrap:wrap}.nav-links{order:3;width:100%;overflow:auto}.nav-links a{height:44px;white-space:nowrap}.nav-tools{margin-left:auto}.nav-chip{padding:7px 9px}.hero-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}#hero{padding:110px 20px 72px;background-attachment:scroll}.story-shell{grid-template-columns:1fr}.chapter-grid,.takeaway-grid{grid-template-columns:1fr}.hero-dashboard{padding:14px}.palette{padding-top:64px}footer{display:block;line-height:2}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.001ms!important}.hero-marquee span{animation:none;padding-left:0}.cinema-cursor{display:none}}
 
+
+/* ═══════════════════════════════════════════════════════════
+   DIRECTORS' LEAGUE — upgraded interactive analytics module
+   ═══════════════════════════════════════════════════════════ */
+.director-kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:28px 0 20px}
+.director-kpi{position:relative;overflow:hidden;border:1px solid var(--border);border-radius:22px;padding:16px;background:linear-gradient(145deg,rgba(255,255,255,.32),rgba(255,255,255,.05));box-shadow:var(--shadow-xl);min-height:132px}
+.director-kpi::after{content:'';position:absolute;right:-44px;bottom:-58px;width:150px;height:150px;background:radial-gradient(circle,rgba(212,168,48,.20),transparent 66%)}
+.director-kpi-label{font-family:var(--mono);font-size:9px;letter-spacing:2.4px;color:var(--gold);text-transform:uppercase;position:relative}
+.director-kpi-value{font-family:var(--serif);font-size:clamp(24px,3vw,36px);line-height:1.05;margin:12px 0 8px;position:relative}
+.director-kpi-note{font-family:var(--mono);font-size:10px;line-height:1.6;color:var(--muted2);position:relative}
+.director-controls{align-items:flex-start;margin-top:20px;margin-bottom:18px;padding:14px;border:1px solid rgba(196,170,132,.62);border-radius:20px;background:linear-gradient(90deg,rgba(212,168,48,.09),rgba(255,255,255,.06))}
+.director-control-group{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.director-control-group + .director-control-group{margin-left:4px}
+.director-league-layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:18px;align-items:start}
+.director-panel{position:sticky;top:78px;border:1px solid var(--border);border-radius:24px;background:linear-gradient(150deg,var(--card),rgba(255,255,255,.10));box-shadow:var(--shadow-xl);padding:20px;min-height:520px;overflow:hidden}
+.director-panel::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 82% 0%,rgba(212,168,48,.18),transparent 34%),radial-gradient(circle at 0% 100%,rgba(155,58,40,.11),transparent 42%);pointer-events:none}
+.director-panel > *{position:relative}.director-panel-kicker{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--gold);margin-bottom:8px;text-transform:uppercase}.director-panel-name{font-family:var(--serif);font-size:34px;line-height:1.05;margin-bottom:10px}.director-panel-rank{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(160,114,12,.34);border-radius:999px;padding:6px 9px;font-family:var(--mono);font-size:9px;letter-spacing:1.6px;color:var(--gold2);background:rgba(212,168,48,.10);margin-bottom:18px}
+.director-panel-metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px}.director-panel-metric{border:1px solid rgba(196,170,132,.72);border-radius:16px;padding:12px;background:rgba(255,255,255,.12)}.director-panel-metric .label{font-family:var(--mono);font-size:8px;letter-spacing:2px;color:var(--muted);text-transform:uppercase}.director-panel-metric .value{font-family:var(--serif);font-size:24px;line-height:1.1;margin-top:5px}.director-panel-metric .sub{font-family:var(--mono);font-size:9px;color:var(--muted2);margin-top:4px}
+.director-verdict{border-left:2px solid var(--gold-dim);padding:10px 0 10px 13px;margin:10px 0 18px;color:var(--muted2);font-size:13px;line-height:1.75;background:linear-gradient(90deg,rgba(212,168,48,.10),transparent)}
+.director-film-list{display:grid;gap:9px;margin-top:12px}.director-film-row{display:grid;grid-template-columns:1fr 76px;gap:10px;align-items:center;font-family:var(--mono);font-size:9px}.director-film-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted2)}.director-film-bar{height:10px;border-radius:999px;background:rgba(196,170,132,.22);overflow:hidden}.director-film-fill{height:100%;border-radius:999px}.director-film-value{text-align:right;color:var(--gold2)}
+.director-empty{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--muted);padding:80px 24px;text-align:center;line-height:2}.director-legend{display:flex;flex-wrap:wrap;gap:12px;margin:14px 0 0}.director-legend .legend-item{cursor:default}.director-row-label{font-family:var(--mono);font-size:10px;fill:var(--muted2);letter-spacing:.5px}.director-row-small{font-family:var(--mono);font-size:8px;fill:var(--muted);letter-spacing:.6px}.director-rank{font-family:var(--mono);font-size:8px;fill:var(--gold2);letter-spacing:1px}.director-axis-label{font-family:var(--mono);font-size:9px;fill:var(--muted);letter-spacing:1.8px}.director-median-label{font-family:var(--mono);font-size:8px;fill:var(--gold2);letter-spacing:.7px}.director-row-bg{fill:transparent;cursor:pointer}.director-row-bg:hover{fill:rgba(212,168,48,.08)}.director-row-bg.selected{fill:rgba(212,168,48,.13);stroke:rgba(212,168,48,.24);stroke-width:1}
+body.dark-room .director-kpi,body.dark-room .director-panel,body.dark-room .director-controls{background:linear-gradient(145deg,rgba(255,255,255,.06),rgba(255,255,255,.02))}body.dark-room .director-panel-metric{background:rgba(255,255,255,.045)}body.dark-room .director-panel-rank{color:var(--gold-bright)}
+@media(max-width:1100px){.director-kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.director-league-layout{grid-template-columns:1fr}.director-panel{position:relative;top:auto;min-height:0}}
+@media(max-width:720px){.director-kpi-grid{grid-template-columns:1fr}.director-controls{display:block}.director-control-group{margin-bottom:10px}.director-panel-metrics{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body class="is-loading">
@@ -265,7 +289,7 @@ section{position:relative}.story-lobby{padding-top:88px;padding-bottom:88px}.sto
     <div data-reveal>
       <div class="section-kicker">TRAILER MODE</div>
       <h2 class="story-title">Follow the money, then question the myth.</h2>
-      <p class="story-copy">The page is now structured like a short investigative film: first the suspects, then the flows, then the payoff matrix, franchise arcs, critic-versus-commerce paradox, and finally the directors who repeatedly convert risk into reward.</p>
+      <p class="story-copy">It's basically a conspiracy board but for Hollywood budgets. Follow the string.</p>
     </div>
     <div class="chapter-grid">
       <a class="chapter-card" data-num="01" href="#galaxy" data-reveal><span class="chapter-tag">SCENE 01</span><h3>The Dossier</h3><p>Search, filter and interrogate the budget-versus-revenue universe.</p></a>
@@ -402,11 +426,57 @@ section{position:relative}.story-lobby{padding-top:88px;padding-bottom:88px}.sto
 <!-- ═══ 06 DIRECTORS' LEAGUE ═══ -->
 <section id="directors">
   <div class="scene-header"><div class="scene-tag">06</div><h2>Directors' League</h2></div>
-  <div class="scene-q">Which directors consistently turn budgets into box office gold?</div>
-  <p class="scene-narrative">Directors with at least 2 films in our financial dataset, ranked by median ROI. Each dot is a film — color encodes its genre. The large gold dot is the director's median. The spread reveals consistency: a tight cluster means reliable results; wide spread means high variance.</p>
-  <div class="viz-frame" id="directors-frame">
-    <div class="viz-corner tl">SORTED BY MEDIAN ROI &nbsp;·&nbsp; DOT = ONE FILM &nbsp;·&nbsp; ◆ = MEDIAN</div>
-    <div id="directors-viz"></div>
+  <div class="scene-q">Which directors repeatedly turn creative risk into box-office return?</div>
+  <p class="scene-narrative">The previous view ranked directors only by median ROI. This upgraded league treats them like a scouting report: filter by genre, change the ranking metric, compare consistency bands, and click any director to open a full dossier of hit rate, profit, signature genre and film-level performance.</p>
+
+  <div class="director-kpi-grid" id="director-kpis">
+    <div class="director-kpi" data-reveal><div class="director-kpi-label">ROI Leader</div><div class="director-kpi-value" id="dir-kpi-roi">—</div><div class="director-kpi-note" id="dir-kpi-roi-note">Median return across films</div></div>
+    <div class="director-kpi" data-reveal><div class="director-kpi-label">Most Consistent</div><div class="director-kpi-value" id="dir-kpi-consistency">—</div><div class="director-kpi-note" id="dir-kpi-consistency-note">Best ROI with the tightest spread</div></div>
+    <div class="director-kpi" data-reveal><div class="director-kpi-label">Box Office Engine</div><div class="director-kpi-value" id="dir-kpi-gross">—</div><div class="director-kpi-note" id="dir-kpi-gross-note">Highest cumulative revenue</div></div>
+    <div class="director-kpi" data-reveal><div class="director-kpi-label">Hit-Maker</div><div class="director-kpi-value" id="dir-kpi-hit">—</div><div class="director-kpi-note" id="dir-kpi-hit-note">Best share of films above 3× ROI</div></div>
+  </div>
+
+  <div class="controls director-controls">
+    <div class="director-control-group">
+      <span class="ctrl-label">RANK BY</span>
+      <button class="pill active" data-dir-sort="medianRoi">Median ROI</button>
+      <button class="pill" data-dir-sort="hitRate">Hit Rate</button>
+      <button class="pill" data-dir-sort="consistency">Consistency</button>
+      <button class="pill" data-dir-sort="totalRevenue">Box Office</button>
+      <button class="pill" data-dir-sort="avgRating">Rating</button>
+    </div>
+    <div class="divider"></div>
+    <div class="director-control-group">
+      <span class="ctrl-label">GENRE</span>
+      <button class="pill active" data-dir-genre="all">All</button>
+      <button class="pill" data-dir-genre="Action">Action</button>
+      <button class="pill" data-dir-genre="Drama">Drama</button>
+      <button class="pill" data-dir-genre="Comedy">Comedy</button>
+      <button class="pill" data-dir-genre="Horror">Horror</button>
+      <button class="pill" data-dir-genre="Animation">Animation</button>
+      <button class="pill" data-dir-genre="Thriller">Thriller</button>
+      <button class="pill" data-dir-genre="Sci-Fi">Sci-Fi</button>
+    </div>
+    <div class="divider"></div>
+    <div class="director-control-group">
+      <span class="ctrl-label">MIN FILMS</span>
+      <button class="pill active" data-dir-min="2">2+</button>
+      <button class="pill" data-dir-min="3">3+</button>
+    </div>
+  </div>
+
+  <div class="director-league-layout">
+    <div>
+      <div class="viz-frame" id="directors-frame">
+        <div class="viz-corner tl" id="directors-corner">DIRECTOR ROI DISTRIBUTION &nbsp;·&nbsp; ◆ = MEDIAN</div>
+        <div class="viz-corner tr" id="directors-count">—</div>
+        <div id="directors-viz"></div>
+      </div>
+      <div class="director-legend" id="director-legend"></div>
+    </div>
+    <aside class="director-panel" id="director-panel">
+      <div class="director-empty">CLICK A DIRECTOR ROW<br>TO OPEN THE DOSSIER</div>
+    </aside>
   </div>
 </section>
 
@@ -606,7 +676,9 @@ const FDATA = FRANCHISES.map(fr => {
   return { ...fr, orig, peak, mult: peak/orig.rev, total: d3.sum(fr.films, s => s.rev) };
 });
 
-
+// ═══════════════════════════════════════════════════════════
+//  CONSTANTS & HELPERS
+// ═══════════════════════════════════════════════════════════
 const COLORS   = {Action:'#c9843a',Drama:'#7a6fbd',Comedy:'#4a9e78',Horror:'#b54a3a',Animation:'#c9558a',Thriller:'#4a8ab5','Sci-Fi':'#4aab9e',Other:'#5a5248'};
 const GENRES   = ['Action','Animation','Comedy','Drama','Horror','Sci-Fi','Thriller'];
 const TIERS    = ['micro','low','mid','block'];
@@ -641,7 +713,9 @@ function showTT(ev, d) {
 function moveTT(ev){ TT.style.left=Math.min(ev.clientX+16,window.innerWidth-240)+'px'; TT.style.top=Math.max(ev.clientY-90,10)+'px'; }
 function hideTT()  { TT.style.opacity = 0; }
 
-
+// ═══════════════════════════════════════════════════════════
+//  SCENE 01 — DOSSIER BOARD
+// ═══════════════════════════════════════════════════════════
 let g_genre='all', g_yAxis='revenue';
 
 function renderDossier() {
@@ -786,6 +860,9 @@ function sankeyPath(l) {
   return 'M'+l.source.x1+','+l.y0+' C'+mx+','+l.y0+' '+mx+','+l.y1+' '+l.target.x0+','+l.y1;
 }
 
+// ═══════════════════════════════════════════════════════════
+//  SCENE 02 — THE FLOW
+// ═══════════════════════════════════════════════════════════
 let g_flow = 'all';
 
 function renderFlow() {
@@ -906,7 +983,9 @@ document.querySelectorAll('[data-flow]').forEach(btn=>btn.addEventListener('clic
   btn.classList.add('active'); g_flow=btn.dataset.flow; renderFlow();
 }));
 
-
+// ═══════════════════════════════════════════════════════════
+//  SCENE 03 — PROFITABILITY MATRIX
+// ═══════════════════════════════════════════════════════════
 let g_decade='all', g_metric='roi', g_cell=null;
 
 function computeMatrix() {
@@ -995,7 +1074,9 @@ document.querySelectorAll('[data-decade]').forEach(btn=>btn.addEventListener('cl
 document.getElementById('m-roi').addEventListener('click',()=>{g_metric='roi';document.getElementById('m-roi').classList.add('active');document.getElementById('m-profit').classList.remove('active');document.getElementById('matrix-label').textContent='GENRE × BUDGET TIER  ·  CELL = MEDIAN ROI';g_cell=null;document.getElementById('matrix-detail').style.display='none';renderMatrix();});
 document.getElementById('m-profit').addEventListener('click',()=>{g_metric='profit';document.getElementById('m-profit').classList.add('active');document.getElementById('m-roi').classList.remove('active');document.getElementById('matrix-label').textContent='GENRE × BUDGET TIER  ·  CELL = % PROFITABLE';g_cell=null;document.getElementById('matrix-detail').style.display='none';renderMatrix();});
 
-
+// ═══════════════════════════════════════════════════════════
+//  SCENE 04 — DYNASTIES
+// ═══════════════════════════════════════════════════════════
 let g_fr=null;
 
 function renderDynasties(){
@@ -1078,34 +1159,75 @@ function renderDynastyPanel(fr){
 }
 
 
-
+// ═══════════════════════════════════════════════════════════
+//  COMPUTED DIRECTOR DATA
+// ═══════════════════════════════════════════════════════════
 function medianOf(arr) {
   if(!arr.length) return 0;
   const s=[...arr].sort((a,b)=>a-b), m=Math.floor(s.length/2);
   return s.length%2?s[m]:(s[m-1]+s[m])/2;
 }
-function topVal(arr) {
-  const cnt={}; arr.forEach(v=>{cnt[v]=(cnt[v]||0)+1;});
-  return Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0][0];
+function quantileOf(arr, q) {
+  if(!arr.length) return 0;
+  const s=[...arr].sort((a,b)=>a-b);
+  return d3.quantile(s, q) ?? 0;
 }
-
+function topVal(arr) {
+  if(!arr.length) return '—';
+  const cnt={}; arr.forEach(v=>{cnt[v]=(cnt[v]||0)+1;});
+  return Object.entries(cnt).sort((a,b)=>b[1]-a[1] || a[0].localeCompare(b[0]))[0][0];
+}
+function escapeHtml(s){return String(s ?? '').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+function fmtCompactMoney(n){ if(!isFinite(n))return '—'; if(Math.abs(n)>=1e9)return '$'+(n/1e9).toFixed(1)+'B'; if(Math.abs(n)>=1e6)return '$'+Math.round(n/1e6)+'M'; return '$'+Math.round(n/1e3)+'K'; }
+function fmtPct(n){return Math.round((n||0)*100)+'%';}
+function directorStats(name, fs) {
+  const rois = fs.map(f=>f.roi);
+  const q1 = quantileOf(rois,.25), q3 = quantileOf(rois,.75);
+  const iqr = Math.max(.01, q3-q1);
+  const medianRoi = medianOf(rois);
+  return {
+    name, films:fs, count:fs.length,
+    medianRoi,
+    q1, q3,
+    spread: iqr,
+    consistency: medianRoi / (1 + Math.log1p(iqr)),
+    hitRate: fs.filter(f=>f.roi>=3).length/fs.length,
+    flopRate: fs.filter(f=>f.roi<1).length/fs.length,
+    avgRating: d3.mean(fs,f=>f.rating) || 0,
+    totalRevenue: d3.sum(fs,f=>f.revenue),
+    totalBudget: d3.sum(fs,f=>f.budget),
+    totalProfit: d3.sum(fs,f=>f.revenue-f.budget),
+    topGenre: topVal(fs.map(f=>f.genre)),
+    topFilm: [...fs].sort((a,b)=>b.roi-a.roi)[0],
+    biggestFilm: [...fs].sort((a,b)=>b.revenue-a.revenue)[0],
+  };
+}
 const dirMap={};
 FILMS.filter(f=>f.budget>0&&f.revenue>0).forEach(f=>{
   (dirMap[f.director]=dirMap[f.director]||[]).push(f);
 });
-const DIRECTORS = Object.entries(dirMap)
-  .filter(([,fs])=>fs.length>=2)
-  .map(([name,fs])=>({
-    name, films:fs, count:fs.length,
-    medianRoi: medianOf(fs.map(f=>f.roi)),
-    hitRate:   fs.filter(f=>f.roi>=3).length/fs.length,
-    avgRating: d3.mean(fs,f=>f.rating),
-    topGenre:  topVal(fs.map(f=>f.genre)),
-  }))
-  .sort((a,b)=>b.medianRoi-a.medianRoi)
-  .slice(0,18);
+const DIRECTORS_ALL = Object.entries(dirMap)
+  .map(([name,fs])=>directorStats(name,fs))
+  .filter(d=>d.count>=2);
 
-
+let directorState = { sort:'medianRoi', genre:'all', minFilms:2 };
+let selectedDirectorName = null;
+function getDirectorRows() {
+  const rows = DIRECTORS_ALL.map(d=>{
+    const fs = directorState.genre==='all' ? d.films : d.films.filter(f=>f.genre===directorState.genre);
+    if(fs.length < directorState.minFilms) return null;
+    return directorStats(d.name, fs);
+  }).filter(Boolean);
+  const key = directorState.sort;
+  rows.sort((a,b)=>{
+    const diff = (b[key] ?? 0) - (a[key] ?? 0);
+    return diff || b.medianRoi-a.medianRoi || b.count-a.count || a.name.localeCompare(b.name);
+  });
+  return rows.slice(0,18);
+}
+// ═══════════════════════════════════════════════════════════
+//  SCENE 01 — SEARCH / SPOTLIGHT  (patch onto renderDossier)
+// ═══════════════════════════════════════════════════════════
 let g_search = '';
 
 document.getElementById('film-search').addEventListener('input', function() {
@@ -1166,7 +1288,9 @@ function applySearch() {
 // Re-apply search after each re-render of the dossier
 const _origRenderDossier = renderDossier;
 
-
+// ═══════════════════════════════════════════════════════════
+//  SCENE 05 — THE PARADOX  (Rating vs Revenue)
+// ═══════════════════════════════════════════════════════════
 let g_paradoxGenre = 'all';
 
 function renderParadox() {
@@ -1255,85 +1379,177 @@ document.querySelectorAll('[data-paradox-genre]').forEach(btn=>btn.addEventListe
   btn.classList.add('active'); g_paradoxGenre=btn.dataset.paradoxGenre; renderParadox();
 }));
 
+// ═══════════════════════════════════════════════════════════
+//  SCENE 06 — DIRECTORS' LEAGUE  (interactive league board)
+// ═══════════════════════════════════════════════════════════
+function metricLabel(key){
+  return ({medianRoi:'median ROI',hitRate:'hit rate',consistency:'consistency',totalRevenue:'box office',avgRating:'rating'})[key] || key;
+}
+function directorVerdict(d){
+  if(!d) return '';
+  const lead = d.medianRoi>=10 ? 'Elite efficiency profile' : d.medianRoi>=4 ? 'Strong commercial converter' : d.hitRate>=.6 ? 'Reliable hit-maker' : d.avgRating>=4 ? 'Critically strong, commercially mixed' : 'High-variance profile';
+  const risk = d.flopRate===0 ? 'no flops in this filtered sample' : fmtPct(d.flopRate)+' of films below break-even';
+  return lead + ': ' + d.name + ' combines a '+d.medianRoi.toFixed(1)+'× median ROI with '+fmtPct(d.hitRate)+' hit rate and '+risk+'.';
+}
+function renderDirectorKPIs(rows){
+  const set = (id,txt)=>{const el=document.getElementById(id); if(el)el.textContent=txt;};
+  if(!rows.length){
+    ['dir-kpi-roi','dir-kpi-consistency','dir-kpi-gross','dir-kpi-hit'].forEach(id=>set(id,'—'));
+    ['dir-kpi-roi-note','dir-kpi-consistency-note','dir-kpi-gross-note','dir-kpi-hit-note'].forEach(id=>set(id,'No directors match this filter'));
+    return;
+  }
+  const roi=[...rows].sort((a,b)=>b.medianRoi-a.medianRoi)[0];
+  const cons=[...rows].sort((a,b)=>b.consistency-a.consistency)[0];
+  const gross=[...rows].sort((a,b)=>b.totalRevenue-a.totalRevenue)[0];
+  const hit=[...rows].sort((a,b)=>b.hitRate-a.hitRate || b.medianRoi-a.medianRoi)[0];
+  set('dir-kpi-roi', roi.name); set('dir-kpi-roi-note', roi.medianRoi.toFixed(1)+'× median ROI · '+roi.count+' films');
+  set('dir-kpi-consistency', cons.name); set('dir-kpi-consistency-note', 'Score '+cons.consistency.toFixed(1)+' · IQR '+cons.spread.toFixed(1)+'×');
+  set('dir-kpi-gross', gross.name); set('dir-kpi-gross-note', fmtCompactMoney(gross.totalRevenue)+' revenue · '+fmtCompactMoney(gross.totalProfit)+' profit');
+  set('dir-kpi-hit', hit.name); set('dir-kpi-hit-note', fmtPct(hit.hitRate)+' of films above 3× ROI');
+}
+function renderDirectorLegend(){
+  const leg=document.getElementById('director-legend'); if(!leg) return;
+  leg.innerHTML='';
+  GENRES.forEach(g=>{
+    const it=document.createElement('div'); it.className='legend-item';
+    it.innerHTML='<div class="legend-dot" style="background:'+COLORS[g]+'"></div>'+g;
+    leg.appendChild(it);
+  });
+}
+function renderDirectorPanel(d, rank){
+  const panel=document.getElementById('director-panel'); if(!panel) return;
+  if(!d){ panel.innerHTML='<div class="director-empty">NO DIRECTORS MATCH<br>THE CURRENT FILTERS</div>'; return; }
+  const maxRoi = Math.max(3, d3.max(d.films,f=>f.roi) || 3);
+  const films = [...d.films].sort((a,b)=>b.roi-a.roi).map(f=>{
+    const w=Math.max(4, Math.min(100, (f.roi/maxRoi)*100));
+    return '<div class="director-film-row" title="'+escapeHtml(f.title)+'">'+
+      '<div><div class="director-film-title">'+escapeHtml(f.title)+' · '+f.year+'</div><div class="director-film-bar"><div class="director-film-fill" style="width:'+w+'%;background:'+(COLORS[f.genre]||COLORS.Other)+'"></div></div></div>'+
+      '<div class="director-film-value">'+f.roi.toFixed(1)+'×</div>'+
+    '</div>';
+  }).join('');
+  panel.innerHTML =
+    '<div class="director-panel-kicker">Director dossier</div>'+
+    '<div class="director-panel-name">'+escapeHtml(d.name)+'</div>'+
+    '<div class="director-panel-rank">RANK #'+rank+' · '+escapeHtml(metricLabel(directorState.sort).toUpperCase())+'</div>'+
+    '<div class="director-panel-metrics">'+
+      '<div class="director-panel-metric"><div class="label">Median ROI</div><div class="value">'+d.medianRoi.toFixed(1)+'×</div><div class="sub">Q1–Q3: '+d.q1.toFixed(1)+'×–'+d.q3.toFixed(1)+'×</div></div>'+
+      '<div class="director-panel-metric"><div class="label">Hit Rate</div><div class="value">'+fmtPct(d.hitRate)+'</div><div class="sub">Films above 3× ROI</div></div>'+
+      '<div class="director-panel-metric"><div class="label">Total Gross</div><div class="value">'+fmtCompactMoney(d.totalRevenue)+'</div><div class="sub">Profit '+fmtCompactMoney(d.totalProfit)+'</div></div>'+
+      '<div class="director-panel-metric"><div class="label">Avg Rating</div><div class="value">'+d.avgRating.toFixed(1)+'</div><div class="sub">Signature: '+escapeHtml(d.topGenre)+'</div></div>'+
+    '</div>'+
+    '<div class="director-verdict">'+escapeHtml(directorVerdict(d))+'</div>'+
+    '<div class="director-panel-kicker">Film-level ROI</div>'+
+    '<div class="director-film-list">'+films+'</div>';
+}
 function renderDirectors() {
   const frame = document.getElementById('directors-frame');
+  if(!frame) return;
+  const rows = getDirectorRows();
+  renderDirectorKPIs(rows);
+  renderDirectorLegend();
+  if(!selectedDirectorName || !rows.some(d=>d.name===selectedDirectorName)) selectedDirectorName = rows[0]?.name || null;
+
+  const countEl=document.getElementById('directors-count');
+  if(countEl) countEl.textContent = rows.length ? rows.length+' directors · '+metricLabel(directorState.sort) : '0 directors';
+  const corner=document.getElementById('directors-corner');
+  if(corner) corner.textContent = 'SORTED BY '+metricLabel(directorState.sort).toUpperCase()+' · '+(directorState.genre==='all'?'ALL GENRES':directorState.genre.toUpperCase())+' · ◆ = MEDIAN';
+
   const W = frame.clientWidth;
-  const ROW = 38, ML = 148, MR = 48, MT = 36, MB = 44;
-  const H = MT + DIRECTORS.length*ROW + MB;
-  const CAP = 55; // ROI cap for display
+  const ROW = 48, ML = W < 760 ? 116 : 172, MR = 42, MT = 54, MB = 64;
+  const H = Math.max(240, MT + rows.length*ROW + MB);
+  const CAP = 200;
 
   d3.select('#directors-viz').selectAll('*').remove();
-
   const svg = d3.select('#directors-viz').append('svg').attr('width',W).attr('height',H);
-  const xSc = d3.scaleLinear().domain([0,CAP]).range([ML,W-MR]);
 
-  // Grid verticals
-  [0,10,20,30,40,50].forEach(v=>{
-    svg.append('line').attr('x1',xSc(v)).attr('x2',xSc(v)).attr('y1',MT).attr('y2',H-MB).attr('stroke','#c4aa84').attr('stroke-width',.6).attr('opacity',.4);
-    svg.append('text').attr('x',xSc(v)).attr('y',H-MB+14).attr('text-anchor','middle').attr('font-family','DM Mono,monospace').attr('font-size',8).attr('fill','#6b5a3a').text(v===0?'0':v+'×');
+  if(!rows.length){
+    svg.append('text').attr('x',W/2).attr('y',H/2).attr('text-anchor','middle').attr('font-family','DM Mono,monospace').attr('font-size',10).attr('letter-spacing',2).attr('fill','var(--muted)').text('NO DIRECTORS MATCH THE CURRENT FILTERS');
+    renderDirectorPanel(null,0);
+    return;
+  }
+
+  const xSc = d3.scaleLog().domain([0.08,CAP]).range([ML,W-MR]).clamp(true);
+  const yFor = i => MT + i*ROW + ROW/2;
+  const ticks = [0.1,0.3,1,3,10,30,100,200];
+
+  ticks.forEach(v=>{
+    svg.append('line').attr('x1',xSc(v)).attr('x2',xSc(v)).attr('y1',MT-10).attr('y2',H-MB+6).attr('stroke',v===1?'#9b3a28':v===3?'#4a8a5a':'#c4aa84').attr('stroke-width',v===1||v===3?1.15:.55).attr('stroke-dasharray',v===1||v===3?'5 4':null).attr('opacity',v===1||v===3?.75:.36);
+    svg.append('text').attr('x',xSc(v)).attr('y',H-MB+22).attr('text-anchor','middle').attr('class','director-axis-label').text(v===200?'>200×':v+'×');
   });
-  svg.append('text').attr('x',xSc(CAP)+2).attr('y',H-MB+14).attr('font-family','DM Mono,monospace').attr('font-size',8).attr('fill','#6b5a3a').text('>'+CAP+'×');
+  svg.append('text').attr('x',xSc(1)).attr('y',MT-18).attr('text-anchor','middle').attr('class','director-axis-label').attr('fill','#9b3a28').text('BREAK-EVEN');
+  svg.append('text').attr('x',xSc(3)).attr('y',MT-18).attr('text-anchor','middle').attr('class','director-axis-label').attr('fill','#4a8a5a').text('HIT LINE');
+  svg.append('text').attr('x',(ML+W-MR)/2).attr('y',H-14).attr('text-anchor','middle').attr('class','director-axis-label').text('RETURN ON INVESTMENT · LOG SCALE');
 
-  // Axis label
-  svg.append('text').attr('x',(ML+W-MR)/2).attr('y',H-MB+28).attr('text-anchor','middle').attr('font-size',10).attr('fill','#6b5a3a').attr('font-family','DM Mono,monospace').attr('letter-spacing',2).text('RETURN ON INVESTMENT');
+  rows.forEach((dir,i)=>{
+    const cy = yFor(i);
+    const selected = dir.name === selectedDirectorName;
+    const group = svg.append('g').attr('class','director-row').style('cursor','pointer').on('click',()=>{selectedDirectorName=dir.name;renderDirectors();});
+    group.append('rect').attr('class','director-row-bg'+(selected?' selected':''))
+      .attr('x',8).attr('y',cy-ROW/2+3).attr('width',W-16).attr('height',ROW-6).attr('rx',14);
+    group.append('text').attr('class','director-rank').attr('x',18).attr('y',cy-5).text('#'+String(i+1).padStart(2,'0'));
+    group.append('text').attr('class','director-row-label').attr('x',ML-10).attr('y',cy-5).attr('text-anchor','end').text(dir.name);
+    group.append('text').attr('class','director-row-small').attr('x',ML-10).attr('y',cy+10).attr('text-anchor','end').text(dir.count+' films · '+dir.topGenre+' · '+fmtPct(dir.hitRate)+' hits');
 
-  // Director rows
-  DIRECTORS.forEach((dir,i)=>{
-    const cy = MT + i*ROW + ROW/2;
-    const medX = xSc(Math.min(dir.medianRoi, CAP));
+    const q1x = xSc(Math.max(.08,Math.min(CAP,dir.q1))), q3x = xSc(Math.max(.08,Math.min(CAP,dir.q3)));
+    group.append('line').attr('x1',q1x).attr('x2',q3x).attr('y1',cy).attr('y2',cy).attr('stroke',COLORS[dir.topGenre]||COLORS.Other).attr('stroke-width',8).attr('stroke-linecap','round').attr('opacity',.20);
+    group.append('line').attr('x1',xSc(Math.max(.08,Math.min(CAP,d3.min(dir.films,f=>f.roi))))).attr('x2',xSc(Math.max(.08,Math.min(CAP,d3.max(dir.films,f=>f.roi))))).attr('y1',cy).attr('y2',cy).attr('stroke',COLORS[dir.topGenre]||COLORS.Other).attr('stroke-width',1.2).attr('opacity',.32);
 
-    // Faint row separator
-    if(i>0) svg.append('line').attr('x1',ML).attr('x2',W-MR).attr('y1',MT+i*ROW).attr('y2',MT+i*ROW).attr('stroke','#c4aa84').attr('stroke-width',.3).attr('opacity',.3);
-
-    // Director name
-    svg.append('text').attr('class','dir-row-label').attr('x',ML-8).attr('y',cy).attr('dy','0.35em').attr('text-anchor','end').text(dir.name);
-
-    // Film count badge
-    svg.append('text').attr('x',ML-8).attr('y',cy+11).attr('dy','0.35em').attr('text-anchor','end').attr('font-family','DM Mono,monospace').attr('font-size',7.5).attr('fill','var(--muted)').text(dir.count+' film'+(dir.count>1?'s':''));
-
-    // Connecting line between min and max ROI (range indicator)
-    const rois = dir.films.map(f=>Math.min(f.roi,CAP));
-    const minX = xSc(d3.min(rois)), maxX = xSc(d3.max(rois));
-    svg.append('line').attr('x1',minX).attr('x2',maxX).attr('y1',cy).attr('y2',cy).attr('stroke',COLORS[dir.topGenre]||COLORS.Other).attr('stroke-width',1.5).attr('opacity',.35);
-
-    // Individual film dots
-    dir.films.forEach(f=>{
-      const roi = Math.min(f.roi, CAP);
-      const capped = f.roi > CAP;
-      svg.append('circle')
-        .attr('cx',xSc(roi)).attr('cy',cy).attr('r',5)
-        .attr('fill', COLORS[f.genre]||COLORS.Other)
-        .attr('opacity',.78).attr('stroke',capped?'#f0e6d0':'none').attr('stroke-width',capped?1.5:0)
-        .style('cursor','pointer')
-        .append('title').text(f.title+' ('+f.year+')\nROI: '+(f.roi>CAP?'>'+CAP+'×':f.roi.toFixed(1)+'×'));
+    dir.films.forEach((f,j)=>{
+      const roi = Math.max(.08, Math.min(CAP, f.roi));
+      const jitter = ((j%5)-2)*2.9;
+      group.append('circle')
+        .attr('cx',xSc(roi)).attr('cy',cy+jitter).attr('r',Math.max(4.2,Math.min(9,Math.sqrt(f.revenue/120e6))))
+        .attr('fill',COLORS[f.genre]||COLORS.Other).attr('opacity',selected?.95:.74)
+        .attr('stroke',f.roi>CAP?'#f0e6d0':'rgba(13,11,8,.35)').attr('stroke-width',f.roi>CAP?1.7:.45)
+        .on('mouseover',function(ev){d3.select(this).raise().attr('opacity',1).attr('stroke','#f0e6d0').attr('stroke-width',2);showTT(ev,f);})
+        .on('mousemove',moveTT)
+        .on('mouseout',function(){d3.select(this).attr('opacity',selected?.95:.74).attr('stroke',f.roi>CAP?'#f0e6d0':'rgba(13,11,8,.35)').attr('stroke-width',f.roi>CAP?1.7:.45);hideTT();});
     });
 
-    // Median diamond
-    svg.append('path')
-      .attr('d','M'+medX+','+(cy-6)+' L'+(medX+5)+','+cy+' L'+medX+','+(cy+6)+' L'+(medX-5)+','+cy+' Z')
-      .attr('fill','#d4a830').attr('opacity',.92).style('cursor','default')
-      .append('title').text(dir.name+'\nMedian ROI: '+dir.medianRoi.toFixed(1)+'×\nHit rate: '+Math.round(dir.hitRate*100)+'%\nAvg rating: '+dir.avgRating.toFixed(2));
-
-    // Median value text
-    svg.append('text').attr('class','dir-median-label')
-      .attr('x',medX+(dir.medianRoi>CAP-5?-8:8)).attr('y',cy).attr('dy','0.35em')
-      .attr('text-anchor',dir.medianRoi>CAP-5?'end':'start')
+    const medX = xSc(Math.max(.08,Math.min(CAP,dir.medianRoi)));
+    group.append('path')
+      .attr('d','M'+medX+','+(cy-8)+' L'+(medX+7)+','+cy+' L'+medX+','+(cy+8)+' L'+(medX-7)+','+cy+' Z')
+      .attr('fill','#d4a830').attr('stroke',selected?'#fff1bc':'rgba(13,11,8,.35)').attr('stroke-width',selected?2:.75).attr('opacity',.96);
+    group.append('text').attr('class','director-median-label')
+      .attr('x',medX+(dir.medianRoi>70?-9:10)).attr('y',cy+4).attr('text-anchor',dir.medianRoi>70?'end':'start')
       .text(dir.medianRoi.toFixed(1)+'×');
   });
 
-  // Top label
-  svg.append('text').attr('x',ML).attr('y',MT-16).attr('font-family','DM Mono,monospace').attr('font-size',9).attr('fill','#6b5a3a').attr('letter-spacing',1).text('← MORE CONSISTENT');
-  svg.append('text').attr('x',W-MR).attr('y',MT-16).attr('text-anchor','end').attr('font-family','DM Mono,monospace').attr('font-size',9).attr('fill','#6b5a3a').attr('letter-spacing',1).text('HIGHER ROI →');
+  const selected = rows.find(d=>d.name===selectedDirectorName) || rows[0];
+  renderDirectorPanel(selected, rows.findIndex(d=>d.name===selected.name)+1);
 }
 
+document.querySelectorAll('[data-dir-sort]').forEach(btn=>btn.addEventListener('click',()=>{
+  directorState.sort = btn.dataset.dirSort;
+  document.querySelectorAll('[data-dir-sort]').forEach(b=>b.classList.toggle('active', b===btn));
+  selectedDirectorName = null;
+  renderDirectors();
+}));
+document.querySelectorAll('[data-dir-genre]').forEach(btn=>btn.addEventListener('click',()=>{
+  directorState.genre = btn.dataset.dirGenre;
+  document.querySelectorAll('[data-dir-genre]').forEach(b=>b.classList.toggle('active', b===btn));
+  selectedDirectorName = null;
+  renderDirectors();
+}));
+document.querySelectorAll('[data-dir-min]').forEach(btn=>btn.addEventListener('click',()=>{
+  directorState.minFilms = +btn.dataset.dirMin;
+  document.querySelectorAll('[data-dir-min]').forEach(b=>b.classList.toggle('active', b===btn));
+  selectedDirectorName = null;
+  renderDirectors();
+}));
 
 
+// ═══════════════════════════════════════════════════════════
+//  NAV ACTIVE STATE
+// ═══════════════════════════════════════════════════════════
 const navLinks=document.querySelectorAll('.nav-links a');
 new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)navLinks.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+e.target.id));});},{threshold:.35}).observe&&['hero','galaxy','flow','matrix','sequels','paradox','directors'].forEach(id=>{const el=document.getElementById(id);if(el)new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)navLinks.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+e.target.id));});},{threshold:.35}).observe(el);});
 
 
 
-
+// ═══════════════════════════════════════════════════════════
+//  WOW EXPERIENCE LAYER — cinematic UI, search palette, progress
+// ═══════════════════════════════════════════════════════════
 renderDossier = function(){ _origRenderDossier(); applySearch(); };
 
 function byMax(arr, fn){ return arr.reduce((best,d)=>fn(d)>fn(best)?d:best, arr[0]); }
@@ -1552,7 +1768,9 @@ function animateHeroCounters(){
   nums.forEach(n=>io.observe(n));
 }
 
-
+// ═══════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════
 renderDossier();
 renderFlow();
 renderMatrix();
