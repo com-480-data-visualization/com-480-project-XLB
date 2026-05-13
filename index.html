@@ -122,6 +122,23 @@ footer{border-top:1px solid var(--border);padding:32px 40px;display:flex;justify
   .nav-links a{padding:0 10px;font-size:9px}
   .dynasty-layout{grid-template-columns:1fr}
 }
+
+/* SEARCH */
+.search-wrap{display:flex;align-items:center;gap:10px;margin-top:12px;margin-bottom:0}
+.search-input{font-family:var(--mono);font-size:11px;letter-spacing:1px;padding:7px 14px;border:1px solid var(--border);background:var(--surface);color:var(--text);width:260px;border-radius:2px;outline:none;transition:border-color .2s}
+.search-input:focus{border-color:var(--gold-dim)}
+.search-input::placeholder{color:var(--muted)}
+.search-clear{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--muted);cursor:pointer;display:none;padding:4px 8px;border:1px solid var(--border);border-radius:2px;background:transparent;transition:all .2s}
+.search-clear:hover{color:var(--gold);border-color:var(--gold-dim)}
+.search-hint{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1px}
+
+/* PARADOX QUADRANT LABELS */
+.quad-label{font-family:var(--mono);font-size:9px;letter-spacing:2px;opacity:.5}
+
+/* DIRECTOR CHART */
+.dir-row-label{font-family:var(--mono);font-size:10px;fill:var(--muted2);letter-spacing:.5px}
+.dir-median-label{font-family:var(--mono);font-size:9px;fill:var(--gold-dim)}
+
 </style>
 </head>
 <body>
@@ -144,7 +161,7 @@ footer{border-top:1px solid var(--border);padding:32px 40px;display:flex;justify
     <a href="#galaxy">DOSSIER</a>
     <a href="#flow">THE FLOW</a>
     <a href="#matrix">MATRIX</a>
-    <a href="#sequels">DYNASTIES</a>
+    <a href="#sequels">DYNASTIES</a><a href="#paradox">PARADOX</a><a href="#directors">DIRECTORS</a>
   </div>
   <div class="nav-right">EPFL COM-480 &nbsp;·&nbsp; 2026</div>
 </nav>
@@ -192,6 +209,11 @@ footer{border-top:1px solid var(--border);padding:32px 40px;display:flex;justify
     <div id="galaxy-viz"></div>
   </div>
   <div class="legend" id="genre-legend"></div>
+  <div class="search-wrap">
+    <input class="search-input" id="film-search" type="text" placeholder="Search a film title…" autocomplete="off">
+    <button class="search-clear" id="search-clear">✕ CLEAR</button>
+    <span class="search-hint" id="search-hint"></span>
+  </div>
 </section>
 
 <!-- ═══ 02 THE FLOW ═══ -->
@@ -258,15 +280,49 @@ footer{border-top:1px solid var(--border);padding:32px 40px;display:flex;justify
   </div>
 </section>
 
+<!-- ═══ 05 THE PARADOX ═══ -->
+<section id="paradox">
+  <div class="scene-header"><div class="scene-tag">05</div><h2>The Paradox</h2></div>
+  <div class="scene-q">Is critical acclaim correlated with commercial success — or are they fundamentally at odds?</div>
+  <p class="scene-narrative">Ratings on the Y-axis, box office on the X-axis. The lines mark the medians. Films top-right win on both axes. Top-left are undervalued gems; bottom-right are crowd pleasers critics ignored. Hover any dot. Use the genre filter to isolate patterns.</p>
+  <div class="controls">
+    <span class="ctrl-label">GENRE</span>
+    <button class="pill active" data-paradox-genre="all">All</button>
+    <button class="pill" data-paradox-genre="Action">Action</button>
+    <button class="pill" data-paradox-genre="Drama">Drama</button>
+    <button class="pill" data-paradox-genre="Comedy">Comedy</button>
+    <button class="pill" data-paradox-genre="Horror">Horror</button>
+    <button class="pill" data-paradox-genre="Animation">Animation</button>
+    <button class="pill" data-paradox-genre="Thriller">Thriller</button>
+    <button class="pill" data-paradox-genre="Sci-Fi">Sci-Fi</button>
+  </div>
+  <div class="viz-frame" id="paradox-frame">
+    <div class="viz-corner tl" id="paradox-count"></div>
+    <div class="viz-corner tr">AUDIENCE RATING vs BOX OFFICE REVENUE</div>
+    <div id="paradox-viz"></div>
+  </div>
+  <div class="legend" id="paradox-legend"></div>
+</section>
+
+<!-- ═══ 06 DIRECTORS' LEAGUE ═══ -->
+<section id="directors">
+  <div class="scene-header"><div class="scene-tag">06</div><h2>Directors' League</h2></div>
+  <div class="scene-q">Which directors consistently turn budgets into box office gold?</div>
+  <p class="scene-narrative">Directors with at least 2 films in our financial dataset, ranked by median ROI. Each dot is a film — color encodes its genre. The large gold dot is the director's median. The spread reveals consistency: a tight cluster means reliable results; wide spread means high variance.</p>
+  <div class="viz-frame" id="directors-frame">
+    <div class="viz-corner tl">SORTED BY MEDIAN ROI &nbsp;·&nbsp; DOT = ONE FILM &nbsp;·&nbsp; ◆ = MEDIAN</div>
+    <div id="directors-viz"></div>
+  </div>
+</section>
+
+
 <footer>
   <div>CINESCOPE &nbsp;·&nbsp; COM-480 Data Visualization &nbsp;·&nbsp; EPFL 2026 &nbsp;·&nbsp; Team XLB</div>
   <div>Barrada &nbsp;·&nbsp; Lakrami &nbsp;·&nbsp; Chentouf &nbsp;·&nbsp; El Yadouni</div>
 </footer>
 
 <script>
-// ═══════════════════════════════════════════════════════════
-//  FILM DATA  [title, year, budget_M, revenue_M, rating/5, genre, director]
-// ═══════════════════════════════════════════════════════════
+
 const RAW = [
   // ACTION
   ['Jaws',                     1975,   9,  470, 3.9,'Action',   'S. Spielberg'],
@@ -404,9 +460,7 @@ const FILMS = RAW.map(([title,year,budget,revenue,rating,genre,director]) => ({
   budget: budget*1e6, revenue: revenue*1e6, roi: revenue/budget
 }));
 
-// ═══════════════════════════════════════════════════════════
-//  FRANCHISE DATA  (revenues in $M)
-// ═══════════════════════════════════════════════════════════
+
 const FRANCHISES = [
   {name:'Marvel (MCU)',        genre:'Action',    films:[{t:'Iron Man',year:2008,rev:585},{t:'The Avengers',year:2012,rev:1519},{t:'Infinity War',year:2018,rev:2048},{t:'Endgame',year:2019,rev:2798}]},
   {name:'Star Wars',           genre:'Sci-Fi',    films:[{t:'A New Hope',year:1977,rev:775},{t:'Empire Strikes Back',year:1980,rev:538},{t:'Return of the Jedi',year:1983,rev:475},{t:'The Force Awakens',year:2015,rev:2068}]},
@@ -432,9 +486,7 @@ const FDATA = FRANCHISES.map(fr => {
   return { ...fr, orig, peak, mult: peak/orig.rev, total: d3.sum(fr.films, s => s.rev) };
 });
 
-// ═══════════════════════════════════════════════════════════
-//  CONSTANTS & HELPERS
-// ═══════════════════════════════════════════════════════════
+
 const COLORS   = {Action:'#c9843a',Drama:'#7a6fbd',Comedy:'#4a9e78',Horror:'#b54a3a',Animation:'#c9558a',Thriller:'#4a8ab5','Sci-Fi':'#4aab9e',Other:'#5a5248'};
 const GENRES   = ['Action','Animation','Comedy','Drama','Horror','Sci-Fi','Thriller'];
 const TIERS    = ['micro','low','mid','block'];
@@ -727,9 +779,7 @@ document.querySelectorAll('[data-flow]').forEach(btn=>btn.addEventListener('clic
   btn.classList.add('active'); g_flow=btn.dataset.flow; renderFlow();
 }));
 
-// ═══════════════════════════════════════════════════════════
-//  SCENE 03 — PROFITABILITY MATRIX
-// ═══════════════════════════════════════════════════════════
+
 let g_decade='all', g_metric='roi', g_cell=null;
 
 function computeMatrix() {
@@ -818,9 +868,7 @@ document.querySelectorAll('[data-decade]').forEach(btn=>btn.addEventListener('cl
 document.getElementById('m-roi').addEventListener('click',()=>{g_metric='roi';document.getElementById('m-roi').classList.add('active');document.getElementById('m-profit').classList.remove('active');document.getElementById('matrix-label').textContent='GENRE × BUDGET TIER  ·  CELL = MEDIAN ROI';g_cell=null;document.getElementById('matrix-detail').style.display='none';renderMatrix();});
 document.getElementById('m-profit').addEventListener('click',()=>{g_metric='profit';document.getElementById('m-profit').classList.add('active');document.getElementById('m-roi').classList.remove('active');document.getElementById('matrix-label').textContent='GENRE × BUDGET TIER  ·  CELL = % PROFITABLE';g_cell=null;document.getElementById('matrix-detail').style.display='none';renderMatrix();});
 
-// ═══════════════════════════════════════════════════════════
-//  SCENE 04 — DYNASTIES
-// ═══════════════════════════════════════════════════════════
+
 let g_fr=null;
 
 function renderDynasties(){
@@ -902,20 +950,268 @@ function renderDynastyPanel(fr){
   panel.appendChild(note);
 }
 
-// ═══════════════════════════════════════════════════════════
-//  NAV ACTIVE STATE
-// ═══════════════════════════════════════════════════════════
-const navLinks=document.querySelectorAll('.nav-links a');
-new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)navLinks.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+e.target.id));});},{threshold:.35}).observe&&['hero','galaxy','flow','matrix','sequels'].forEach(id=>{const el=document.getElementById(id);if(el)new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)navLinks.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+e.target.id));});},{threshold:.35}).observe(el);});
 
-// ═══════════════════════════════════════════════════════════
-//  INIT
-// ═══════════════════════════════════════════════════════════
+
+function medianOf(arr) {
+  if(!arr.length) return 0;
+  const s=[...arr].sort((a,b)=>a-b), m=Math.floor(s.length/2);
+  return s.length%2?s[m]:(s[m-1]+s[m])/2;
+}
+function topVal(arr) {
+  const cnt={}; arr.forEach(v=>{cnt[v]=(cnt[v]||0)+1;});
+  return Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0][0];
+}
+
+const dirMap={};
+FILMS.filter(f=>f.budget>0&&f.revenue>0).forEach(f=>{
+  (dirMap[f.director]=dirMap[f.director]||[]).push(f);
+});
+const DIRECTORS = Object.entries(dirMap)
+  .filter(([,fs])=>fs.length>=2)
+  .map(([name,fs])=>({
+    name, films:fs, count:fs.length,
+    medianRoi: medianOf(fs.map(f=>f.roi)),
+    hitRate:   fs.filter(f=>f.roi>=3).length/fs.length,
+    avgRating: d3.mean(fs,f=>f.rating),
+    topGenre:  topVal(fs.map(f=>f.genre)),
+  }))
+  .sort((a,b)=>b.medianRoi-a.medianRoi)
+  .slice(0,18);
+
+
+let g_search = '';
+
+document.getElementById('film-search').addEventListener('input', function() {
+  g_search = this.value.trim().toLowerCase();
+  document.getElementById('search-clear').style.display = g_search ? 'inline-block' : 'none';
+  applySearch();
+});
+document.getElementById('search-clear').addEventListener('click', function() {
+  g_search = '';
+  document.getElementById('film-search').value = '';
+  this.style.display = 'none';
+  document.getElementById('search-hint').textContent = '';
+  applySearch();
+});
+
+function applySearch() {
+  const svgEl = document.querySelector('#galaxy-viz svg');
+  if (!svgEl) return;
+  const svg = d3.select(svgEl);
+
+  svg.selectAll('text.spotlight-lbl').remove();
+
+  if (!g_search) {
+    svg.selectAll('circle').attr('opacity', .72).attr('stroke','none');
+    document.getElementById('search-hint').textContent = '';
+    return;
+  }
+
+  let hits = 0;
+  svg.selectAll('circle').each(function(d) {
+    const match = d.title.toLowerCase().includes(g_search);
+    d3.select(this)
+      .attr('opacity', match ? 1 : 0.07)
+      .attr('stroke', match ? '#f0e6d0' : 'none')
+      .attr('stroke-width', match ? 2 : 0);
+    if (match) hits++;
+  });
+
+  // Labels for matched films
+  const xSc = d3.scaleLog().domain([2e4,1e10]).range([76, svgEl.clientWidth-44]).clamp(true);
+  const yDom = g_yAxis==='revenue'?[3e5,5e9]:[0.04,500];
+  const ySc  = d3.scaleLog().domain(yDom).range([svgEl.clientHeight-58, 44]).clamp(true);
+
+  FILMS.filter(f=>f.budget>0&&f.revenue>0&&f.title.toLowerCase().includes(g_search)).forEach(d=>{
+    const cx = xSc(d.budget);
+    const cy = ySc(g_yAxis==='revenue'?d.revenue:d.roi);
+    svg.append('text').attr('class','spotlight-lbl')
+      .attr('x', cx+10).attr('y', cy-8)
+      .attr('font-family','DM Mono,monospace').attr('font-size',10)
+      .attr('fill','#f0e6d0').attr('font-weight','bold')
+      .attr('pointer-events','none')
+      .text(d.title+' ('+d.year+')');
+  });
+
+  document.getElementById('search-hint').textContent = hits ? hits+' match'+(hits>1?'es':'') : 'no match';
+}
+
+// Re-apply search after each re-render of the dossier
+const _origRenderDossier = renderDossier;
+
+
+let g_paradoxGenre = 'all';
+
+function renderParadox() {
+  const frame = document.getElementById('paradox-frame');
+  const W = frame.clientWidth, H = Math.min(560, window.innerHeight*.7);
+  const M = {top:44, right:44, bottom:58, left:68};
+  d3.select('#paradox-viz').selectAll('*').remove();
+
+  const base = FILMS.filter(f=>f.budget>0&&f.revenue>0&&f.rating>0);
+  const data = g_paradoxGenre==='all' ? base : base.filter(f=>f.genre===g_paradoxGenre);
+  document.getElementById('paradox-count').textContent = data.length+' films';
+
+  const xSc = d3.scaleLog().domain([d3.min(base,f=>f.revenue)*.5, d3.max(base,f=>f.revenue)*1.5]).range([M.left,W-M.right]).clamp(true);
+  const ySc = d3.scaleLinear().domain([1.2, 4.7]).range([H-M.bottom, M.top]);
+
+  const medRev = medianOf(base.map(f=>f.revenue));
+  const medRat = medianOf(base.map(f=>f.rating));
+
+  const svg = d3.select('#paradox-viz').append('svg').attr('width',W).attr('height',H);
+
+  // Subtle quadrant backgrounds
+  const qAlpha = 0.035;
+  [[medRev*1.5, medRat+0.1, W-M.right, M.top,        '#d4a830', 'ACCLAIMED & LOADED'],
+   [M.left,     medRat+0.1, medRev*.7,  M.top,         '#4aab9e', "CRITIC'S DARLINGS"],
+   [medRev*1.5, H-M.bottom, W-M.right,  medRat-0.1,   '#c9843a', 'CROWD PLEASERS'],
+   [M.left,     H-M.bottom, medRev*.7,  medRat-0.1,   '#5a5248', 'FORGOTTEN FILMS'],
+  ].forEach(([anchorX, anchorY, cx, cy, col, lbl])=>{
+    const rx=Math.min(xSc(anchorX),W-M.right), lx=Math.max(xSc(anchorX),M.left);
+    // just draw labels, skip complex region drawing
+  });
+
+  // Grid
+  [1e6,1e7,1e8,1e9].forEach(v=>svg.append('line').attr('x1',xSc(v)).attr('x2',xSc(v)).attr('y1',M.top).attr('y2',H-M.bottom).attr('stroke','#c4aa84').attr('stroke-width',.6).attr('opacity',.35));
+  [2,2.5,3,3.5,4,4.5].forEach(v=>svg.append('line').attr('x1',M.left).attr('x2',W-M.right).attr('y1',ySc(v)).attr('y2',ySc(v)).attr('stroke','#c4aa84').attr('stroke-width',.6).attr('opacity',.35));
+
+  // Median reference lines
+  svg.append('line').attr('x1',xSc(medRev)).attr('x2',xSc(medRev)).attr('y1',M.top).attr('y2',H-M.bottom).attr('stroke','#d4a830').attr('stroke-width',1.5).attr('stroke-dasharray','6 4');
+  svg.append('line').attr('x1',M.left).attr('x2',W-M.right).attr('y1',ySc(medRat)).attr('y2',ySc(medRat)).attr('stroke','#d4a830').attr('stroke-width',1.5).attr('stroke-dasharray','6 4');
+
+  // Quadrant labels
+  const qx = xSc(medRev), qy = ySc(medRat);
+  [
+    {x:(qx+W-M.right)/2, y:(M.top+qy)/2,         t:'ACCLAIMED & LOADED',  col:'#b8882a'},
+    {x:(M.left+qx)/2,    y:(M.top+qy)/2,          t:"CRITIC'S DARLINGS",   col:'#4aab9e'},
+    {x:(qx+W-M.right)/2, y:(qy+H-M.bottom)/2,    t:'CROWD PLEASERS',      col:'#c9843a'},
+    {x:(M.left+qx)/2,    y:(qy+H-M.bottom)/2,    t:'FORGOTTEN FILMS',     col:'#5a5248'},
+  ].forEach(q=>
+    svg.append('text').attr('x',q.x).attr('y',q.y).attr('text-anchor','middle')
+      .attr('font-family','DM Mono,monospace').attr('font-size',8.5).attr('letter-spacing',2)
+      .attr('fill',q.col).attr('opacity',.55).text(q.t)
+  );
+
+  // Median labels
+  svg.append('text').attr('x',xSc(medRev)+5).attr('y',M.top+14).attr('font-family','DM Mono,monospace').attr('font-size',8).attr('fill','#b8882a').text('MEDIAN REVENUE');
+  svg.append('text').attr('x',W-M.right-5).attr('y',ySc(medRat)-5).attr('text-anchor','end').attr('font-family','DM Mono,monospace').attr('font-size',8).attr('fill','#b8882a').text('MEDIAN RATING');
+
+  // Axes
+  svg.append('g').attr('transform','translate(0,'+(H-M.bottom)+')').call(d3.axisBottom(xSc).tickValues([1e6,1e7,1e8,1e9]).tickFormat(fmt));
+  svg.append('g').attr('transform','translate('+M.left+',0)').call(d3.axisLeft(ySc).tickValues([2,2.5,3,3.5,4,4.5]).tickFormat(v=>v.toFixed(1)+' ★'));
+  svg.append('text').attr('x',W/2).attr('y',H-6).attr('text-anchor','middle').attr('font-size',10).attr('fill','#6b5a3a').attr('font-family','DM Mono,monospace').attr('letter-spacing',2).text('BOX OFFICE REVENUE');
+  svg.append('text').attr('transform','rotate(-90)').attr('x',-H/2).attr('y',18).attr('text-anchor','middle').attr('font-size',10).attr('fill','#6b5a3a').attr('font-family','DM Mono,monospace').attr('letter-spacing',2).text('AUDIENCE RATING (/ 5)');
+
+  // Dots
+  svg.selectAll('circle').data(data).join('circle')
+    .attr('cx',f=>xSc(f.revenue)).attr('cy',f=>ySc(f.rating))
+    .attr('r', f=>Math.max(4.5,Math.min(14,Math.sqrt(f.budget/8e6)*5)))
+    .attr('fill',f=>COLORS[f.genre]||COLORS.Other).attr('opacity',.72).attr('stroke','none').style('cursor','pointer')
+    .on('mouseover',function(ev,d){
+      d3.select(this).raise().attr('opacity',1).attr('r',Math.max(6,Math.min(16,Math.sqrt(d.budget/8e6)*5+2))).attr('stroke','#f0e6d0').attr('stroke-width',2.5).attr('stroke-opacity',.5);
+      showTT(ev,d);
+    })
+    .on('mousemove',moveTT).on('mouseout',function(ev,d){d3.select(this).attr('opacity',.72).attr('r',Math.max(4.5,Math.min(14,Math.sqrt(d.budget/8e6)*5))).attr('stroke','none');hideTT();});
+
+  // Paradox legend
+  const leg=document.getElementById('paradox-legend'); leg.innerHTML='';
+  GENRES.forEach(g=>{
+    const it=document.createElement('div');it.className='legend-item';
+    it.innerHTML='<div class="legend-dot" style="background:'+COLORS[g]+'"></div>'+g;
+    it.onclick=()=>{g_paradoxGenre=(g_paradoxGenre===g)?'all':g;document.querySelectorAll('[data-paradox-genre]').forEach(b=>b.classList.toggle('active',b.dataset.paradoxGenre===g_paradoxGenre||(g_paradoxGenre==='all'&&b.dataset.paradoxGenre==='all')));renderParadox();};
+    leg.appendChild(it);
+  });
+}
+
+document.querySelectorAll('[data-paradox-genre]').forEach(btn=>btn.addEventListener('click',()=>{
+  document.querySelectorAll('[data-paradox-genre]').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); g_paradoxGenre=btn.dataset.paradoxGenre; renderParadox();
+}));
+
+function renderDirectors() {
+  const frame = document.getElementById('directors-frame');
+  const W = frame.clientWidth;
+  const ROW = 38, ML = 148, MR = 48, MT = 36, MB = 44;
+  const H = MT + DIRECTORS.length*ROW + MB;
+  const CAP = 55; // ROI cap for display
+
+  d3.select('#directors-viz').selectAll('*').remove();
+
+  const svg = d3.select('#directors-viz').append('svg').attr('width',W).attr('height',H);
+  const xSc = d3.scaleLinear().domain([0,CAP]).range([ML,W-MR]);
+
+  // Grid verticals
+  [0,10,20,30,40,50].forEach(v=>{
+    svg.append('line').attr('x1',xSc(v)).attr('x2',xSc(v)).attr('y1',MT).attr('y2',H-MB).attr('stroke','#c4aa84').attr('stroke-width',.6).attr('opacity',.4);
+    svg.append('text').attr('x',xSc(v)).attr('y',H-MB+14).attr('text-anchor','middle').attr('font-family','DM Mono,monospace').attr('font-size',8).attr('fill','#6b5a3a').text(v===0?'0':v+'×');
+  });
+  svg.append('text').attr('x',xSc(CAP)+2).attr('y',H-MB+14).attr('font-family','DM Mono,monospace').attr('font-size',8).attr('fill','#6b5a3a').text('>'+CAP+'×');
+
+  // Axis label
+  svg.append('text').attr('x',(ML+W-MR)/2).attr('y',H-MB+28).attr('text-anchor','middle').attr('font-size',10).attr('fill','#6b5a3a').attr('font-family','DM Mono,monospace').attr('letter-spacing',2).text('RETURN ON INVESTMENT');
+
+  // Director rows
+  DIRECTORS.forEach((dir,i)=>{
+    const cy = MT + i*ROW + ROW/2;
+    const medX = xSc(Math.min(dir.medianRoi, CAP));
+
+    // Faint row separator
+    if(i>0) svg.append('line').attr('x1',ML).attr('x2',W-MR).attr('y1',MT+i*ROW).attr('y2',MT+i*ROW).attr('stroke','#c4aa84').attr('stroke-width',.3).attr('opacity',.3);
+
+    // Director name
+    svg.append('text').attr('class','dir-row-label').attr('x',ML-8).attr('y',cy).attr('dy','0.35em').attr('text-anchor','end').text(dir.name);
+
+    // Film count badge
+    svg.append('text').attr('x',ML-8).attr('y',cy+11).attr('dy','0.35em').attr('text-anchor','end').attr('font-family','DM Mono,monospace').attr('font-size',7.5).attr('fill','var(--muted)').text(dir.count+' film'+(dir.count>1?'s':''));
+
+    // Connecting line between min and max ROI (range indicator)
+    const rois = dir.films.map(f=>Math.min(f.roi,CAP));
+    const minX = xSc(d3.min(rois)), maxX = xSc(d3.max(rois));
+    svg.append('line').attr('x1',minX).attr('x2',maxX).attr('y1',cy).attr('y2',cy).attr('stroke',COLORS[dir.topGenre]||COLORS.Other).attr('stroke-width',1.5).attr('opacity',.35);
+
+    // Individual film dots
+    dir.films.forEach(f=>{
+      const roi = Math.min(f.roi, CAP);
+      const capped = f.roi > CAP;
+      svg.append('circle')
+        .attr('cx',xSc(roi)).attr('cy',cy).attr('r',5)
+        .attr('fill', COLORS[f.genre]||COLORS.Other)
+        .attr('opacity',.78).attr('stroke',capped?'#f0e6d0':'none').attr('stroke-width',capped?1.5:0)
+        .style('cursor','pointer')
+        .append('title').text(f.title+' ('+f.year+')\nROI: '+(f.roi>CAP?'>'+CAP+'×':f.roi.toFixed(1)+'×'));
+    });
+
+    // Median diamond
+    svg.append('path')
+      .attr('d','M'+medX+','+(cy-6)+' L'+(medX+5)+','+cy+' L'+medX+','+(cy+6)+' L'+(medX-5)+','+cy+' Z')
+      .attr('fill','#d4a830').attr('opacity',.92).style('cursor','default')
+      .append('title').text(dir.name+'\nMedian ROI: '+dir.medianRoi.toFixed(1)+'×\nHit rate: '+Math.round(dir.hitRate*100)+'%\nAvg rating: '+dir.avgRating.toFixed(2));
+
+    // Median value text
+    svg.append('text').attr('class','dir-median-label')
+      .attr('x',medX+(dir.medianRoi>CAP-5?-8:8)).attr('y',cy).attr('dy','0.35em')
+      .attr('text-anchor',dir.medianRoi>CAP-5?'end':'start')
+      .text(dir.medianRoi.toFixed(1)+'×');
+  });
+
+  // Top label
+  svg.append('text').attr('x',ML).attr('y',MT-16).attr('font-family','DM Mono,monospace').attr('font-size',9).attr('fill','#6b5a3a').attr('letter-spacing',1).text('← MORE CONSISTENT');
+  svg.append('text').attr('x',W-MR).attr('y',MT-16).attr('text-anchor','end').attr('font-family','DM Mono,monospace').attr('font-size',9).attr('fill','#6b5a3a').attr('letter-spacing',1).text('HIGHER ROI →');
+}
+
+
+
+const navLinks=document.querySelectorAll('.nav-links a');
+new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)navLinks.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+e.target.id));});},{threshold:.35}).observe&&['hero','galaxy','flow','matrix','sequels','paradox','directors'].forEach(id=>{const el=document.getElementById(id);if(el)new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)navLinks.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+e.target.id));});},{threshold:.35}).observe(el);});
+
+
 renderDossier();
 renderFlow();
 renderMatrix();
 renderDynasties();
-window.addEventListener('resize',()=>{renderDossier();renderFlow();renderMatrix();renderDynasties();});
+renderParadox();
+renderDirectors();
+window.addEventListener('resize',()=>{renderDossier();renderFlow();renderMatrix();renderDynasties();renderParadox();renderDirectors();});
 </script>
 </body>
 </html>
