@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-"""Resolve current TMDb poster URLs for selected CineScope film evidence.
+"""Resolve current TMDb poster URLs for CineScope film evidence.
 
 The downloaded metadata contains poster paths that may become stale after
 TMDb image changes. By default this script resolves a curated set of
-recognisable examples used during interaction; `--all` expands that set.
-The cache is consumed by export_web_data.py.
+recognisable examples used during interaction; `--top-franchises` adds
+eligible installments for the leading collections by total gross, while
+`--all` expands to the complete financial universe. The cache is consumed by
+export_web_data.py.
 """
 
 from __future__ import annotations
@@ -23,6 +25,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 MOVIES_DATA = ROOT / "data" / "web" / "movies.json"
+FRANCHISE_DATA = ROOT / "data" / "web" / "franchises.json"
 POSTER_CACHE = ROOT / "data" / "web" / "movie_posters.json"
 USER_AGENT = "CineScope-EPFL/1.0 (academic visualization project)"
 IMAGE_PATTERN = re.compile(
@@ -92,6 +95,13 @@ def current_poster(movie_id: int) -> str | None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--workers", type=int, default=8, help="Concurrent TMDb page requests.")
+    parser.add_argument(
+        "--top-franchises",
+        type=int,
+        default=0,
+        metavar="N",
+        help="Resolve headline examples and installments from the top N collections by total gross.",
+    )
     parser.add_argument("--all", action="store_true", help="Resolve all eligible films rather than the curated evidence set.")
     parser.add_argument("--limit", type=int, help="Resolve only this many uncached films for testing.")
     parser.add_argument("--refresh", action="store_true", help="Refresh URLs already stored in the cache.")
@@ -100,9 +110,24 @@ def main() -> None:
     with MOVIES_DATA.open(encoding="utf-8") as handle:
         movies: list[dict[str, Any]] = json.load(handle)
     cache = read_cache()
-    candidates = movies if args.all else [movie for movie in movies if movie["title"] in CURATED_TITLES]
-    if not args.all:
-        cache = {str(movie["id"]): cache.get(str(movie["id"])) for movie in candidates if str(movie["id"]) in cache}
+    dynasty_ids: set[int] = set()
+    if args.top_franchises:
+        with FRANCHISE_DATA.open(encoding="utf-8") as handle:
+            franchises = json.load(handle)["franchises"]
+        dynasty_ids = {
+            film["id"]
+            for franchise in franchises[: args.top_franchises]
+            for film in franchise["installments"]
+        }
+    candidates = (
+        movies
+        if args.all
+        else [
+            movie
+            for movie in movies
+            if movie["title"] in CURATED_TITLES or movie["id"] in dynasty_ids
+        ]
+    )
     queue = [
         (movie["id"], movie["title"])
         for movie in candidates

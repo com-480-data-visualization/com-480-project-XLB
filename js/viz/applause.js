@@ -15,7 +15,7 @@ import {
   moveTooltip,
   regression,
   setActiveButtons,
-} from "../utils.js?v=20260526-gallery2";
+} from "../utils.js?v=20260526-final1";
 
 const RATING_BANDS = [
   { key: "under-2.5", label: "< 2.5", test: (rating) => rating < 2.5 },

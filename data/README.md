@@ -19,7 +19,7 @@ data/
     |-- franchises.json
     |-- directors.json
     |-- summary.json
-    |-- movie_posters.json       # Curated TMDb poster URL cache
+    |-- movie_posters.json       # Headline and selected Dynasties TMDb poster URL cache
     `-- director_portraits.json  # Attributed Commons portrait metadata
 ```
 
@@ -44,7 +44,7 @@ used in selected detail views:
 
 ```bash
 python3 scripts/export_web_data.py
-python3 scripts/refresh_movie_posters.py
+python3 scripts/refresh_movie_posters.py --top-franchises 100
 python3 scripts/fetch_director_portraits.py
 python3 scripts/export_web_data.py
 ```
@@ -55,7 +55,7 @@ python3 scripts/export_web_data.py
 | `franchises.json` | TMDb collections, their measurable installments, and sequel comparisons |
 | `directors.json` | Director-level portfolio summaries |
 | `summary.json` | Rules, counts, headline observations, and displayed narrative values |
-| `movie_posters.json` | Current TMDb poster URLs for a small curated set of named film examples |
+| `movie_posters.json` | Current TMDb poster URLs for headline examples and installments in the 100 highest-grossing Dynasties collections |
 | `director_portraits.json` | Local portrait paths and Wikimedia Commons source/licence metadata |
 
 ## Analysis Rules

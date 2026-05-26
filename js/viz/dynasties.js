@@ -13,7 +13,7 @@ import {
   moveTooltip,
   setActiveButtons,
   showTooltip,
-} from "../utils.js?v=20260526-gallery2";
+} from "../utils.js?v=20260526-final1";
 
 function matchesComparison(comparison, state) {
   return (

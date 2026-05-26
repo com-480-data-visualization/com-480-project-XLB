@@ -59,7 +59,7 @@ python3 scripts/export_web_data.py
 To refresh the optional contextual imagery used in selected detail panels:
 
 ```bash
-python3 scripts/refresh_movie_posters.py
+python3 scripts/refresh_movie_posters.py --top-franchises 100
 python3 scripts/fetch_director_portraits.py
 python3 scripts/export_web_data.py
 ```
@@ -202,7 +202,7 @@ CineScope is built from *The Movies Dataset* (Kaggle/TMDb), enriched with MovieL
 
 The budget threshold removes unstable ROI values created by implausibly tiny recorded costs while retaining genuine low-budget breakouts such as *Paranormal Activity* (`$15,000` recorded budget). After thresholding and ID de-duplication, the financial universe contains **5,317 films**. The website computes aggregated results from all eligible films; only the Dossier Board limits individual plotted marks to a deterministic stratified sample of at most **800** so bubbles remain readable.
 
-A small curated set of headline and franchise examples receives refreshed TMDb poster URLs for contextual hover and reel imagery, with TMDb credited in the interface; other marks remain data-first text dossiers. Reusable director portraits are fetched from Wikimedia Commons with their licence and source links stored in `data/web/director_portraits.json` and `assets/images/directors/ATTRIBUTION.md`.
+Named Dossier examples and eligible installments from the 100 highest-grossing Dynasties collections receive refreshed TMDb poster URLs for contextual hover and reel imagery, with TMDb credited in the interface. The scatter remains data-first: images load only in tooltips or the currently opened reel. Reusable director portraits are fetched from Wikimedia Commons with their licence and source links stored in `data/web/director_portraits.json` and `assets/images/directors/ATTRIBUTION.md`.
 
 ### Delivered Visualizations
 
