@@ -242,12 +242,12 @@ export function createApplause(movies) {
         .selectAll("circle")
         .data(sampleFilms(band.films, metric.value), (movie) => movie.id)
         .join("circle")
-        .attr("cx", (movie) => revealDuration ? x(band.middle) : x(Math.min(metric.value(movie), upper)))
+        .attr("cx", (movie) => x(Math.min(metric.value(movie), upper)))
         .attr("cy", (movie) => {
           const jitter = ((((movie.id * 2654435761) >>> 0) / 4294967295) - 0.5) * (y.bandwidth() - 10);
           return y(band.key) + y.bandwidth() / 2 + jitter;
         })
-        .attr("r", revealDuration ? 0 : 2.4)
+        .attr("r", 2.4)
         .attr("fill", (movie) => COLORS[movie.genre])
         .attr("stroke", "var(--paper-2)")
         .attr("stroke-width", 0.6)
@@ -261,8 +261,6 @@ export function createApplause(movies) {
         .delay((_, index) => revealDuration ? 175 + bandIndex * 42 + (index % 10) * 8 : 0)
         .duration(revealDuration)
         .ease(d3.easeCubicOut)
-        .attr("cx", (movie) => x(Math.min(metric.value(movie), upper)))
-        .attr("r", 2.4)
         .attr("opacity", band.key === selectedBand ? 0.8 : 0.45);
     });
 

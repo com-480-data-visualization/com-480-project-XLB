@@ -233,7 +233,7 @@ export function createDossierBoard(movies) {
       .join("circle")
       .attr("cx", (movie) => x(movie.budget))
       .attr("cy", revealDuration ? height - margin.bottom : markY)
-      .attr("r", revealDuration ? 0 : radius)
+      .attr("r", revealDuration ? 0 : (movie) => radius(movie.budget))
       .attr("fill", (movie) => COLORS[movie.genre])
       .attr("opacity", revealDuration ? 0 : baseOpacity)
       .attr("stroke", baseStroke)
@@ -270,7 +270,7 @@ export function createDossierBoard(movies) {
         .duration(revealDuration)
         .ease(d3.easeCubicOut)
         .attr("cy", markY)
-        .attr("r", radius)
+        .attr("r", (movie) => radius(movie.budget))
         .attr("opacity", baseOpacity);
     }
 
