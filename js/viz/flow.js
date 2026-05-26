@@ -13,7 +13,7 @@ import {
   median,
   motionDuration,
   setActiveButtons,
-} from "../utils.js?v=20260526-motion1";
+} from "../utils.js?v=20260526-gallery2";
 
 const ROI_OUTCOMES = [
   { key: "Flop", label: "FLOP < 0.5x", color: "#b54a3a" },

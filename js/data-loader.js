@@ -3,6 +3,7 @@ export async function loadData() {
     ["movies", "data/web/movies.json"],
     ["franchises", "data/web/franchises.json"],
     ["directors", "data/web/directors.json"],
+    ["directorPortraits", "data/web/director_portraits.json"],
     ["summary", "data/web/summary.json"],
   ];
 

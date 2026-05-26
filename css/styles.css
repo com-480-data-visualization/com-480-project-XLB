@@ -932,6 +932,76 @@ section {
   padding-top: 15px;
 }
 
+.director-card-head {
+  align-items: start;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: 93px minmax(0, 1fr);
+}
+
+.director-card-head h3 {
+  font-size: 22px;
+  margin-top: 7px;
+}
+
+.director-card-head .muted {
+  font-size: 11px !important;
+  line-height: 1.55;
+}
+
+.director-portrait {
+  background:
+    linear-gradient(135deg, rgba(212, 168, 48, 0.1), transparent 47%),
+    var(--paper-2);
+  border: 1px solid var(--line);
+  margin: 0;
+  overflow: hidden;
+  position: relative;
+  width: 93px;
+}
+
+.director-portrait img {
+  display: block;
+  filter: sepia(0.14) contrast(1.04) saturate(0.84);
+  height: 116px;
+  object-fit: cover;
+  object-position: center 18%;
+  width: 100%;
+}
+
+.director-portrait figcaption {
+  border-top: 1px solid var(--line-soft);
+  color: var(--muted);
+  font: 7px / 1.55 var(--mono);
+  letter-spacing: 0.45px;
+  padding: 4px 5px;
+}
+
+.director-portrait figcaption a {
+  color: var(--gold);
+  text-decoration: none;
+}
+
+.director-slate {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: 142px;
+  justify-content: center;
+}
+
+.director-slate span {
+  color: var(--gold);
+  font: 500 30px var(--serif);
+}
+
+.director-slate small {
+  color: var(--muted);
+  font: 6px var(--mono);
+  letter-spacing: 0.65px;
+  margin-top: 9px;
+}
+
 .metric-grid span {
   color: var(--muted);
   display: block;
@@ -951,6 +1021,47 @@ section {
 
 .radial-panel {
   padding: 15px 18px 17px;
+}
+
+.franchise-posters {
+  border-bottom: 1px solid var(--line-soft);
+  border-top: 1px solid var(--line-soft);
+  display: flex;
+  gap: 6px;
+  margin: 10px 0 13px;
+  overflow-x: auto;
+  padding: 7px 0;
+  scrollbar-width: thin;
+}
+
+.franchise-posters figure {
+  flex: 0 0 42px;
+  margin: 0;
+  position: relative;
+}
+
+.franchise-posters img {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  display: block;
+  height: 63px;
+  object-fit: cover;
+  width: 42px;
+}
+
+.franchise-posters figure.peak img {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px rgba(212, 168, 48, 0.25);
+}
+
+.franchise-posters figcaption {
+  background: rgba(16, 13, 9, 0.82);
+  bottom: 0;
+  color: var(--paper);
+  font: 7px var(--mono);
+  left: 1px;
+  padding: 2px 3px;
+  position: absolute;
 }
 
 .radial-header h3 {
@@ -1026,7 +1137,7 @@ section {
   box-shadow: 0 15px 38px rgba(0, 0, 0, 0.28);
   color: var(--hero-text);
   left: 0;
-  max-width: 270px;
+  max-width: 285px;
   opacity: 0;
   padding: 12px 14px;
   pointer-events: none;
@@ -1035,6 +1146,25 @@ section {
   transform: translate(-1000px, -1000px);
   transition: opacity 100ms ease;
   z-index: 1000;
+}
+
+.tooltip.has-poster {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 66px minmax(144px, 1fr);
+  max-width: 350px;
+}
+
+.tooltip-poster {
+  border: 1px solid #57432a;
+  display: block;
+  height: 99px;
+  object-fit: cover;
+  width: 66px;
+}
+
+.tooltip-copy {
+  min-width: 0;
 }
 
 .tooltip.visible {
@@ -1281,6 +1411,17 @@ section {
   font-size: 14px;
   line-height: 1.95;
   margin: 0;
+}
+
+.methodology .asset-note {
+  color: var(--muted);
+  font: 10px / 1.7 var(--mono);
+  letter-spacing: 0.25px;
+  margin-top: 14px;
+}
+
+.methodology .asset-note a {
+  color: var(--gold);
 }
 
 .credits {

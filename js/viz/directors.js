@@ -1,6 +1,7 @@
 import {
   COLORS,
   d3,
+  escapeHtml,
   filterMovies,
   formatInteger,
   formatMoney,
@@ -13,7 +14,7 @@ import {
   moveTooltip,
   setActiveButtons,
   showTooltip,
-} from "../utils.js?v=20260526-motion1";
+} from "../utils.js?v=20260526-gallery2";
 
 function buildRecords(movies, minimumFilms) {
   return d3
@@ -37,7 +38,16 @@ function buildRecords(movies, minimumFilms) {
     });
 }
 
-export function createDirectors(movies, precomputedDirectors) {
+function initials(name) {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("");
+}
+
+export function createDirectors(movies, precomputedDirectors, portraits = {}) {
   const container = document.getElementById("directors-viz");
   const detail = document.getElementById("director-detail");
   const count = document.getElementById("director-count");
@@ -72,10 +82,27 @@ export function createDirectors(movies, precomputedDirectors) {
       return;
     }
     const maximum = director.films[0].revenue;
+    const portrait = portraits[director.name];
+    const portraitMarkup = portrait
+      ? `
+        <figure class="director-portrait">
+          <img src="${escapeHtml(portrait.src)}" alt="Portrait of ${escapeHtml(director.name)}" loading="lazy">
+          <figcaption><a href="${escapeHtml(portrait.sourceUrl)}" target="_blank" rel="noopener">PORTRAIT</a> · ${escapeHtml(portrait.license)}</figcaption>
+        </figure>`
+      : `
+        <div class="director-portrait director-slate" aria-hidden="true">
+          <span>${escapeHtml(initials(director.name))}</span>
+          <small>PORTRAIT UNAVAILABLE</small>
+        </div>`;
     detail.innerHTML = `
-      <p class="section-label">DIRECTOR DOSSIER</p>
-      <h3>${director.name}</h3>
-      <p class="muted">${formatInteger(director.filmCount)} financially valid films in view · dominant genre: ${director.genre}</p>
+      <div class="director-card-head">
+          ${portraitMarkup}
+        <div>
+          <p class="section-label">DIRECTOR DOSSIER</p>
+          <h3>${escapeHtml(director.name)}</h3>
+          <p class="muted">${formatInteger(director.filmCount)} financially valid films in view · dominant genre: ${escapeHtml(director.genre)}</p>
+        </div>
+      </div>
       <div class="metric-grid">
         <div><strong>${formatRoi(director.medianRoi)}</strong><span>MEDIAN ROI</span></div>
         <div><strong>${formatMoney(director.totalRevenue)}</strong><span>TOTAL GROSS</span></div>
@@ -85,7 +112,7 @@ export function createDirectors(movies, precomputedDirectors) {
       <div class="portfolio-list">
         ${director.films.slice(0, 7).map((film) => `
           <div class="portfolio-film">
-            <span title="${film.title}">${limitText(film.title, 22)}</span>
+            <span title="${escapeHtml(film.title)}">${escapeHtml(limitText(film.title, 22))}</span>
             <i><b style="width:${(film.revenue / maximum) * 100}%"></b></i>
             <strong>${formatRoi(film.roi)}</strong>
           </div>`).join("")}

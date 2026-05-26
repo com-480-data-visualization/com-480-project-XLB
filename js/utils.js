@@ -236,7 +236,7 @@ export function renderLegend(container, genres = GENRES) {
     .join("");
 }
 
-function escapeHtml(value) {
+export function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>"']/g, (character) => ({
     "&": "&amp;",
     "<": "&lt;",
@@ -246,16 +246,25 @@ function escapeHtml(value) {
   }[character]));
 }
 
-export function showTooltip(event, title, rows) {
-  tooltip.innerHTML = `<h4>${escapeHtml(title)}</h4><dl>${rows
+export function showTooltip(event, title, rows, posterUrl = null) {
+  const poster = posterUrl
+    ? `<img class="tooltip-poster" src="${escapeHtml(posterUrl)}" alt="" loading="lazy">`
+    : "";
+  tooltip.classList.toggle("has-poster", Boolean(posterUrl));
+  tooltip.innerHTML = `${poster}<div class="tooltip-copy"><h4>${escapeHtml(title)}</h4><dl>${rows
     .map(([label, value, className = ""]) => `<dt>${escapeHtml(label)}</dt><dd class="${className}">${escapeHtml(value)}</dd>`)
-    .join("")}</dl>`;
+    .join("")}</dl></div>`;
+  tooltip.querySelector(".tooltip-poster")?.addEventListener("error", (imageEvent) => {
+    imageEvent.currentTarget.remove();
+    tooltip.classList.remove("has-poster");
+  }, { once: true });
   tooltip.classList.add("visible");
   moveTooltip(event);
 }
 
 export function moveTooltip(event) {
-  const left = Math.min(event.clientX + 16, window.innerWidth - 285);
+  const width = tooltip.classList.contains("has-poster") ? 365 : 285;
+  const left = Math.min(event.clientX + 16, window.innerWidth - width);
   const top = Math.max(event.clientY - 45, 12);
   tooltip.style.transform = `translate(${left}px, ${top}px)`;
 }
@@ -275,7 +284,7 @@ export function filmTooltip(event, movie) {
     ["Genre", movie.genre],
     ["Director", movie.director || "Unknown"],
     ["Cast", movie.cast?.join(", ") || "-"],
-  ]);
+  ], movie.posterUrl);
 }
 
 export function regression(points) {

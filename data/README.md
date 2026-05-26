@@ -18,7 +18,9 @@ data/
     |-- movies.json
     |-- franchises.json
     |-- directors.json
-    `-- summary.json
+    |-- summary.json
+    |-- movie_posters.json       # Curated TMDb poster URL cache
+    `-- director_portraits.json  # Attributed Commons portrait metadata
 ```
 
 ## Source And Processed Data
@@ -36,9 +38,14 @@ Zero values in raw `budget` and `revenue` fields represent unavailable financial
 
 ## Browser Exports
 
-Run the web export after generating `data/processed/movies.csv`:
+Run the web export after generating `data/processed/movies.csv`. The two media
+steps are optional for analytical values but reproduce the contextual artwork
+used in selected detail views:
 
 ```bash
+python3 scripts/export_web_data.py
+python3 scripts/refresh_movie_posters.py
+python3 scripts/fetch_director_portraits.py
 python3 scripts/export_web_data.py
 ```
 
@@ -48,6 +55,8 @@ python3 scripts/export_web_data.py
 | `franchises.json` | TMDb collections, their measurable installments, and sequel comparisons |
 | `directors.json` | Director-level portfolio summaries |
 | `summary.json` | Rules, counts, headline observations, and displayed narrative values |
+| `movie_posters.json` | Current TMDb poster URLs for a small curated set of named film examples |
+| `director_portraits.json` | Local portrait paths and Wikimedia Commons source/licence metadata |
 
 ## Analysis Rules
 

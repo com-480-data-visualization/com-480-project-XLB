@@ -1,0 +1,527 @@
+{
+  "Alex Kendrick": {
+    "src": "assets/images/directors/alex-kendrick.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Alex_Kendrick_2019_(Me-riHIbnqI).jpg",
+    "creator": "JOSUÉ VALANDRO JR",
+    "license": "CC BY 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/3.0"
+  },
+  "Alfred Hitchcock": {
+    "src": "assets/images/directors/alfred-hitchcock.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Hitchcock,_Alfred_02.jpg",
+    "creator": "Ante Brkan",
+    "license": "Public domain",
+    "licenseUrl": "https://commons.wikimedia.org/wiki/File:Hitchcock,_Alfred_02.jpg"
+  },
+  "Andrew Stanton": {
+    "src": "assets/images/directors/andrew-stanton.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Andrew_Stanton_at_the_2026_Sundance_Film_Festival_for_In_the_Blink_of_an_Eye_(01)_(cropped).jpg",
+    "creator": "Sarah K Joyce",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  "Ang Lee": {
+    "src": "assets/images/directors/ang-lee.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:2016_NAB_Show%27s_The_Future_of_Cinema_Conference,_produced_in_partnership_with_SMPTE_(26717112630)_(cropped).jpg",
+    "creator": "The Society of Motion Picture and Television Engineers from White Plains, NY, USA",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0"
+  },
+  "Barry Sonnenfeld": {
+    "src": "assets/images/directors/barry-sonnenfeld.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Barry_Sonnenfeld_2012.jpg",
+    "creator": "The Summit",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0"
+  },
+  "Bill Condon": {
+    "src": "assets/images/directors/bill-condon.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Bill_Condon_at_the_2025_Sundance_Film_Festival_(cropped).jpg",
+    "creator": "Everwest",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0"
+  },
+  "Billy Wilder": {
+    "src": "assets/images/directors/billy-wilder.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Billy_Wilder.jpg",
+    "creator": "unknown (Paramount Pictures)",
+    "license": "Public domain",
+    "licenseUrl": "https://commons.wikimedia.org/wiki/File:Billy_Wilder.jpg"
+  },
+  "Bryan Singer": {
+    "src": "assets/images/directors/bryan-singer.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Brian_Singer_%22International_Competition_Jury%22_at_Opening_Ceremony_of_the_28th_Tokyo_International_Film_Festival_(22427114066)_(cropped)(2).jpg",
+    "creator": "Dick Thomas Johnson from Tokyo, Japan",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0"
+  },
+  "Carlos Saldanha": {
+    "src": "assets/images/directors/carlos-saldanha.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Carlos_Saldanha_2017.jpg",
+    "creator": "Boungawa",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  "Cecil B. DeMille": {
+    "src": "assets/images/directors/cecil-b-demille.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Demille_-_c1920_(3x4_cropped).JPG",
+    "creator": "Albert Witzel",
+    "license": "Public domain",
+    "licenseUrl": "https://commons.wikimedia.org/wiki/File:Demille_-_c1920_(3x4_cropped).JPG"
+  },
+  "Chris Columbus": {
+    "src": "assets/images/directors/chris-columbus.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Chris_Columbus_-_Home_Alone_35th.jpg",
+    "creator": "Kevin Paul",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0"
+  },
+  "Christopher Nolan": {
+    "src": "assets/images/directors/christopher-nolan.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:ChrisNolanBFI150224_(10_of_12)_(53532289710)_(cropped2).jpg",
+    "creator": "Raph_PH",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0"
+  },
+  "Clint Eastwood": {
+    "src": "assets/images/directors/clint-eastwood.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Clint_Eastwood_visits_MCB_Camp_Pendleton_(1)_(cropped).jpg",
+    "creator": "Lance Cpl. Melissa I. Ugalde",
+    "license": "Public domain",
+    "licenseUrl": "https://commons.wikimedia.org/wiki/File:Clint_Eastwood_visits_MCB_Camp_Pendleton_(1)_(cropped).jpg"
+  },
+  "Darren Aronofsky": {
+    "src": "assets/images/directors/darren-aronofsky.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:OIFF_2015-07-17_193547_-_Darren_Aronofsky.jpg",
+    "creator": "Andriy Makukha (Amakuha)",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  "David Fincher": {
+    "src": "assets/images/directors/david-fincher.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:TheKillerBFILFF051023_(8_of_22)_(53255176376)_(cropped2).jpg",
+    "creator": "Raph_PH",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0"
+  },
+  "David Lean": {
+    "src": "assets/images/directors/david-lean.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Aankomst_filmster_Ann_Todd_en_haar_echtgenoot_filmregisseur_David_Lean_op_Schiph,_Bestanddeelnr_905-4605_(2).jpg",
+    "creator": "Harry Pot / Anefo",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en"
+  },
+  "David Yates": {
+    "src": "assets/images/directors/david-yates.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:David_Yates_by_Gage_Skidmore.jpg",
+    "creator": "Gage Skidmore",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+  },
+  "Edgar Wright": {
+    "src": "assets/images/directors/edgar-wright.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Edgar_Wright_Photo_Op_GalaxyCon_Richmond_2026.jpg",
+    "creator": "Super Festivals from Ft. Lauderdale, USA",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0"
+  },
+  "Francis Lawrence": {
+    "src": "assets/images/directors/francis-lawrence.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Francis_Lawrence_by_Gage_Skidmore_2.jpg",
+    "creator": "Gage Skidmore",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+  },
+  "Fred Zinnemann": {
+    "src": "assets/images/directors/fred-zinnemann.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Fred_Zinnemann_1940s.jpg",
+    "creator": "MGM",
+    "license": "Public domain",
+    "licenseUrl": "https://commons.wikimedia.org/wiki/File:Fred_Zinnemann_1940s.jpg"
+  },
+  "Garry Marshall": {
+    "src": "assets/images/directors/garry-marshall.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Garry_Marshall_2013_cropped.jpg",
+    "creator": "Louise Palanker",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0"
+  },
+  "George Lucas": {
+    "src": "assets/images/directors/george-lucas.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:George_Lucas_by_Gage_Skidmore.jpg",
+    "creator": "Gage Skidmore",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+  },
+  "George Roy Hill": {
+    "src": "assets/images/directors/george-roy-hill.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:George_Roy_Hill_(cropped).jpg",
+    "creator": "Steelehill12",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  "Gore Verbinski": {
+    "src": "assets/images/directors/gore-verbinski.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Gore_Verbinski-4335.jpg",
+    "creator": "Harald Krichel",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  "Hayao Miyazaki": {
+    "src": "assets/images/directors/hayao-miyazaki.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:HayaoMiyazakiCCJuly09.jpg",
+    "creator": "Natasha Baucas at https://www.flickr.com/photos/sdnatasha/",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0"
+  },
+  "Henry Joost": {
+    "src": "assets/images/directors/henry-joost.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Henry_Joost_at_2016_San_Diego_Comic-Con_(cropped).jpg",
+    "creator": "https://www.flickr.com/photos/idominick/",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0"
+  },
+  "Ivan Reitman": {
+    "src": "assets/images/directors/ivan-reitman.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Ivan_Reitman_with_prop_from_Ghostbusters_(cropped).jpg",
+    "creator": "Jose Galvez, Los Angeles Times",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0"
+  },
+  "J.J. Abrams": {
+    "src": "assets/images/directors/j-j-abrams.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:J._J._Abrams.jpg",
+    "creator": "Dick Thomas Johnson from Tokyo, Japan",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0"
+  },
+  "James Cameron": {
+    "src": "assets/images/directors/james-cameron.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:James_Cameron_at_53rd_Saturn_Awards_2026-01_(cropped).jpg",
+    "creator": "Kevin Paul",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0"
+  },
+  "James Wan": {
+    "src": "assets/images/directors/james-wan.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:James_Wan_at_Sundance_Film_Festival_2026.jpg",
+    "creator": "Kirby Taylor",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0"
+  },
+  "Jay Roach": {
+    "src": "assets/images/directors/jay-roach.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Jay_Roach_(2013).JPG",
+    "creator": "Peabody Awards",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0"
+  },
+  "Jeff Tremaine": {
+    "src": "assets/images/directors/jeff-tremaine.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Jeff_Tremaine_Bad_Grandpa_(cropped).jpg",
+    "creator": "Christopher William Adach from London, UK",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0"
+  },
+  "Joel Coen": {
+    "src": "assets/images/directors/joel-coen.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Joel_Coen_-_Berlin_Berlinale_66_(24950127406)_(cropped).jpg",
+    "creator": "www.GlynLowe.com from Hamburg, Germany",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0"
+  },
+  "Joel Schumacher": {
+    "src": "assets/images/directors/joel-schumacher.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Joel_Schumacher_at_Taormina_Film_Fest_2003_(cropped).jpg",
+    "creator": "Kasper2006 (talk)",
+    "license": "Public domain",
+    "licenseUrl": "https://commons.wikimedia.org/wiki/File:Joel_Schumacher_at_Taormina_Film_Fest_2003_(cropped).jpg"
+  },
+  "John G. Avildsen": {
+    "src": "assets/images/directors/john-g-avildsen.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:John_G._Avildsen_(1986).png",
+    "creator": "Columbia Pictures",
+    "license": "Public domain",
+    "licenseUrl": "https://commons.wikimedia.org/wiki/File:John_G._Avildsen_(1986).png"
+  },
+  "John Glen": {
+    "src": "assets/images/directors/john-glen.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:John_Glen_(film_director)_in_2012.png",
+    "creator": "The Conmunity - Pop Culture Geek from Los Angeles, CA, USA",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0"
+  },
+  "Jon Favreau": {
+    "src": "assets/images/directors/jon-favreau.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Jon_Favreau_2016.jpeg",
+    "creator": "Eva Rinaldi(Uploader: Musa Raza)",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0"
+  },
+  "Jon M. Chu": {
+    "src": "assets/images/directors/jon-m-chu.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Jon_Chu_-_Wicked.jpg",
+    "creator": "Kevin Paul",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0"
+  },
+  "Jon Turteltaub": {
+    "src": "assets/images/directors/jon-turteltaub.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:JonTurteltaubHWOFJan2013.jpg",
+    "creator": "Angela George",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+  },
+  "Joss Whedon": {
+    "src": "assets/images/directors/joss-whedon.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Joss_Whedon_by_Gage_Skidmore_8.jpg",
+    "creator": "Gage Skidmore",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+  },
+  "Lasse Hallström": {
+    "src": "assets/images/directors/lasse-hallstrom.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Lasse_Hallstr%C3%B6m.jpg",
+    "creator": "Lena_Olin_and_Lasse_Hallström.jpg: Jan Videren from Stockholm, Sweden derivative work: RanZag (talk)",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0"
+  },
+  "M. Night Shyamalan": {
+    "src": "assets/images/directors/m-night-shyamalan.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:M._Night_Shyamalan_(28769148857)_(cropped_2).jpg",
+    "creator": "Gage Skidmore from Peoria, AZ, United States of America",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0"
+  },
+  "Martin Scorsese": {
+    "src": "assets/images/directors/martin-scorsese.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Martin_Scorsese-68749.jpg",
+    "creator": "Harald Krichel",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  "Mel Brooks": {
+    "src": "assets/images/directors/mel-brooks.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:MelBrooksApr10.jpg",
+    "creator": "Angela George at https://www.flickr.com/photos/sharongraphics/",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+  },
+  "Michael Bay": {
+    "src": "assets/images/directors/michael-bay.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:MichaelBay08.jpg",
+    "creator": "Romina Espinosa at http://www.rominaespinosa.com",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+  },
+  "Michael Moore": {
+    "src": "assets/images/directors/michael-moore.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Michael_Moore_2011_Shankbone_5.JPG",
+    "creator": "David Shankbone",
+    "license": "CC BY 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/3.0"
+  },
+  "Norman Jewison": {
+    "src": "assets/images/directors/norman-jewison.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:A_portrait_of_Norman_Jewison_taken_by_Gail_Harvey._(48198901241)_(cropped).jpg",
+    "creator": "Canadian Film Centre from Toronto, Canada",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0"
+  },
+  "Paul W.S. Anderson": {
+    "src": "assets/images/directors/paul-w-s-anderson.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Paul_W._S._Anderson_by_Gage_Skidmore.jpg",
+    "creator": "Gage Skidmore",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+  },
+  "Pedro Almodóvar": {
+    "src": "assets/images/directors/pedro-almodovar.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Pedro_Almod%C3%B3var-69720_(cropped).jpg",
+    "creator": "Harald Krichel",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  "Peter Jackson": {
+    "src": "assets/images/directors/peter-jackson.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Peter_Jackson_SDCC_2014.jpg",
+    "creator": "Gage Skidmore",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0"
+  },
+  "Quentin Tarantino": {
+    "src": "assets/images/directors/quentin-tarantino.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Quentin_Tarantino_by_Gage_Skidmore.jpg",
+    "creator": "Gage Skidmore",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+  },
+  "Richard Donner": {
+    "src": "assets/images/directors/richard-donner.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Richard_Donner_(4505771045)_(cropped).jpg",
+    "creator": "Alan Light",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0"
+  },
+  "Ridley Scott": {
+    "src": "assets/images/directors/ridley-scott.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:NASA_Journey_to_Mars_and_%E2%80%9CThe_Martian%E2%80%9D_(201508180030HQ).jpg",
+    "creator": "Bill Ingalls",
+    "license": "Public domain",
+    "licenseUrl": "https://commons.wikimedia.org/wiki/File:NASA_Journey_to_Mars_and_%E2%80%9CThe_Martian%E2%80%9D_(201508180030HQ).jpg"
+  },
+  "Rob Cohen": {
+    "src": "assets/images/directors/rob-cohen.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:US_Navy_040618-N-6817C-090_Director_Rob_Cohen_visits_with_Commanding_Officer,_USS_Abraham_Lincoln_(CVN_72),_Capt._Kendall_L._Card,_on_the_bridge_after_the_completion_of_filming,_the_upcoming_motion_picture_Stealth_(cropped).JPG",
+    "creator": "U.S. Navy photo by Photographer's Mate 3rd Class Tyler J. Clements",
+    "license": "Public domain",
+    "licenseUrl": "https://commons.wikimedia.org/wiki/File:US_Navy_040618-N-6817C-090_Director_Rob_Cohen_visits_with_Commanding_Officer,_USS_Abraham_Lincoln_(CVN_72),_Capt._Kendall_L._Card,_on_the_bridge_after_the_completion_of_filming,_the_upcoming_motion_picture_Stealth_(cropped).JPG"
+  },
+  "Robert Rodriguez": {
+    "src": "assets/images/directors/robert-rodriguez.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Robert_Rodriguez_SDCC_2014.jpg",
+    "creator": "Gage Skidmore",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0"
+  },
+  "Robert Zemeckis": {
+    "src": "assets/images/directors/robert-zemeckis.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Robert_Zemeckis_%22The_Walk%22_at_Opening_Ceremony_of_the_28th_Tokyo_International_Film_Festival_(21835891403)_(cropped).jpg",
+    "creator": "Dick Thomas Johnson from Tokyo, Japan",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0"
+  },
+  "Roland Emmerich": {
+    "src": "assets/images/directors/roland-emmerich.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Independence_Day-_Resurgence_Japan_Premiere-_Roland_Emmerich_(28502013341)_CROPPED.jpg",
+    "creator": "Dick Thomas Johnson",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0"
+  },
+  "Ron Howard": {
+    "src": "assets/images/directors/ron-howard.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Ron_Howard_at_the_2024_Toronto_International_Film_Festival_05_(cropped).jpg",
+    "creator": "Jay Dixit",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  "Sam Mendes": {
+    "src": "assets/images/directors/sam-mendes.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Sam_Mendes_in_2022-2.jpg",
+    "creator": "Frankie Fouganthin",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  "Sam Raimi": {
+    "src": "assets/images/directors/sam-raimi.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Sam_Raimi_Photo_Op_GalaxyCon_Raleigh_2024_(cropped).jpg",
+    "creator": "Super Festivals from Ft. Lauderdale, USA",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0"
+  },
+  "Sergio Leone": {
+    "src": "assets/images/directors/sergio-leone.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Sergio_Leone_1975.jpg",
+    "creator": "Unknown authorUnknown author",
+    "license": "Public domain",
+    "licenseUrl": "https://commons.wikimedia.org/wiki/File:Sergio_Leone_1975.jpg"
+  },
+  "Shawn Levy": {
+    "src": "assets/images/directors/shawn-levy.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Shawn_Levy_by_Gage_Skidmore_2.jpg",
+    "creator": "Gage Skidmore",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+  },
+  "Stanley Kubrick": {
+    "src": "assets/images/directors/stanley-kubrick.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Stanley_Kubrick_in_Dr._Strangelove_Trailer_(4)_Cropped.jpg",
+    "creator": "Columbia Pictures (Q186941)",
+    "license": "Public domain",
+    "licenseUrl": "https://commons.wikimedia.org/wiki/File:Stanley_Kubrick_in_Dr._Strangelove_Trailer_(4)_Cropped.jpg"
+  },
+  "Steven Soderbergh": {
+    "src": "assets/images/directors/steven-soderbergh.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:58th_Karlovy_Vary_International_Film_Festival,_Steven_Soderbergh_07_(cropped).jpg",
+    "creator": "Jan Beránek",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  "Steven Spielberg": {
+    "src": "assets/images/directors/steven-spielberg.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:MKr25402_Steven_Spielberg_(Berlinale_2023)_(3x4_cropped).jpg",
+    "creator": "Martin Kraft",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  "Sylvester Stallone": {
+    "src": "assets/images/directors/sylvester-stallone.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:P20251206DT-0472_(3x4_cropped_on_Stallone_with_moderate_headroom).jpg",
+    "creator": "The White House",
+    "license": "Public domain",
+    "licenseUrl": "https://commons.wikimedia.org/wiki/File:P20251206DT-0472_(3x4_cropped_on_Stallone_with_moderate_headroom).jpg"
+  },
+  "Tim Burton": {
+    "src": "assets/images/directors/tim-burton.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Tim_Burton-63605.jpg",
+    "creator": "Harald Krichel",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  "Timur Bekmambetov": {
+    "src": "assets/images/directors/timur-bekmambetov.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Timur_Bekmambetov_by_Gage_Skidmore.jpg",
+    "creator": "Gage Skidmore",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+  },
+  "Tobe Hooper": {
+    "src": "assets/images/directors/tobe-hooper.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Massacre_%C3%A0_la_tron%C3%A7onneuse_40eme_anniversaire_Grand_Rex_23_septembre_2014_-_25_(cropped).jpg",
+    "creator": "Lionel Allorge",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+  },
+  "Tony Scott": {
+    "src": "assets/images/directors/tony-scott.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Filming_of_Top_Gun_movie_(05)_1985.jpg",
+    "creator": "PH2 Michael D.P. Flynn, U.S. Navy",
+    "license": "Public domain",
+    "licenseUrl": "https://commons.wikimedia.org/wiki/File:Filming_of_Top_Gun_movie_(05)_1985.jpg"
+  },
+  "Wes Craven": {
+    "src": "assets/images/directors/wes-craven.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Wes_Craven_2010.jpg",
+    "creator": "Bob Bekian from Thousand Oaks Ca., USA",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0"
+  },
+  "William Wyler": {
+    "src": "assets/images/directors/william-wyler.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:William_Wyler_portrait.jpg",
+    "creator": "Film studio",
+    "license": "Public domain",
+    "licenseUrl": "https://commons.wikimedia.org/wiki/File:William_Wyler_portrait.jpg"
+  },
+  "Wolfgang Petersen": {
+    "src": "assets/images/directors/wolfgang-petersen.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Wolfgang_Petersen_-_Poseidon_Premiere_(cropped).jpg",
+    "creator": "S Pakhrin from DC, USA",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0"
+  },
+  "Woody Allen": {
+    "src": "assets/images/directors/woody-allen.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Woody_Allen_Cannes_2016.jpg",
+    "creator": "Georges Biard",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+  },
+  "Zack Snyder": {
+    "src": "assets/images/directors/zack-snyder.webp",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Zack_Snyder_by_Gage_Skidmore_2.jpg",
+    "creator": "Gage Skidmore",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
+  }
+}

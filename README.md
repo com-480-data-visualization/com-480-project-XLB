@@ -31,7 +31,7 @@ The committed web exports are sufficient to view the website. This Python enviro
 ```bash
 conda create -n movies-viz python=3.11 -y
 conda activate movies-viz
-pip install kaggle pandas matplotlib seaborn jupyter scipy
+pip install kaggle pandas matplotlib seaborn jupyter scipy pillow
 ```
 
 ### 3. Download the dataset
@@ -56,6 +56,14 @@ Open and run all cells in `eda/preprocessing.ipynb` to generate `data/processed/
 python3 scripts/export_web_data.py
 ```
 
+To refresh the optional contextual imagery used in selected detail panels:
+
+```bash
+python3 scripts/refresh_movie_posters.py
+python3 scripts/fetch_director_portraits.py
+python3 scripts/export_web_data.py
+```
+
 ### 5. Run the visualization
 
 The website loads JSON files through `fetch`, so it must be served over HTTP:
@@ -74,6 +82,7 @@ Open <http://localhost:8080/>.
 .
 ├── index.html                    # Narrative page structure and view containers
 ├── assets/images/cover.webp      # Optimized cinematic hero artwork
+├── assets/images/directors/      # Attributed Commons portrait thumbnails
 ├── css/styles.css                # Cinematic visual system and responsive layouts
 ├── js/
 │   ├── app.js                    # Story text, loading, navigation and shared controls
@@ -82,6 +91,8 @@ Open <http://localhost:8080/>.
 │   ├── utils.js                  # Formatting, sampling, tooltip and chart utilities
 │   └── viz/                      # One D3 module for each delivered visualization
 ├── scripts/export_web_data.py    # Reproducible financial/franchise web export
+├── scripts/refresh_movie_posters.py # Refreshes current TMDb poster URL cache
+├── scripts/fetch_director_portraits.py # Reproducible Commons portrait export
 ├── data/
 │   ├── README.md                 # Data contract and documented analysis rules
 │   ├── raw/                      # Kaggle downloads, not committed
@@ -90,7 +101,9 @@ Open <http://localhost:8080/>.
 ├── eda/                          # Preprocessing notebook, EDA notebook and figures
 ├── sketches/                     # Milestone 2 visual design proposals
 ├── MS2_XLB.pdf                   # Milestone 2 report
-└── process_book_XLB.pdf          # Milestone 3 process book
+├── process_book_XLB.tex          # Editable Milestone 3 report source
+├── process_book_XLB.pdf          # Milestone 3 process book
+└── screencast_XLB.md             # Two-minute recording plan and scripts
 ```
 
 ---
@@ -189,6 +202,8 @@ CineScope is built from *The Movies Dataset* (Kaggle/TMDb), enriched with MovieL
 
 The budget threshold removes unstable ROI values created by implausibly tiny recorded costs while retaining genuine low-budget breakouts such as *Paranormal Activity* (`$15,000` recorded budget). After thresholding and ID de-duplication, the financial universe contains **5,317 films**. The website computes aggregated results from all eligible films; only the Dossier Board limits individual plotted marks to a deterministic stratified sample of at most **800** so bubbles remain readable.
 
+A small curated set of headline and franchise examples receives refreshed TMDb poster URLs for contextual hover and reel imagery, with TMDb credited in the interface; other marks remain data-first text dossiers. Reusable director portraits are fetched from Wikimedia Commons with their licence and source links stored in `data/web/director_portraits.json` and `assets/images/directors/ATTRIBUTION.md`.
+
 ### Delivered Visualizations
 
 1. **The Dossier Board** is a D3 log-scale scatter plot of budget against revenue or ROI. Genre and decade filters, title search, brush inspection, film tooltips, a break-even line, and named outcome regions let readers start with concrete movies.
@@ -211,8 +226,11 @@ The story tests a series of familiar promises: spend more, select the right genr
 - **Data delivery:** compact generated JSON files in `data/web/`, suitable for static GitHub Pages deployment.
 - **Architecture:** shared application state for genre and decade; independent view modules under `js/viz/`.
 - **Presentation mode:** the default `Dark Room` palette provides cinematic contrast, with an optional light-room toggle.
+- **Contextual imagery:** selected-film posters are requested from TMDb; director dossier portraits are locally optimized Commons thumbnails with per-image attribution.
 - **Use:** an exploratory editorial visualization for observed relationships, not a causal or revenue-prediction model.
 
 ### Process Book
 
-The full design process, evolution from the Milestone 2 sketches, data decisions, technical challenges, and peer-assessment breakdown are documented in the [Milestone 3 process book](process_book_XLB.pdf).
+The full design process, evolution from the Milestone 2 sketches, data decisions, technical challenges, and peer-assessment breakdown are documented in the [Milestone 3 process book](process_book_XLB.pdf), with its editable [LaTeX source](process_book_XLB.tex) included in the repository.
+
+The [screencast plan](screencast_XLB.md) provides two alternative scripts and recording guidance for producing the required single final video of no more than two minutes.

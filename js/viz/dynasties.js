@@ -2,6 +2,7 @@ import {
   COLORS,
   d3,
   drawPaths,
+  escapeHtml,
   formatInteger,
   formatMoney,
   formatPercent,
@@ -12,7 +13,7 @@ import {
   moveTooltip,
   setActiveButtons,
   showTooltip,
-} from "../utils.js?v=20260526-motion1";
+} from "../utils.js?v=20260526-gallery2";
 
 function matchesComparison(comparison, state) {
   return (
@@ -28,7 +29,11 @@ export function createDynasties(data) {
   const count = document.getElementById("dynasty-count");
   const reading = document.getElementById("dynasty-reading");
   let mode = "revenue";
-  let selectedId = data.franchises[0]?.id || null;
+  const illustratedOpening = data.franchises.find((franchise) => (
+    franchise.installments.length > 1 &&
+    franchise.installments.every((film) => film.posterUrl)
+  ));
+  let selectedId = illustratedOpening?.id || data.franchises[0]?.id || null;
   let currentState = { genre: "All", decade: "all" };
 
   document.querySelectorAll("[data-dynasty-mode]").forEach((button) => {
@@ -114,6 +119,19 @@ export function createDynasties(data) {
     const improved = sequels.filter((film) => filmMetric(film) > filmMetric(original)).length;
     const label = mode === "revenue" ? "GROSS" : mode === "roi" ? "ROI" : "RATING";
     const peak = d3.greatest(installments, filmMetric);
+    const illustratedInstallments = installments.filter((film) => film.posterUrl);
+    const posterStrip = illustratedInstallments.length
+      ? `
+        <div class="franchise-posters" aria-label="Available posters for visible installments">
+          ${illustratedInstallments.map((film) => `
+            <figure class="${film.id === peak.id ? "peak" : ""}">
+              <img src="${escapeHtml(film.posterUrl)}" alt="${escapeHtml(film.title)} poster" loading="lazy">
+              <figcaption>#${film.order}</figcaption>
+            </figure>
+          `).join("")}
+        </div>
+      `
+      : "";
     detail.innerHTML = `
       <div class="radial-header">
         <p class="section-label">FRANCHISE REEL · ${label}</p>
@@ -121,13 +139,23 @@ export function createDynasties(data) {
         <p>${formatInteger(installments.length)} VISIBLE ELIGIBLE OF ${formatInteger(franchise.knownInstallments)} KNOWN INSTALLMENTS</p>
       </div>
       <div id="franchise-reel-viz"></div>
+      ${posterStrip}
       <div class="metric-grid">
         <div><strong>${formatMoney(franchise.totalRevenue)}</strong><span>TOTAL GROSS</span></div>
-        <div><strong>${formatPercent(improved / sequels.length)}</strong><span>ABOVE ORIGINAL · ${label}</span></div>
+        <div><strong>${sequels.length ? formatPercent(improved / sequels.length) : "-"}</strong><span>ABOVE ORIGINAL · ${label}</span></div>
         <div><strong>${limitText(peak.title, 18)}</strong><span>PEAK INSTALLMENT</span></div>
         <div><strong>${formatMetric(filmMetric(peak))}</strong><span>PEAK ${label}</span></div>
       </div>
     `;
+    detail.querySelectorAll(".franchise-posters img").forEach((image) => {
+      image.addEventListener("error", () => {
+        const strip = image.closest(".franchise-posters");
+        image.parentElement.remove();
+        if (strip && !strip.querySelector("figure")) {
+          strip.remove();
+        }
+      }, { once: true });
+    });
     const reelContainer = detail.querySelector("#franchise-reel-viz");
     const width = 326;
     const height = 287;
@@ -261,6 +289,7 @@ export function createDynasties(data) {
   }
 
   function render(state) {
+    hideTooltip();
     currentState = state;
     let comparisons = data.comparisons
       .filter((comparison) => matchesComparison(comparison, state))
@@ -410,7 +439,7 @@ export function createDynasties(data) {
           [`#${comparison.installment}`, limitText(comparison.title, 25)],
           [`Original ${metricLabel}`, axisFormatter(original)],
           [`Sequel ${metricLabel}`, axisFormatter(sequel), sequel >= original ? "positive" : "negative"],
-        ]);
+        ], comparison.posterUrl);
       })
       .on("mousemove", moveTooltip)
       .on("mouseleave", function onLeave(_, comparison) {

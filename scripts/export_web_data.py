@@ -19,6 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PROCESSED_MOVIES = ROOT / "data" / "processed" / "movies.csv"
 RAW_METADATA = ROOT / "data" / "raw" / "movies_metadata.csv"
 OUTPUT_DIR = ROOT / "data" / "web"
+POSTER_CACHE = OUTPUT_DIR / "movie_posters.json"
 
 BUDGET_FLOOR = 10_000
 RATING_MIN_VOTES = 50
@@ -214,6 +215,19 @@ def enrich_collections(
         movie["collection"] = collection["name"] if collection else None
 
 
+def load_poster_urls() -> dict[int, str]:
+    if not POSTER_CACHE.exists():
+        return {}
+    with POSTER_CACHE.open(encoding="utf-8") as handle:
+        cached = json.load(handle)
+    return {int(movie_id): url for movie_id, url in cached.items() if url}
+
+
+def enrich_posters(movies: list[dict[str, Any]], poster_urls: dict[int, str]) -> None:
+    for movie in movies:
+        movie["posterUrl"] = poster_urls.get(movie["id"])
+
+
 def build_franchises(
     movies: list[dict[str, Any]], collection_metadata: dict[int, dict[str, Any]]
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
@@ -250,6 +264,7 @@ def build_franchises(
                 "rating": movie["rating"],
                 "ratingVotes": movie["ratingVotes"],
                 "genre": movie["genre"],
+                "posterUrl": movie["posterUrl"],
                 "revenueVsOriginal": rounded(comparison_value),
             }
             installments.append(installment)
@@ -275,6 +290,7 @@ def build_franchises(
                         "originalRatingVotes": original["ratingVotes"],
                         "sequelRating": movie["rating"],
                         "sequelRatingVotes": movie["ratingVotes"],
+                        "posterUrl": movie["posterUrl"],
                         "budget": movie["budget"],
                         "revenueVsOriginal": rounded(comparison_value),
                     }
@@ -337,6 +353,7 @@ def director_record(name: str, films: list[dict[str, Any]]) -> dict[str, Any]:
                 "revenue": film["revenue"],
                 "roi": film["roi"],
                 "genre": film["genre"],
+                "posterUrl": film["posterUrl"],
             }
             for film in ordered_films
         ],
@@ -467,6 +484,7 @@ def build() -> None:
     movies, counts = load_movies()
     collection_metadata = load_collection_metadata()
     enrich_collections(movies, collection_metadata)
+    enrich_posters(movies, load_poster_urls())
     franchises, comparisons = build_franchises(movies, collection_metadata)
     directors = build_directors(movies)
     summary = build_summary(movies, franchises, comparisons, directors, counts)

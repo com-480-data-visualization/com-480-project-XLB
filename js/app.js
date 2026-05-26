@@ -1,5 +1,5 @@
-import { loadData } from "./data-loader.js?v=20260526-motion1";
-import { getState, setState, subscribe } from "./state.js?v=20260526-motion1";
+import { loadData } from "./data-loader.js?v=20260526-gallery2";
+import { getState, setState, subscribe } from "./state.js?v=20260526-gallery2";
 import {
   DECADES,
   filterMovies,
@@ -9,13 +9,13 @@ import {
   formatPercent,
   formatRoi,
   median,
-} from "./utils.js?v=20260526-motion1";
-import { createDossierBoard } from "./viz/dossier-board.js?v=20260526-motion1";
-import { createFlow } from "./viz/flow.js?v=20260526-motion1";
-import { createProfitabilityMatrix } from "./viz/profitability-matrix.js?v=20260526-motion1";
-import { createDynasties } from "./viz/dynasties.js?v=20260526-motion1";
-import { createApplause } from "./viz/applause.js?v=20260526-motion1";
-import { createDirectors } from "./viz/directors.js?v=20260526-motion1";
+} from "./utils.js?v=20260526-gallery2";
+import { createDossierBoard } from "./viz/dossier-board.js?v=20260526-gallery2";
+import { createFlow } from "./viz/flow.js?v=20260526-gallery2";
+import { createProfitabilityMatrix } from "./viz/profitability-matrix.js?v=20260526-gallery2";
+import { createDynasties } from "./viz/dynasties.js?v=20260526-gallery2";
+import { createApplause } from "./viz/applause.js?v=20260526-gallery2";
+import { createDirectors } from "./viz/directors.js?v=20260526-gallery2";
 
 function text(id, value) {
   const element = document.getElementById(id);
@@ -177,7 +177,7 @@ async function start() {
       { id: "matrix", visualization: createProfitabilityMatrix(data.movies) },
       { id: "dynasties", visualization: createDynasties(data.franchises) },
       { id: "applause", visualization: createApplause(data.movies) },
-      { id: "directors", visualization: createDirectors(data.movies, data.directors) },
+      { id: "directors", visualization: createDirectors(data.movies, data.directors, data.directorPortraits) },
     ];
     const visualizations = scenes.map((scene) => scene.visualization);
     const render = (state) => {
