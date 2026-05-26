@@ -13,7 +13,7 @@ import {
   moveTooltip,
   setActiveButtons,
   showTooltip,
-} from "../utils.js";
+} from "../utils.js?v=20260526-motion1";
 
 function buildRecords(movies, minimumFilms) {
   return d3

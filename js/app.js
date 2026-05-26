@@ -1,5 +1,5 @@
-import { loadData } from "./data-loader.js";
-import { getState, setState, subscribe } from "./state.js";
+import { loadData } from "./data-loader.js?v=20260526-motion1";
+import { getState, setState, subscribe } from "./state.js?v=20260526-motion1";
 import {
   DECADES,
   filterMovies,
@@ -9,13 +9,13 @@ import {
   formatPercent,
   formatRoi,
   median,
-} from "./utils.js";
-import { createDossierBoard } from "./viz/dossier-board.js";
-import { createFlow } from "./viz/flow.js";
-import { createProfitabilityMatrix } from "./viz/profitability-matrix.js";
-import { createDynasties } from "./viz/dynasties.js";
-import { createApplause } from "./viz/applause.js";
-import { createDirectors } from "./viz/directors.js";
+} from "./utils.js?v=20260526-motion1";
+import { createDossierBoard } from "./viz/dossier-board.js?v=20260526-motion1";
+import { createFlow } from "./viz/flow.js?v=20260526-motion1";
+import { createProfitabilityMatrix } from "./viz/profitability-matrix.js?v=20260526-motion1";
+import { createDynasties } from "./viz/dynasties.js?v=20260526-motion1";
+import { createApplause } from "./viz/applause.js?v=20260526-motion1";
+import { createDirectors } from "./viz/directors.js?v=20260526-motion1";
 
 function text(id, value) {
   const element = document.getElementById(id);
