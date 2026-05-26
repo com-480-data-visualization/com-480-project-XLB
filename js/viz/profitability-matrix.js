@@ -13,7 +13,7 @@ import {
   moveTooltip,
   setActiveButtons,
   showTooltip,
-} from "../utils.js?v=20260526-final2";
+} from "../utils.js?v=20260526-final3";
 
 function kernelDensity(values, thresholds, bandwidth) {
   return thresholds.map((threshold) => [
@@ -30,6 +30,7 @@ export function createProfitabilityMatrix(movies) {
   const detail = document.getElementById("matrix-detail");
   const count = document.getElementById("matrix-count");
   const reading = document.getElementById("matrix-reading");
+  const decoder = document.getElementById("matrix-decoder");
   let mode = "median";
   let selection = null;
   let currentState = { genre: "All", decade: "all" };
@@ -192,6 +193,9 @@ export function createProfitabilityMatrix(movies) {
   function render(state) {
     currentState = state;
     const visible = filterMovies(movies, state);
+    decoder.textContent = mode === "median"
+      ? "MEDIAN ROI 3.0x = HALF THE CELL REACHED AT LEAST 3x BUDGET · CLICK CELL FOR DISTRIBUTION · CHANGE DECADE TO TEST THE PATTERN"
+      : "% PROFITABLE = SHARE GROSSING AT LEAST THE RECORDED BUDGET · CLICK CELL FOR DISTRIBUTION · CHANGE DECADE TO TEST THE PATTERN";
     const genres = visibleRows(state);
     const cells = genres.flatMap((genre) => TIERS.map((tier) => cellData(visible, genre, tier)));
     const populated = cells.filter((cell) => cell.count);

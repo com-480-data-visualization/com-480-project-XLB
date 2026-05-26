@@ -13,7 +13,7 @@ import {
   median,
   motionDuration,
   setActiveButtons,
-} from "../utils.js?v=20260526-final2";
+} from "../utils.js?v=20260526-final3";
 
 const ROI_OUTCOMES = [
   { key: "Flop", label: "FLOP < 0.5x", color: "#b54a3a" },
@@ -47,6 +47,7 @@ export function createFlow(movies, setGenre) {
   const count = document.getElementById("flow-count");
   const insight = document.getElementById("flow-insight");
   const reading = document.getElementById("flow-reading");
+  const decoder = document.getElementById("flow-decoder");
   let mode = "roi";
   let currentState = { genre: "All", decade: "all" };
 
@@ -73,10 +74,15 @@ export function createFlow(movies, setGenre) {
     const primaryLabel = mode === "roi" ? "MEDIAN ROI" : "MEDIAN BOX OFFICE";
     const outcomeValue = mode === "roi" ? formatPercent(hitShare) : formatPercent(majorShare);
     const outcomeLabel = mode === "roi" ? "HIT OR BETTER" : "$100M OR MORE";
+    const prompt = genre
+      ? genre === currentState.genre
+        ? "Selected through every chapter. Move the decade slider above to test this route in another era."
+        : "Click this genre to carry it through every chapter, then compare decades above."
+      : "Hover a genre to isolate its incoming budgets and outgoing results; switch the outcome definition above.";
     insight.innerHTML = `
       <p class="section-label">${genre ? "SELECTED ROUTE" : "READ THE FLOW"}</p>
       <h3>${label}</h3>
-      <p>${genre ? "Click this genre to carry it into every chapter." : "Hover a genre to isolate its incoming budgets and outgoing results."}</p>
+      <p>${prompt}</p>
       <div class="insight-value">
         <strong>${primaryValue}</strong>
         <span>${primaryLabel} · ${formatInteger(films.length)} FILMS</span>
@@ -92,6 +98,9 @@ export function createFlow(movies, setGenre) {
     currentState = state;
     const visible = filterMovies(movies, state);
     count.textContent = `${formatInteger(visible.length)} films`;
+    decoder.textContent = mode === "roi"
+      ? "ROI OUTCOMES · FLOP < 0.5x · BREAK-EVEN 0.5-2x · HIT 2-10x · MEGAHIT > 10x · HOVER ROUTE · CLICK GENRE"
+      : "BOX-OFFICE OUTCOMES · UNDER $10M · $10-100M · $100-500M · OVER $500M · HOVER ROUTE · CLICK GENRE";
     container.replaceChildren();
     updateInsight(state.genre === "All" ? null : state.genre, visible);
     const routes = d3

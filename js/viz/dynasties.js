@@ -13,7 +13,7 @@ import {
   moveTooltip,
   setActiveButtons,
   showTooltip,
-} from "../utils.js?v=20260526-final2";
+} from "../utils.js?v=20260526-final3";
 
 function matchesComparison(comparison, state) {
   return (
@@ -478,8 +478,20 @@ export function createDynasties(data) {
         const [original, sequel] = metricValue(comparison, mode);
         return sequel >= original;
       })).length;
-    reading.textContent = `Across ${formatInteger(visibleFranchises.length)} visible collections, only ${formatPercent(improving / comparisons.length)} of ${formatInteger(comparisons.length)} sequels meet or exceed their original on ${metricLabel.toLowerCase()}; ${formatPercent(collectionsWithoutGain / visibleFranchises.length)} of collections never manage it once. The chronological reel matters because a series can peak late, decline gradually, or briefly recover rather than follow a single sequel rule.`;
-    renderReel(visibleFranchises.find((franchise) => franchise.id === selectedId));
+    const selectedFranchise = visibleFranchises.find((franchise) => franchise.id === selectedId);
+    const selectedComparisons = comparisons.filter((comparison) => comparison.franchiseId === selectedId);
+    const selectedBest = d3.greatest(selectedComparisons, sequelMetric);
+    const selectedWins = selectedComparisons.filter((comparison) => (
+      sequelMetric(comparison) >= originalMetric(comparison)
+    )).length;
+    const selectionReading = selectedFranchise && selectedBest
+      ? ` In the opened ${selectedFranchise.name} reel, ${formatInteger(selectedWins)} of ${formatInteger(selectedComparisons.length)} eligible sequels reach the original on this measure; ${selectedBest.title} is its strongest displayed sequel at ${formatMetric(sequelMetric(selectedBest))}.`
+      : "";
+    const eraReading = state.decade === "all"
+      ? " Move the decade control above to compare collections by the era in which their original film opened."
+      : ` This ${state.decade}s cut keeps collections whose original opened in that decade; slide it again to compare another launch era.`;
+    reading.textContent = `Across ${formatInteger(visibleFranchises.length)} visible collections, only ${formatPercent(improving / comparisons.length)} of ${formatInteger(comparisons.length)} sequels meet or exceed their original on ${metricLabel.toLowerCase()}; ${formatPercent(collectionsWithoutGain / visibleFranchises.length)} of collections never manage it once.${selectionReading} Hover a reel chapter to compare it with both the original and the previous installment.${eraReading}`;
+    renderReel(selectedFranchise);
   }
 
   return { render };

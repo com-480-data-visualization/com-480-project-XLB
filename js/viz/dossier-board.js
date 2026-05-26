@@ -16,7 +16,7 @@ import {
   regression,
   renderLegend,
   setActiveButtons,
-} from "../utils.js?v=20260526-final2";
+} from "../utils.js?v=20260526-final3";
 
 export function createDossierBoard(movies) {
   const container = document.getElementById("dossier-viz");
