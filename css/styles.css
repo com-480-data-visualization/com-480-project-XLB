@@ -1251,29 +1251,60 @@ section {
   max-width: 820px;
 }
 
-.closing-quote {
-  background: var(--paper-3);
-  border-left: 3px solid var(--gold);
-  box-shadow: var(--shadow);
-  margin: 46px 0;
+.closing-screen {
+  background:
+    radial-gradient(ellipse at center, rgba(212, 168, 48, 0.09), transparent 58%),
+    #100d09;
+  border: 1px solid #423323;
+  box-shadow: 0 30px 76px rgba(16, 13, 9, 0.24);
+  color: var(--hero-text);
+  margin-top: 68px;
   overflow: hidden;
-  padding: 37px clamp(24px, 6vw, 64px);
+  padding: clamp(44px, 6vw, 62px) clamp(24px, 7vw, 82px) 37px;
   position: relative;
   text-align: center;
 }
 
-.closing-quote::before {
-  background: repeating-linear-gradient(90deg, var(--gold) 0 22px, transparent 22px 31px);
+.closing-screen::after {
+  background: radial-gradient(ellipse at 50% -20%, rgba(212, 168, 48, 0.16), transparent 48%);
   content: "";
-  height: 3px;
-  left: 0;
-  opacity: 0.7;
+  inset: 0;
+  pointer-events: none;
   position: absolute;
-  right: 0;
-  top: 0;
 }
 
-.closing-quote.visible::after {
+.closing-screen-frame span {
+  background: repeating-linear-gradient(90deg, #d4a830 0 21px, transparent 21px 31px);
+  height: 3px;
+  left: 24px;
+  opacity: 0.48;
+  position: absolute;
+  right: 24px;
+  top: 16px;
+}
+
+.closing-screen-frame span:last-child {
+  bottom: 16px;
+  top: auto;
+}
+
+.closing-kicker {
+  color: #c4ad87;
+  font: 10px var(--mono);
+  letter-spacing: 5px;
+  margin: 0 0 27px;
+  position: relative;
+  z-index: 1;
+}
+
+.closing-quote {
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+  position: relative;
+}
+
+.closing-screen.visible .closing-quote::after {
   animation: final-projection 1.15s 120ms ease-out both;
   background: linear-gradient(106deg, transparent 18%, rgba(212, 168, 48, 0.17) 50%, transparent 74%);
   content: "";
@@ -1284,26 +1315,18 @@ section {
 
 .closing-quote p {
   font: italic 500 clamp(27px, 4vw, 43px) / 1.42 var(--serif);
-  margin: 0 0 19px;
+  margin: 0;
   position: relative;
   z-index: 1;
 }
 
 .closing-quote strong {
-  color: var(--gold);
+  color: #d4a830;
 }
 
-.closing-quote.visible strong {
+.closing-screen.visible .closing-quote strong {
   animation: final-title 820ms 270ms ease-out both;
   display: inline-block;
-}
-
-.closing-quote cite {
-  color: var(--muted);
-  font: normal 10px var(--mono);
-  letter-spacing: 3px;
-  position: relative;
-  z-index: 1;
 }
 
 @keyframes final-projection {
@@ -1425,21 +1448,64 @@ section {
 }
 
 .credits {
-  border-top: 1px solid var(--line);
-  margin-top: 68px;
-  padding-top: 43px;
+  border-top: 1px solid rgba(196, 173, 135, 0.27);
+  margin-top: 43px;
+  padding-top: 32px;
+  position: relative;
   text-align: center;
+  z-index: 1;
+}
+
+.credits .section-label {
+  color: #d4a830;
 }
 
 .credits h3 {
+  color: var(--hero-text);
   font: 500 clamp(25px, 3vw, 35px) var(--serif);
-  margin: 13px 0;
+  margin: 17px auto 15px;
+  max-width: 970px;
+}
+
+.credits h3 span {
+  color: #d4a830;
+  margin: 0 9px;
 }
 
 .credits p:last-child {
-  color: var(--muted);
+  color: #c4ad87;
   font: 10px var(--mono);
   letter-spacing: 2px;
+}
+
+.end-mark {
+  color: #d4a830;
+  font: 500 11px var(--mono);
+  letter-spacing: 8px;
+  margin: 34px 0 0;
+  opacity: 0.8;
+  position: relative;
+  z-index: 1;
+}
+
+.closing-screen.visible .credits h3,
+.closing-screen.visible .end-mark {
+  animation: final-credits 700ms 420ms ease-out both;
+}
+
+.closing-screen.visible .end-mark {
+  animation-delay: 770ms;
+}
+
+@keyframes final-credits {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 footer {
