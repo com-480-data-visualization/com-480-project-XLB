@@ -1,5 +1,7 @@
 # CineScope — COM-480 Data Visualization
 
+**EPFL 2026 · Team XLB**
+
 The website is live at [CineScope](https://com-480-data-visualization.github.io/com-480-project-XLB/).
 
 | Student's name | SCIPER |
@@ -22,7 +24,9 @@ git clone git@github.com:com-480-data-visualization/com-480-project-XLB.git
 cd com-480-project-XLB
 ```
 
-### 2. Create and activate the conda environment
+### 2. Create and activate the analysis environment
+
+The committed web exports are sufficient to view the website. This Python environment is only required to reproduce preprocessing and analysis exports.
 
 ```bash
 conda create -n movies-viz python=3.11 -y
@@ -44,18 +48,49 @@ kaggle datasets download -d rounakbanik/the-movies-dataset -p data/raw/ --unzip
 2. Click Download (requires a free Kaggle account)
 3. Unzip and move all CSV files into `data/raw/`
 
-### 4. Run the preprocessing notebook
+### 4. Reproduce the processed web data
 
-Open and run all cells in `eda/preprocessing.ipynb`. This generates `data/processed/movies.csv`.
-
-### 5. Open the visualization
-
-Simply open `index.html` in any modern browser. The visualization runs entirely client-side — no server required.
+Open and run all cells in `eda/preprocessing.ipynb` to generate `data/processed/movies.csv`, then export the browser-ready data:
 
 ```bash
-# Quick local server (optional, for Chrome which blocks some file:// requests)
-python -m http.server 8080
-# then open http://localhost:8080
+python3 scripts/export_web_data.py
+```
+
+### 5. Run the visualization
+
+The website loads JSON files through `fetch`, so it must be served over HTTP:
+
+```bash
+python3 -m http.server 8080
+```
+
+Open <http://localhost:8080/>.
+
+---
+
+## Repository Map
+
+```text
+.
+├── index.html                    # Narrative page structure and view containers
+├── assets/images/cover.webp      # Optimized cinematic hero artwork
+├── css/styles.css                # Cinematic visual system and responsive layouts
+├── js/
+│   ├── app.js                    # Story text, loading, navigation and shared controls
+│   ├── data-loader.js            # Browser JSON loading
+│   ├── state.js                  # Coordinated genre and decade filters
+│   ├── utils.js                  # Formatting, sampling, tooltip and chart utilities
+│   └── viz/                      # One D3 module for each delivered visualization
+├── scripts/export_web_data.py    # Reproducible financial/franchise web export
+├── data/
+│   ├── README.md                 # Data contract and documented analysis rules
+│   ├── raw/                      # Kaggle downloads, not committed
+│   ├── processed/                # Notebook output, not committed
+│   └── web/                      # Compact JSON files loaded by the final website
+├── eda/                          # Preprocessing notebook, EDA notebook and figures
+├── sketches/                     # Milestone 2 visual design proposals
+├── MS2_XLB.pdf                   # Milestone 2 report
+└── process_book_XLB.pdf          # Milestone 3 process book
 ```
 
 ---
@@ -121,66 +156,63 @@ For inspiration we draw on the Pudding's essay-style scrollytelling pieces, the 
 
 See [MS2_XLB.pdf](MS2_XLB.pdf) for the full project description, visualization sketches, tools and work breakdown.
 
-CineScope is our interactive explorer structured around four coordinated views. The four views are:
+CineScope is our interactive explorer structured around four coordinated views. The four proposed views were:
 
 1. **The Dossier Board** — budget vs. revenue scatter with quadrant annotations and film hover cards
 2. **The Flow** — Sankey diagram mapping budget tiers through genres to financial outcomes
 3. **The Profitability Matrix** — genre × budget tier heatmap showing median ROI with a decade slider and drill-down view
 4. **Dynasties** — original vs. sequel revenue scatter with franchise drill-down panel
 
+Following the feedback highlighting the potential of *The Flow* and *Dynasties*, those views remain central to the final narrative and are driven by the real processed data in Milestone 3.
+
 ---
 
 ## Milestone 3
 
-### What was built
+### Final Story
 
-All four visualizations are fully implemented and interactive:
+**What makes a movie successful?** CineScope follows six possible signals of success: scale, genre, return, inheritance, applause, and directing track record. The story moves from individual films to production strategies, then tests whether audience rating, franchise identity, or a recognised director can remove uncertainty.
 
-**01 — The Dossier Board**
-- D3.js log-log scatter plot of production budget vs. box office revenue
-- Genre filter pills and Y-axis toggle (Revenue / ROI)
-- Break-even diagonal with quadrant annotations (Blockbusters, Micro-Budget Breakouts, Flops, Big-Budget Misses)
-- Rich hover tooltip showing title, year, budget, revenue, ROI, rating and director
-- Responsive to window resize
+> A movie can buy scale, earn applause, or inherit a name. None of them buys certainty.
 
-**02 — The Flow**
-- D3-Sankey diagram tracing films from budget tier → genre → financial outcome
-- Three-layer Sankey with node and link hover highlighting
-- Filter toggle: All Films / Hits Only (>3× ROI) / Flops Only (<1× ROI)
-- Node labels with film counts; link widths encode volume
+### Data Preparation
 
-**03 — The Profitability Matrix**
-- Genre × budget tier heatmap encoding median ROI per cell
-- Decade filter (1970s–2010s) and metric toggle (Median ROI / % Profitable)
-- Click any cell to reveal a ranked bar chart of films in that segment
-- Sequential color scale from dark (low) to gold (high)
+CineScope is built from *The Movies Dataset* (Kaggle/TMDb), enriched with MovieLens audience ratings and collection information. We clean and join the source tables in the analysis pipeline, then generate compact visualization resources with `scripts/export_web_data.py` so the interactive story can be served statically on GitHub Pages.
 
-**04 — Dynasties**
-- Bubble scatter: X = original film revenue (log), Y = peak sequel revenue / original (multiplier)
-- Bubble size encodes total franchise gross; color encodes genre
-- Reference line at multiplier = 1 (sequel equals original)
-- Click any franchise bubble to reveal its full revenue arc with ranked bar chart
-- Covers 15 major franchises from 1964–2021
+| Analysis rule | Final decision |
+| --- | --- |
+| Financial eligibility | Positive recorded revenue and budget of at least `$10,000` |
+| ROI definition | Gross box-office revenue divided by recorded production budget |
+| Release coverage | Films through 2017, the endpoint of the source dataset |
+| Rating evidence | MovieLens comparisons require at least 50 recorded ratings |
+| Franchise evidence | Every eligible sequel is compared with its collection's eligible original |
 
-### Technical implementation
+The budget threshold removes unstable ROI values created by implausibly tiny recorded costs while retaining genuine low-budget breakouts such as *Paranormal Activity* (`$15,000` recorded budget). After thresholding and ID de-duplication, the financial universe contains **5,317 films**. The website computes aggregated results from all eligible films; only the Dossier Board limits individual plotted marks to a deterministic stratified sample of at most **800** so bubbles remain readable.
 
-- **Framework**: Vanilla JavaScript + D3.js v7 + d3-sankey v0.12
-- **No build step**: single `index.html`, works directly from GitHub Pages
-- **Data**: curated embedded dataset of 140+ films covering all genres and decades 1968–2021; structured to accept a larger JSON dataset from the preprocessing pipeline
-- **Responsive**: all four scenes redraw on window resize
-- **Libraries**: D3.js (cdnjs), d3-sankey (jsdelivr), Google Fonts (Playfair Display, DM Mono, DM Sans)
+### Delivered Visualizations
 
-### Process book
+1. **The Dossier Board** is a D3 log-scale scatter plot of budget against revenue or ROI. Genre and decade filters, title search, brush inspection, film tooltips, a break-even line, and named outcome regions let readers start with concrete movies.
+2. **The Flow** is a D3-Sankey view from budget tier to genre to commercial outcome. Width encodes the number of eligible films; hovering traces a path and selecting a genre coordinates the wider story.
+3. **The Profitability Matrix** is a genre-by-budget heatmap toggling median ROI and profitable share. Selecting a cell opens its ROI distribution against the complete current comparison group.
+4. **Dynasties** compares **all** eligible sequels with their original on revenue, ROI, or rating. Selecting a collection opens its chronological franchise reel against the original-film baseline.
+5. **Applause vs. Receipts** groups sufficiently rated films into audience-rating bands. Each band exposes its revenue or ROI range, middle 50%, median, and hoverable film evidence.
+6. **The Name Above The Title** ranks repeat directors as portfolios by median ROI or total gross, with minimum-film thresholds and a selected-film detail panel.
 
-See [process_book_XLB.pdf](process_book_XLB.pdf) for the full process book covering design rationale, development process, data decisions, and team contributions.
+### Narrative And Interaction
 
-### Screencast
+The persistent genre and decade controls update every relevant view. Scene-level metric switches let users distinguish total box office from gross return, while hover cards and drill-down panels preserve identifiable films behind aggregates.
 
-See [screencast_XLB.mp4](screencast_XLB.mp4) for the 2-minute demonstration video.
+The story tests a series of familiar promises: spend more, select the right genre, extend a successful franchise, win audience approval, or hire a recognised director. The Dossier Board exposes the wide spread of outcomes behind comparable budgets. The Flow and Profitability Matrix then show that genre and scale operate together, with Horror leading the displayed genres in median return. Dynasties tests inherited success more directly: across **573** eligible sequel-to-original comparisons in **309** collections, only **46.6%** of sequels outgross their original. Applause vs. Receipts adds a second definition of success: MovieLens rating and logged gross revenue show almost no association in this sample (`r = 0.017`). Together, the views support the concluding claim that cinema offers several paths to success, but no dependable formula.
 
----
+### Technical Implementation And Intended Usage
 
-### Late policy
+- **Framework:** semantic HTML, modular vanilla JavaScript ES modules, CSS, and D3.js v7.
+- **Specialized layouts:** `d3-sankey` for the flow diagram plus custom D3 heatmap, interval, reel, and ranked-marquee layouts.
+- **Data delivery:** compact generated JSON files in `data/web/`, suitable for static GitHub Pages deployment.
+- **Architecture:** shared application state for genre and decade; independent view modules under `js/viz/`.
+- **Presentation mode:** the default `Dark Room` palette provides cinematic contrast, with an optional light-room toggle.
+- **Use:** an exploratory editorial visualization for observed relationships, not a causal or revenue-prediction model.
 
-- < 24h late: 80% of the grade for the milestone
-- < 48h late: 70% of the grade for the milestone
+### Process Book
+
+The full design process, evolution from the Milestone 2 sketches, data decisions, technical challenges, and peer-assessment breakdown are documented in the [Milestone 3 process book](process_book_XLB.pdf).

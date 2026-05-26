@@ -1,2193 +1,347 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CineScope — COM-480 Final Cut</title>
-<meta name="description" content="CineScope is an interactive COM-480 D3.js data story about movie budgets, box office revenue, ratings, genres, franchises and directors.">
-<meta name="theme-color" content="#0d0b08">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-:root{
-  --bg:#f2ebe0;--surface:#e8dfd0;--card:#dfd5c2;
-  --border:#c4aa84;--border2:#b09870;
-  --gold:#a0720c;--gold2:#7a5408;--gold-dim:#b8882a;--gold-bright:#d4a830;
-  --hero-bg:#0d0b08;--hero-border:#3a2e1e;
-  --text:#1e1408;--text-hero:#f0e6d0;--muted:#6b5a3a;--muted-hero:#a89070;--muted2:#4a3820;
-  --red:#9b3a28;--green:#4a8a5a;
-  --serif:'Playfair Display',Georgia,serif;
-  --mono:'DM Mono',monospace;
-  --sans:'DM Sans',system-ui,sans-serif;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.7;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:1000;opacity:.22}
-
-/* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:900;height:56px;display:flex;align-items:center;padding:0 40px;background:rgba(13,11,8,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--hero-border)}
-.logo{font-family:var(--mono);font-size:13px;letter-spacing:4px;color:var(--text-hero);margin-right:48px;flex-shrink:0}
-.logo em{color:var(--gold-bright);font-style:normal}
-.nav-links{display:flex;flex:1}
-.nav-links a{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--muted-hero);text-decoration:none;padding:0 18px;height:56px;display:flex;align-items:center;border-right:1px solid var(--hero-border);transition:color .2s,background .2s}
-.nav-links a:first-child{border-left:1px solid var(--hero-border)}
-.nav-links a:hover{color:var(--gold-bright);background:rgba(212,168,48,.07)}
-.nav-links a.active{color:var(--gold-bright)}
-.nav-right{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--muted-hero);letter-spacing:1px}
-
-/* HERO */
-#hero{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:0 40px 80px;position:relative;overflow:hidden;background-image:url('cover.png');background-size:cover;background-position:center top;background-color:var(--hero-bg);max-width:100%;width:100%;margin-left:0;margin-right:0}
-.hero-bg{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(8,6,3,.50) 0%,rgba(8,6,3,.25) 40%,rgba(8,6,3,.88) 100%);z-index:1}
-.hero-filmstrip{position:absolute;top:0;left:0;right:0;height:4px;background:repeating-linear-gradient(to right,var(--gold-bright) 0px,var(--gold-bright) 20px,transparent 20px,transparent 28px);opacity:.7;z-index:3}
-.hero-content{position:relative;z-index:2;max-width:800px}
-.hero-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:4px;color:var(--gold-bright);margin-bottom:20px;opacity:0;animation:fadeUp .8s .3s forwards}
-h1{font-family:var(--serif);font-size:clamp(42px,6vw,72px);font-weight:700;color:var(--text-hero);line-height:1.05;margin-bottom:24px;opacity:0;animation:fadeUp .8s .5s forwards}
-h1 em{color:var(--gold-bright);font-style:italic}
-.hero-sub{font-size:15px;color:var(--muted-hero);max-width:480px;line-height:1.8;opacity:0;animation:fadeUp .8s .7s forwards}
-.hero-stats{display:flex;gap:48px;margin-top:48px;opacity:0;animation:fadeUp .8s .9s forwards}
-.hero-stat-n{font-family:var(--serif);font-size:36px;font-weight:700;color:var(--gold-bright)}
-.hero-stat-label{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--muted-hero);margin-top:4px}
-.scroll-hint{position:absolute;bottom:32px;right:40px;z-index:3;font-family:var(--mono);font-size:9px;letter-spacing:4px;color:var(--muted-hero);writing-mode:vertical-rl;animation:pulse 2s infinite}
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
-
-/* SECTIONS */
-section{padding:100px 40px;border-top:1px solid var(--border);max-width:1400px;margin:0 auto}
-.scene-header{display:flex;align-items:baseline;gap:20px;margin-bottom:12px}
-.scene-tag{font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--gold)}
-h2{font-family:var(--serif);font-size:clamp(28px,4vw,44px);font-weight:700;color:var(--text)}
-.scene-q{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:1px;margin-bottom:8px}
-.scene-narrative{font-size:14px;color:var(--muted2);max-width:640px;line-height:1.85;margin-bottom:32px;border-left:2px solid var(--gold-dim);padding-left:16px}
-
-
-/* PERFORMANCE PASS */
-section:not(#hero){content-visibility:auto;contain-intrinsic-size:900px;contain:layout paint style;scroll-margin-top:64px}
-.viz-frame svg{display:block;max-width:100%}
-@media(max-width:760px){section:not(#hero){contain-intrinsic-size:760px}.hero-marquee span{animation-duration:36s}}
-
-/* CONTROLS */
-.controls{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:24px}
-.ctrl-label{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--muted)}
-.divider{width:1px;height:20px;background:var(--border);margin:0 8px}
-.pill{font-family:var(--mono);font-size:10px;letter-spacing:1px;padding:5px 12px;border:1px solid var(--border);background:transparent;color:var(--muted2);cursor:pointer;border-radius:2px;transition:all .2s}
-.pill:hover{border-color:var(--gold-dim);color:var(--gold)}
-.pill.active{background:var(--gold);border-color:var(--gold);color:#fff}
-
-/* VIZ FRAME */
-.viz-frame{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:24px}
-.viz-corner{position:absolute;font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--muted);padding:12px 16px;z-index:5;pointer-events:none}
-.viz-corner.tl{top:0;left:0}
-.viz-corner.tr{top:0;right:0}
-
-/* TOOLTIP */
-#tooltip{position:fixed;pointer-events:none;z-index:9999;background:rgba(13,11,8,.96);border:1px solid var(--hero-border);border-radius:4px;padding:14px 18px;min-width:210px;opacity:0;transition:opacity .15s;backdrop-filter:blur(8px)}
-.tt-title{font-family:var(--serif);font-size:15px;color:var(--text-hero);margin-bottom:10px;font-weight:700}
-.tt-row{display:flex;justify-content:space-between;gap:24px;font-family:var(--mono);font-size:10px;color:var(--muted-hero);margin-bottom:4px}
-.tt-row span{color:var(--text-hero)}
-.gold-txt{color:var(--gold-bright)!important}
-.red-txt{color:#e05a4a!important}
-
-/* LEGEND */
-.legend{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:8px}
-.legend-item{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--muted2);letter-spacing:1px;cursor:pointer;user-select:none;transition:color .2s}
-.legend-item:hover{color:var(--text)}
-.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-
-/* D3 AXES */
-.tick line{stroke:var(--border)}
-.tick text{fill:var(--muted);font-family:var(--mono);font-size:9px;letter-spacing:1px}
-.domain{stroke:var(--border)}
-.quadrant-label{fill:var(--border2);font-family:var(--mono);font-size:9px;letter-spacing:2px}
-
-/* MATRIX DETAIL */
-.matrix-detail{background:var(--card);border:1px solid var(--border);border-radius:4px;padding:20px 24px;margin-top:16px}
-.detail-title{font-family:var(--serif);font-size:18px;color:var(--text);margin-bottom:14px}
-
-/* FILM BAR ROWS */
-.film-row{display:flex;align-items:center;gap:8px;margin-bottom:9px;font-family:var(--mono);font-size:10px}
-.film-row-label{min-width:145px;max-width:145px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted2)}
-.film-row-label.c-gold{color:var(--gold-dim)}
-.film-row-label.c-green{color:var(--green)}
-.film-row-track{flex:1;height:16px;background:var(--surface);border-radius:2px;overflow:hidden}
-.film-row-fill{height:100%;border-radius:2px;transition:width .5s ease}
-.film-row-val{min-width:52px;text-align:right;color:var(--muted)}
-.film-row-val.c-gold{color:var(--gold-dim)}
-.film-row-val.c-green{color:var(--green)}
-
-/* DYNASTY */
-.dynasty-layout{display:grid;grid-template-columns:1fr 360px;gap:20px;align-items:start}
-.dynasty-panel{background:var(--card);border:1px solid var(--border);border-radius:4px;padding:20px;min-height:360px}
-.dynasty-panel-placeholder{color:var(--muted);font-family:var(--mono);font-size:10px;letter-spacing:2px;margin-top:90px;text-align:center;line-height:2.2}
-
-/* FOOTER */
-footer{border-top:1px solid var(--border);padding:32px 40px;display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--muted);max-width:1400px;margin:0 auto}
-
-@media(max-width:960px){
-  section{padding:60px 20px}
-  nav{padding:0 20px}
-  .nav-links a{padding:0 10px;font-size:9px}
-  .dynasty-layout{grid-template-columns:1fr}
-}
-
-/* SEARCH */
-.search-wrap{display:flex;align-items:center;gap:10px;margin-top:12px;margin-bottom:0}
-.search-input{font-family:var(--mono);font-size:11px;letter-spacing:1px;padding:7px 14px;border:1px solid var(--border);background:var(--surface);color:var(--text);width:260px;border-radius:2px;outline:none;transition:border-color .2s}
-.search-input:focus{border-color:var(--gold-dim)}
-.search-input::placeholder{color:var(--muted)}
-.search-clear{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--muted);cursor:pointer;display:none;padding:4px 8px;border:1px solid var(--border);border-radius:2px;background:transparent;transition:all .2s}
-.search-clear:hover{color:var(--gold);border-color:var(--gold-dim)}
-.search-hint{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1px}
-
-/* PARADOX QUADRANT LABELS */
-.quad-label{font-family:var(--mono);font-size:9px;letter-spacing:2px;opacity:.5}
-
-/* DIRECTOR CHART */
-.dir-row-label{font-family:var(--mono);font-size:10px;fill:var(--muted2);letter-spacing:.5px}
-.dir-median-label{font-family:var(--mono);font-size:9px;fill:var(--gold-dim)}
-
-
-/* ═══════════════════════════════════════════════════════════
-   WOW LAYER — cinematic product polish for Milestone 3
-   ═══════════════════════════════════════════════════════════ */
-:root{--glow:0 0 32px rgba(212,168,48,.26);--shadow-xl:0 30px 90px rgba(22,13,4,.18);--nav-h:56px}
-body{background:
-  radial-gradient(circle at 12% 8%,rgba(212,168,48,.14),transparent 30vw),
-  radial-gradient(circle at 85% 20%,rgba(155,58,40,.10),transparent 28vw),
-  linear-gradient(180deg,#efe4d0 0%,var(--bg) 38%,#eadfcd 100%);
-}
-body.dark-room{
-  --bg:#090806;--surface:#12100c;--card:#1d1710;--border:#4e3a23;--border2:#705325;
-  --text:#f2e8d3;--muted:#aa9271;--muted2:#d0bd9f;--gold:#d4a830;--gold2:#a77b18;
-  background:radial-gradient(circle at 18% 10%,rgba(212,168,48,.13),transparent 34vw),linear-gradient(180deg,#070604,#11100d 42%,#0a0907);
-}
-body.dark-room section,body.dark-room footer{border-color:var(--border)}
-body.dark-room .scene-narrative,body.dark-room .viz-frame,body.dark-room .matrix-detail,body.dark-room .dynasty-panel{box-shadow:0 18px 80px rgba(0,0,0,.24)}
-body.is-loading{overflow:hidden}
-.progress-bar{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--gold-bright),#fff0b8,var(--red));z-index:1200;box-shadow:var(--glow);transition:width .08s linear}
-#preloader{position:fixed;inset:0;z-index:1500;display:grid;place-items:center;background:#0d0b08;color:var(--text-hero);transition:opacity .55s ease,visibility .55s ease}
-#preloader.loaded{opacity:0;visibility:hidden;pointer-events:none}
-.loader-card{width:min(520px,88vw);border:1px solid #3a2e1e;border-radius:20px;padding:34px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));box-shadow:0 34px 120px rgba(0,0,0,.52);position:relative;overflow:hidden}
-.loader-card::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 34px,rgba(212,168,48,.14) 34px 36px);opacity:.28;animation:loaderSlide 1.2s linear infinite}
-.loader-mark{font-family:var(--mono);letter-spacing:7px;font-size:12px;color:var(--gold-bright);position:relative}.loader-title{font-family:var(--serif);font-size:clamp(36px,8vw,76px);line-height:.95;margin:14px 0 20px;position:relative}.loader-bar{height:3px;background:rgba(212,168,48,.18);overflow:hidden;border-radius:99px;position:relative}.loader-bar span{display:block;height:100%;width:38%;background:linear-gradient(90deg,transparent,var(--gold-bright),transparent);animation:loaderBar 1s ease-in-out infinite}
-@keyframes loaderSlide{to{transform:translateX(36px)}}@keyframes loaderBar{0%{transform:translateX(-110%)}100%{transform:translateX(280%)}}
-.cinema-cursor{position:fixed;left:0;top:0;width:280px;height:280px;pointer-events:none;z-index:2;opacity:.38;transform:translate(-9999px,-9999px);background:radial-gradient(circle,rgba(212,168,48,.13),transparent 64%);mix-blend-mode:multiply;transition:opacity .25s ease}.dark-room .cinema-cursor{mix-blend-mode:screen;opacity:.26}@media(pointer:coarse){.cinema-cursor{display:none}}
-nav{box-shadow:0 10px 40px rgba(0,0,0,.18)}
-.nav-tools{display:flex;align-items:center;gap:8px;margin-left:18px}.nav-chip{border:1px solid rgba(212,168,48,.35);background:rgba(212,168,48,.08);color:var(--text-hero);font-family:var(--mono);font-size:9px;letter-spacing:1.6px;padding:8px 10px;border-radius:999px;cursor:pointer;transition:all .2s}.nav-chip:hover{background:rgba(212,168,48,.18);transform:translateY(-1px)}
-#hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,430px);gap:42px;align-items:end;padding-top:120px;background-attachment:scroll;max-width:100%;width:100%;margin-left:0;margin-right:0}.hero-bg{background:radial-gradient(circle at var(--mx,50%) var(--my,35%),rgba(212,168,48,.12),transparent 28vw),linear-gradient(100deg,rgba(8,6,3,.72) 0%,rgba(8,6,3,.22) 44%,rgba(8,6,3,.72) 100%)}
-.hero-content{max-width:860px}.hero-sub{font-size:16px;max-width:560px}.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px;opacity:0;animation:fadeUp .8s 1s forwards}.hero-btn{display:inline-flex;align-items:center;gap:10px;text-decoration:none;border:1px solid rgba(212,168,48,.48);border-radius:999px;padding:11px 16px;font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--text-hero);background:rgba(13,11,8,.42);backdrop-filter:blur(14px);transition:all .25s}.hero-btn:hover{transform:translateY(-2px);background:rgba(212,168,48,.14);box-shadow:var(--glow)}.hero-btn.primary{background:var(--gold-bright);color:#130d04;border-color:var(--gold-bright);font-weight:700}.hero-btn.primary:hover{background:#f0c956}
-.hero-dashboard{position:relative;z-index:2;border:1px solid rgba(212,168,48,.34);border-radius:24px;padding:20px;background:linear-gradient(180deg,rgba(13,11,8,.76),rgba(13,11,8,.46));backdrop-filter:blur(18px);box-shadow:0 30px 100px rgba(0,0,0,.34);opacity:0;animation:fadeUp .8s 1.1s forwards}.dashboard-kicker{font-family:var(--mono);font-size:10px;letter-spacing:4px;color:var(--gold-bright);margin-bottom:14px}.dash-grid{display:grid;gap:10px}.dash-card{border:1px solid rgba(240,230,208,.12);border-radius:16px;padding:14px;background:rgba(255,255,255,.045);overflow:hidden;position:relative}.dash-card::after{content:'';position:absolute;inset:auto -30% -70% -30%;height:90%;background:radial-gradient(circle,rgba(212,168,48,.16),transparent 64%)}.dash-label{font-family:var(--mono);font-size:9px;letter-spacing:2.4px;color:var(--muted-hero);text-transform:uppercase}.dash-value{font-family:var(--serif);font-size:25px;line-height:1.1;color:var(--text-hero);margin:6px 0;position:relative}.dash-note{font-family:var(--mono);font-size:10px;color:var(--gold-bright);position:relative}.hero-marquee{margin-top:14px;overflow:hidden;border-top:1px solid rgba(212,168,48,.2);padding-top:12px;font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--muted-hero);white-space:nowrap}.hero-marquee span{display:inline-block;padding-left:100%;animation:marquee 24s linear infinite}@keyframes marquee{to{transform:translateX(-100%)}}
-section{position:relative}.story-lobby{padding-top:88px;padding-bottom:88px}.story-shell{display:grid;grid-template-columns:minmax(240px,360px) 1fr;gap:30px;align-items:start}.section-kicker{font-family:var(--mono);font-size:10px;letter-spacing:4px;color:var(--gold);margin-bottom:12px}.story-title{font-family:var(--serif);font-size:clamp(34px,5vw,62px);line-height:1.02;margin-bottom:18px}.story-copy{color:var(--muted2);font-size:15px;line-height:1.9}.chapter-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.chapter-card{display:block;min-height:168px;text-decoration:none;color:var(--text);border:1px solid var(--border);border-radius:22px;padding:18px;background:linear-gradient(145deg,rgba(255,255,255,.30),rgba(255,255,255,.05));box-shadow:var(--shadow-xl);position:relative;overflow:hidden;transition:transform .25s,border-color .25s,box-shadow .25s}.chapter-card::before{content:attr(data-num);position:absolute;right:14px;top:8px;font-family:var(--serif);font-size:64px;color:rgba(160,114,12,.12);line-height:1}.chapter-card:hover{transform:translateY(-7px);border-color:var(--gold-dim);box-shadow:0 28px 90px rgba(160,114,12,.20)}.chapter-card h3{font-family:var(--serif);font-size:23px;margin:28px 0 8px;position:relative}.chapter-card p{font-size:12px;line-height:1.65;color:var(--muted2);position:relative}.chapter-tag{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--gold);position:relative}
-.scene-header::after{content:'';height:1px;flex:1;background:linear-gradient(90deg,var(--border),transparent)}.scene-tag{display:grid;place-items:center;width:34px;height:34px;border:1px solid var(--border);border-radius:50%;background:rgba(212,168,48,.08)}.scene-narrative{background:linear-gradient(90deg,rgba(212,168,48,.10),transparent);border-radius:0 18px 18px 0;padding-top:14px;padding-bottom:14px}.viz-frame{border-radius:22px;box-shadow:var(--shadow-xl);transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease}.viz-frame:hover{transform:translateY(-2px);border-color:var(--gold-dim);box-shadow:0 36px 100px rgba(160,114,12,.18)}.pill{border-radius:999px}.pill.active{box-shadow:var(--glow)}
-.final-cut{padding-bottom:110px}.takeaway-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:28px}.take-card{border:1px solid var(--border);border-radius:24px;padding:24px;background:linear-gradient(145deg,var(--surface),rgba(255,255,255,.18));box-shadow:var(--shadow-xl);min-height:230px}.take-card .num{font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--gold);margin-bottom:18px}.take-card h3{font-family:var(--serif);font-size:28px;line-height:1.08;margin-bottom:12px}.take-card p{color:var(--muted2);font-size:14px;line-height:1.8}.take-metric{margin-top:18px;font-family:var(--mono);font-size:11px;letter-spacing:1px;color:var(--gold2)}
-.palette{position:fixed;inset:0;z-index:1400;display:none;align-items:flex-start;justify-content:center;padding-top:90px;background:rgba(9,8,6,.58);backdrop-filter:blur(10px)}.palette.open{display:flex}.palette-box{width:min(680px,92vw);max-height:78vh;overflow:hidden;border:1px solid rgba(212,168,48,.42);border-radius:24px;background:rgba(13,11,8,.96);box-shadow:0 34px 140px rgba(0,0,0,.62);color:var(--text-hero)}.palette-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid rgba(212,168,48,.18);font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--gold-bright)}.palette-close{border:0;background:transparent;color:var(--muted-hero);cursor:pointer;font-size:22px}.palette-input{width:100%;border:0;background:transparent;color:var(--text-hero);font-family:var(--serif);font-size:31px;outline:none;padding:22px 24px;border-bottom:1px solid rgba(212,168,48,.18)}.palette-input::placeholder{color:rgba(240,230,208,.32)}.palette-results{max-height:420px;overflow:auto;padding:10px}.palette-item{display:grid;grid-template-columns:1fr auto;gap:12px;padding:13px 14px;border-radius:16px;cursor:pointer;border:1px solid transparent}.palette-item:hover,.palette-item.active{background:rgba(212,168,48,.10);border-color:rgba(212,168,48,.22)}.palette-title{font-family:var(--serif);font-size:17px}.palette-meta{font-family:var(--mono);font-size:10px;color:var(--muted-hero);letter-spacing:1px}.floating-help{position:fixed;right:18px;bottom:18px;z-index:920;border:1px solid var(--border);border-radius:999px;background:rgba(13,11,8,.86);color:var(--text-hero);font-family:var(--mono);font-size:10px;letter-spacing:2px;padding:12px 14px;cursor:pointer;box-shadow:0 16px 50px rgba(0,0,0,.22)}.floating-help:hover{border-color:var(--gold-bright);box-shadow:var(--glow)}
-[data-reveal]{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}[data-reveal].is-visible{opacity:1;transform:none}.story-mode .chapter-card{outline:1px solid rgba(212,168,48,.22)}.story-toast{position:fixed;left:50%;bottom:24px;z-index:930;transform:translateX(-50%) translateY(30px);opacity:0;pointer-events:none;border:1px solid rgba(212,168,48,.35);border-radius:999px;padding:11px 16px;background:rgba(13,11,8,.88);color:var(--text-hero);font-family:var(--mono);font-size:10px;letter-spacing:1.6px;transition:.28s}.story-mode .story-toast{opacity:1;transform:translateX(-50%) translateY(0)}
-@media(max-width:1180px){#hero{grid-template-columns:1fr}.hero-dashboard{max-width:720px}.chapter-grid,.takeaway-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.nav-right{display:none}}
-@media(max-width:760px){nav{height:auto;min-height:56px;padding:0 14px;flex-wrap:wrap}.nav-links{order:3;width:100%;overflow:auto}.nav-links a{height:44px;white-space:nowrap}.nav-tools{margin-left:auto}.nav-chip{padding:7px 9px}.hero-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}#hero{padding:110px 20px 72px;background-attachment:scroll}.story-shell{grid-template-columns:1fr}.chapter-grid,.takeaway-grid{grid-template-columns:1fr}.hero-dashboard{padding:14px}.palette{padding-top:64px}footer{display:block;line-height:2}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.001ms!important}.hero-marquee span{animation:none;padding-left:0}.cinema-cursor{display:none}}
-
-
-/* ═══════════════════════════════════════════════════════════
-   DIRECTORS' LEAGUE — upgraded interactive analytics module
-   ═══════════════════════════════════════════════════════════ */
-.director-kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:28px 0 20px}
-.director-kpi{position:relative;overflow:hidden;border:1px solid var(--border);border-radius:22px;padding:16px;background:linear-gradient(145deg,rgba(255,255,255,.32),rgba(255,255,255,.05));box-shadow:var(--shadow-xl);min-height:132px}
-.director-kpi::after{content:'';position:absolute;right:-44px;bottom:-58px;width:150px;height:150px;background:radial-gradient(circle,rgba(212,168,48,.20),transparent 66%)}
-.director-kpi-label{font-family:var(--mono);font-size:9px;letter-spacing:2.4px;color:var(--gold);text-transform:uppercase;position:relative}
-.director-kpi-value{font-family:var(--serif);font-size:clamp(24px,3vw,36px);line-height:1.05;margin:12px 0 8px;position:relative}
-.director-kpi-note{font-family:var(--mono);font-size:10px;line-height:1.6;color:var(--muted2);position:relative}
-.director-controls{align-items:flex-start;margin-top:20px;margin-bottom:18px;padding:14px;border:1px solid rgba(196,170,132,.62);border-radius:20px;background:linear-gradient(90deg,rgba(212,168,48,.09),rgba(255,255,255,.06))}
-.director-control-group{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.director-control-group + .director-control-group{margin-left:4px}
-.director-league-layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:18px;align-items:start}
-.director-panel{position:sticky;top:78px;border:1px solid var(--border);border-radius:24px;background:linear-gradient(150deg,var(--card),rgba(255,255,255,.10));box-shadow:var(--shadow-xl);padding:20px;min-height:520px;overflow:hidden}
-.director-panel::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 82% 0%,rgba(212,168,48,.18),transparent 34%),radial-gradient(circle at 0% 100%,rgba(155,58,40,.11),transparent 42%);pointer-events:none}
-.director-panel > *{position:relative}.director-panel-kicker{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--gold);margin-bottom:8px;text-transform:uppercase}.director-panel-name{font-family:var(--serif);font-size:34px;line-height:1.05;margin-bottom:10px}.director-panel-rank{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(160,114,12,.34);border-radius:999px;padding:6px 9px;font-family:var(--mono);font-size:9px;letter-spacing:1.6px;color:var(--gold2);background:rgba(212,168,48,.10);margin-bottom:18px}
-.director-panel-metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px}.director-panel-metric{border:1px solid rgba(196,170,132,.72);border-radius:16px;padding:12px;background:rgba(255,255,255,.12)}.director-panel-metric .label{font-family:var(--mono);font-size:8px;letter-spacing:2px;color:var(--muted);text-transform:uppercase}.director-panel-metric .value{font-family:var(--serif);font-size:24px;line-height:1.1;margin-top:5px}.director-panel-metric .sub{font-family:var(--mono);font-size:9px;color:var(--muted2);margin-top:4px}
-.director-verdict{border-left:2px solid var(--gold-dim);padding:10px 0 10px 13px;margin:10px 0 18px;color:var(--muted2);font-size:13px;line-height:1.75;background:linear-gradient(90deg,rgba(212,168,48,.10),transparent)}
-.director-film-list{display:grid;gap:9px;margin-top:12px}.director-film-row{display:grid;grid-template-columns:1fr 76px;gap:10px;align-items:center;font-family:var(--mono);font-size:9px}.director-film-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted2)}.director-film-bar{height:10px;border-radius:999px;background:rgba(196,170,132,.22);overflow:hidden}.director-film-fill{height:100%;border-radius:999px}.director-film-value{text-align:right;color:var(--gold2)}
-.director-empty{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--muted);padding:80px 24px;text-align:center;line-height:2}.director-legend{display:flex;flex-wrap:wrap;gap:12px;margin:14px 0 0}.director-legend .legend-item{cursor:default}.director-row-label{font-family:var(--mono);font-size:10px;fill:var(--muted2);letter-spacing:.5px}.director-row-small{font-family:var(--mono);font-size:8px;fill:var(--muted);letter-spacing:.6px}.director-rank{font-family:var(--mono);font-size:8px;fill:var(--gold2);letter-spacing:1px}.director-axis-label{font-family:var(--mono);font-size:9px;fill:var(--muted);letter-spacing:1.8px}.director-median-label{font-family:var(--mono);font-size:8px;fill:var(--gold2);letter-spacing:.7px}.director-row-bg{fill:transparent;cursor:pointer}.director-row-bg:hover{fill:rgba(212,168,48,.08)}.director-row-bg.selected{fill:rgba(212,168,48,.13);stroke:rgba(212,168,48,.24);stroke-width:1}
-body.dark-room .director-kpi,body.dark-room .director-panel,body.dark-room .director-controls{background:linear-gradient(145deg,rgba(255,255,255,.06),rgba(255,255,255,.02))}body.dark-room .director-panel-metric{background:rgba(255,255,255,.045)}body.dark-room .director-panel-rank{color:var(--gold-bright)}
-@media(max-width:1100px){.director-kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.director-league-layout{grid-template-columns:1fr}.director-panel{position:relative;top:auto;min-height:0}}
-@media(max-width:720px){.director-kpi-grid{grid-template-columns:1fr}.director-controls{display:block}.director-control-group{margin-bottom:10px}.director-panel-metrics{grid-template-columns:1fr}}
-
-
-
-/* Director clarity pass — more rows, clearer scale, readable labels */
-#directors-frame{overflow:hidden}
-#directors-viz{overflow-x:auto;overflow-y:hidden;scrollbar-width:thin}
-#directors-viz svg{display:block;min-width:780px}
-.director-chart-note{margin-top:10px;font-family:var(--mono);font-size:10px;letter-spacing:1px;line-height:1.7;color:var(--muted2);border-left:2px solid var(--gold-dim);padding-left:12px}
-.director-league-layout{grid-template-columns:minmax(0,1fr) 390px}
-.director-row-label{font-size:11px;font-weight:600;fill:var(--text);letter-spacing:.25px}
-.director-row-small{font-size:8.5px;fill:var(--muted);letter-spacing:.55px}
-.director-rank{font-size:8.5px;font-weight:700;fill:var(--gold2)}
-.director-axis-label{font-size:9.5px;fill:var(--muted2);letter-spacing:1.3px;font-weight:600}
-.director-median-label{font-size:9px;font-weight:700;fill:var(--gold2)}
-.director-row-bg{fill:rgba(255,255,255,.045);cursor:pointer}
-.director-row-bg.alt{fill:rgba(196,170,132,.055)}
-.director-row-bg:hover{fill:rgba(212,168,48,.13)}
-.director-row-bg.selected{fill:rgba(212,168,48,.18);stroke:rgba(212,168,48,.42);stroke-width:1.2}
-.director-guide-label{font-family:var(--mono);font-size:8.5px;letter-spacing:1.5px;font-weight:700}
-body.dark-room .director-row-label{fill:var(--text-hero)}
-body.dark-room .director-row-bg{fill:rgba(255,255,255,.035)}
-body.dark-room .director-row-bg.alt{fill:rgba(255,255,255,.055)}
-body.dark-room .director-chart-note{color:var(--muted-hero)}
-@media(max-width:1100px){.director-league-layout{grid-template-columns:1fr}.director-panel{position:relative;top:auto}}
-
-/* ═══════════════════════════════════════════════════════════
-   WOW POLISH — micro-interactions & content clarity
-   ═══════════════════════════════════════════════════════════ */
-
-/* Pulsing live indicator dot */
-.live-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--gold-bright);margin-right:7px;vertical-align:middle;animation:livePulse 1.6s ease-in-out infinite;box-shadow:0 0 6px var(--gold-bright)}
-@keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.55)}}
-
-/* Scene tag circle glow on hover */
-.scene-tag{transition:box-shadow .25s,border-color .25s}
-.scene-tag:hover{box-shadow:var(--glow);border-color:var(--gold-bright)}
-
-/* Nav links: relative so active underline works */
-.nav-links a{position:relative}
-.nav-links a.active::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--gold-bright);box-shadow:0 0 8px var(--gold-bright);opacity:.7}
-
-/* Scroll hint bounce */
-.scroll-hint::after{content:' ↓';display:inline-block;animation:bounceArrow 1.6s ease-in-out infinite}
-@keyframes bounceArrow{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
-
-/* Hero h1 subtle glow */
-#hero h1{text-shadow:0 4px 40px rgba(212,168,48,.18)}
-
-/* Chapter card entrance: stagger already handled, add scale micro */
-.chapter-card:hover h3{color:var(--gold)}
-.chapter-card h3{transition:color .22s}
-
-/* Take-card subtle top accent */
-.take-card{border-top:2px solid var(--gold-dim)}
-body.dark-room .take-card{border-top-color:var(--gold)}
-
-/* Scene header line extension with gradient tail */
-.scene-header::after{background:linear-gradient(90deg,var(--border),transparent 60%)}
-
-/* ── Final Cut extras ─────────────────────────────────────── */
-
-/* Pull quote */
-.final-quote{position:relative;padding:32px 36px 28px 62px;margin:40px 0 52px;background:linear-gradient(135deg,rgba(212,168,48,.10),rgba(255,255,255,.04));border-radius:24px;border-left:3px solid var(--gold-bright);box-shadow:var(--shadow-xl)}
-.fq-mark{position:absolute;left:14px;top:2px;font-family:var(--serif);font-size:90px;line-height:1;color:var(--gold-bright);opacity:.25;pointer-events:none}
-.final-quote p{font-family:var(--serif);font-size:clamp(18px,2.4vw,27px);line-height:1.48;color:var(--text);font-style:italic;margin-bottom:14px;position:relative}
-.final-quote cite{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--gold);font-style:normal;position:relative}
-body.dark-room .final-quote p{color:var(--text-hero)}
-
-/* Methodology note */
-.methodology-note{margin-top:52px;padding:22px 26px;border:1px solid var(--border);border-radius:18px;background:var(--surface)}
-.method-label{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--gold);margin-bottom:10px}
-.methodology-note p{font-family:var(--mono);font-size:11px;line-height:1.9;color:var(--muted2)}
-
-/* Film credits */
-.film-credits{margin-top:68px;padding-top:44px;border-top:1px solid var(--border);text-align:center;display:flex;flex-direction:column;align-items:center;gap:0}
-.credits-title{font-family:var(--mono);font-size:9px;letter-spacing:5px;color:var(--gold-dim);margin-bottom:28px}
-.credits-grid{display:grid;grid-template-columns:auto 1fr;gap:10px 28px;max-width:560px;width:100%;text-align:left;margin-bottom:36px}
-.credit-role{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;padding-top:3px;white-space:nowrap}
-.credit-name{font-family:var(--serif);font-size:17px;color:var(--text)}
-body.dark-room .credit-name{color:var(--text-hero)}
-
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CineScope | What makes a movie successful?</title>
+  <meta name="description" content="CineScope is an interactive D3.js data story examining budget, genre, ratings, franchises and directors across movies.">
+  <meta name="theme-color" content="#100d09">
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,500;0,700;1,500;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
+  <script type="module" src="js/app.js"></script>
 </head>
-<body class="is-loading">
-<div id="preloader" aria-hidden="true">
-  <div class="loader-card">
-    <div class="loader-mark">CINESCOPE</div>
-    <div class="loader-title">Final Cut</div>
-    <div class="loader-bar"><span></span></div>
-  </div>
-</div>
-<div class="progress-bar" id="progress-bar" aria-hidden="true"></div>
-<div class="cinema-cursor" id="cinema-cursor" aria-hidden="true"></div>
-<button class="floating-help" id="open-palette" title="Search films">⌘K SEARCH</button>
-<div class="story-toast">TRAILER MODE · Use ↑ / ↓ to move between chapters · Esc to exit</div>
-<script>window.addEventListener('load',function(){setTimeout(function(){var l=document.getElementById('preloader');if(l)l.classList.add('loaded');document.body.classList.remove('is-loading');},900);});</script>
-
-<div id="tooltip">
-  <div class="tt-title" id="tt-title"></div>
-  <div class="tt-row">Year     <span id="tt-year"></span></div>
-  <div class="tt-row">Budget   <span id="tt-budget"></span></div>
-  <div class="tt-row">Revenue  <span id="tt-revenue"></span></div>
-  <div class="tt-row">ROI      <span id="tt-roi"></span></div>
-  <div class="tt-row">Profit   <span id="tt-profit"></span></div>
-  <div class="tt-row">Rating   <span id="tt-rating"></span></div>
-  <div class="tt-row">Genre    <span id="tt-genre"></span></div>
-  <div class="tt-row">Director <span id="tt-director"></span></div>
-</div>
-
-<nav>
-  <div class="logo">CINE<em>SCOPE</em></div>
-  <div class="nav-links">
-    <a href="#hero">INTRO</a>
-    <a href="#story">TRAILER</a>
-    <a href="#galaxy">DOSSIER</a>
-    <a href="#flow">FLOW</a>
-    <a href="#matrix">MATRIX</a>
-    <a href="#sequels">DYNASTIES</a>
-    <a href="#paradox">PARADOX</a>
-    <a href="#directors">DIRECTORS</a>
-    <a href="#timeline">TIMELINE</a>
-    <a href="#takeaways">FINAL CUT</a>
-  </div>
-  <div class="nav-right">EPFL COM-480 &nbsp;·&nbsp; 2026</div>
-  <div class="nav-tools">
-    <button class="nav-chip" id="story-mode-btn">TRAILER MODE</button>
-    <button class="nav-chip" id="theme-toggle">DARK ROOM</button>
-  </div>
-</nav>
-
-<section id="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-filmstrip"></div>
-  <div class="hero-content" data-reveal>
-    <div class="hero-eyebrow">DATA VISUALIZATION &nbsp;·&nbsp; COM-480 &nbsp;·&nbsp; EPFL 2026</div>
-    <h1>What makes a<br>movie <em>successful?</em></h1>
-    <p class="hero-sub">We dug through 45,000+ films so you don't have to. Follow the money across six interactive scenes — and find out who's really winning in Hollywood.</p>
-    <div class="hero-actions">
-      <a class="hero-btn primary" href="#story">START THE TRAILER</a>
-      <a class="hero-btn" href="#galaxy">EXPLORE THE DATA</a>
-      <a class="hero-btn" href="#takeaways">SEE THE FINAL CUT</a>
-    </div>
-    <div class="hero-stats">
-      <div class="hero-stat"><div class="hero-stat-n" data-count="45697">45,697</div><div class="hero-stat-label">FILMS</div></div>
-      <div class="hero-stat"><div class="hero-stat-n" data-count="5417">5,417</div><div class="hero-stat-label">WITH FINANCIALS</div></div>
-      <div class="hero-stat"><div class="hero-stat-n" data-count="20">20</div><div class="hero-stat-label">GENRES</div></div>
-      <div class="hero-stat"><div class="hero-stat-n" data-count="143">143</div><div class="hero-stat-label">YEARS</div></div>
+<body class="dark-room is-loading">
+  <div class="loader" id="loader" aria-hidden="true">
+    <div class="loader-card">
+      <div class="mono-label">CINESCOPE</div>
+      <div class="loader-title">Opening Night</div>
+      <div class="loader-track"><span></span></div>
     </div>
   </div>
-  <aside class="hero-dashboard" data-reveal>
-    <div class="dashboard-kicker"><span class="live-dot" aria-hidden="true"></span>LIVE CUT FROM SAMPLE</div>
-    <div class="dash-grid">
-      <div class="dash-card"><div class="dash-label">highest roi</div><div class="dash-value" id="dash-roi-title">—</div><div class="dash-note" id="dash-roi-note">—</div></div>
-      <div class="dash-card"><div class="dash-label">largest box office</div><div class="dash-value" id="dash-rev-title">—</div><div class="dash-note" id="dash-rev-note">—</div></div>
-      <div class="dash-card"><div class="dash-label">genre efficiency</div><div class="dash-value" id="dash-genre-title">—</div><div class="dash-note" id="dash-genre-note">—</div></div>
+  <div class="progress" id="progress" aria-hidden="true"></div>
+
+  <nav class="nav" aria-label="Story chapters">
+    <a class="brand" href="#hero">CINE<span>SCOPE</span></a>
+    <div class="nav-links">
+      <a href="#dossier">01 Dossier</a>
+      <a href="#flow">02 Flow</a>
+      <a href="#matrix">03 Matrix</a>
+      <a href="#dynasties">04 Dynasties</a>
+      <a href="#applause">05 Applause</a>
+      <a href="#directors">06 Directors</a>
+      <a href="#finale">Final Cut</a>
     </div>
-    <div class="hero-marquee"><span id="hero-marquee-text">Loading top films…</span></div>
-  </aside>
-  <div class="scroll-hint">SCROLL</div>
-</section>
+    <div class="nav-meta">EPFL COM-480 · 2026</div>
+    <button class="nav-button" id="theme-toggle" type="button" aria-pressed="true">LIGHT ROOM</button>
+  </nav>
 
-<section id="story" class="story-lobby">
-  <div class="story-shell">
-    <div data-reveal>
-      <div class="section-kicker">TRAILER MODE</div>
-      <h2 class="story-title">Follow the money, then question the myth.</h2>
-      <p class="story-copy">It's basically a conspiracy board but for Hollywood budgets. Follow the string.</p>
+  <header class="hero" id="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-filmstrip"></div>
+    <div class="hero-copy reveal">
+      <p class="mono-label gold">DATA VISUALIZATION · COM-480 · EPFL 2026</p>
+      <h1>What makes a<br>movie <em>successful?</em></h1>
+      <p class="hero-intro">A larger budget. The right genre. Audience love. A sequel. A trusted director. Cinema sells these promises before the lights go down. We checked what survives after opening night.</p>
+      <div class="hero-actions">
+        <a class="button primary" href="#prologue">START THE STORY</a>
+        <a class="button" href="#dossier">EXPLORE THE DATA</a>
+      </div>
+      <div class="hero-stats">
+        <div><strong id="stat-all-films">-</strong><span>FILMS PROCESSED</span></div>
+        <div><strong id="stat-financial">-</strong><span>CLEAN FINANCIAL RECORDS</span></div>
+        <div><strong id="stat-franchises">-</strong><span>FRANCHISES</span></div>
+        <div><strong id="stat-directors">-</strong><span>REPEAT DIRECTORS</span></div>
+      </div>
+      <p class="hero-thesis">Six tests of success. One cleaned record of what actually reached the box office.</p>
     </div>
-    <div class="chapter-grid">
-      <a class="chapter-card" data-num="01" href="#galaxy" data-reveal><span class="chapter-tag">SCENE 01</span><h3>The Dossier</h3><p>Search, filter and interrogate the budget-versus-revenue universe.</p></a>
-      <a class="chapter-card" data-num="02" href="#flow" data-reveal><span class="chapter-tag">SCENE 02</span><h3>The Flow</h3><p>Watch budget tiers become genres, then hits, misses or break-even stories.</p></a>
-      <a class="chapter-card" data-num="03" href="#matrix" data-reveal><span class="chapter-tag">SCENE 03</span><h3>The Matrix</h3><p>Compare genre × budget combinations through median ROI and profitability.</p></a>
-      <a class="chapter-card" data-num="04" href="#sequels" data-reveal><span class="chapter-tag">SCENE 04</span><h3>Dynasties</h3><p>Find which franchises grow beyond the original and which stall out.</p></a>
-      <a class="chapter-card" data-num="05" href="#paradox" data-reveal><span class="chapter-tag">SCENE 05</span><h3>The Paradox</h3><p>Separate prestige gems, crowd pleasers and the rare films that win both.</p></a>
-      <a class="chapter-card" data-num="06" href="#directors" data-reveal><span class="chapter-tag">SCENE 06</span><h3>Directors</h3><p>Rank consistency, variance and hit-making power across directors.</p></a>
-      <a class="chapter-card" data-num="07" href="#timeline" data-reveal><span class="chapter-tag">SCENE 07</span><h3>The Timeline</h3><p>Watch budgets balloon and ROI shift as Hollywood transforms decade by decade.</p></a>
+    <div class="scroll-prompt">SCROLL TO BEGIN</div>
+  </header>
+
+  <main>
+    <section class="prologue" id="prologue">
+      <div class="prologue-copy reveal">
+        <p class="section-label">FADE IN · THE PITCH</p>
+        <h2>Six promises go into production. The receipts decide.</h2>
+        <p>Success can mean global reach, efficient return, audience love or a lasting franchise. CineScope follows <strong id="prologue-n">-</strong> financially usable films through six promises, from individual releases to repeated reputations.</p>
+      </div>
+      <div class="chapter-cards reveal">
+        <a data-reel="01" href="#dossier"><b>01</b><strong>Scale</strong><span>Budget meets box office.</span></a>
+        <a data-reel="02" href="#flow"><b>02</b><strong>Formula</strong><span>Routes become outcomes.</span></a>
+        <a data-reel="03" href="#matrix"><b>03</b><strong>Fit</strong><span>Genre changes scale.</span></a>
+        <a data-reel="04" href="#dynasties"><b>04</b><strong>Inheritance</strong><span>A hit attempts an encore.</span></a>
+        <a data-reel="05" href="#applause"><b>05</b><strong>Approval</strong><span>Applause meets receipts.</span></a>
+        <a data-reel="06" href="#directors"><b>06</b><strong>Reputation</strong><span>A name returns to screen.</span></a>
+      </div>
+    </section>
+
+    <div class="projection-note reveal">
+      <p class="section-label">PROJECTION NOTES</p>
+      <p><strong>Box office</strong> is worldwide gross. <strong>ROI</strong> is gross divided by reported production budget; <strong>2x</strong> is not profit. Select a genre or decade once to project the same cut through every scene.</p>
     </div>
-  </div>
-</section>
-
-<!-- ═══ 01 DOSSIER ═══ -->
-<section id="galaxy">
-  <div class="scene-header"><div class="scene-tag">01</div><h2>The Dossier Board</h2></div>
-  <div class="scene-q">How strongly does budget predict revenue — and where are the outliers?</div>
-  <p class="scene-narrative">Every dot is a film. The dashed line is break-even. The really interesting ones? Far from it. Try filtering to Horror — those micro-budgets live in a completely different universe.</p>
-  <div class="controls">
-    <span class="ctrl-label">GENRE</span>
-    <button class="pill active" data-genre="all">All</button>
-    <button class="pill" data-genre="Action">Action</button>
-    <button class="pill" data-genre="Drama">Drama</button>
-    <button class="pill" data-genre="Comedy">Comedy</button>
-    <button class="pill" data-genre="Horror">Horror</button>
-    <button class="pill" data-genre="Animation">Animation</button>
-    <button class="pill" data-genre="Thriller">Thriller</button>
-    <button class="pill" data-genre="Sci-Fi">Sci-Fi</button>
-    <div class="divider"></div>
-    <span class="ctrl-label">Y AXIS</span>
-    <button class="pill active" id="y-revenue">Revenue</button>
-    <button class="pill" id="y-roi">ROI</button>
-  </div>
-  <div class="viz-frame" id="galaxy-frame">
-    <div class="viz-corner tl" id="galaxy-count"></div>
-    <div class="viz-corner tr">BUDGET → REVENUE &nbsp;·&nbsp; LOG SCALE</div>
-    <div id="galaxy-viz"></div>
-  </div>
-  <div class="legend" id="genre-legend"></div>
-  <div class="search-wrap">
-    <input class="search-input" id="film-search" type="text" placeholder="Search a film title…" autocomplete="off">
-    <button class="search-clear" id="search-clear">✕ CLEAR</button>
-    <span class="search-hint" id="search-hint"></span>
-  </div>
-</section>
-
-<!-- ═══ 02 THE FLOW ═══ -->
-<section id="flow">
-  <div class="scene-header"><div class="scene-tag">02</div><h2>The Flow</h2></div>
-  <div class="scene-q">How do budget tiers and genres connect to financial outcomes?</div>
-  <p class="scene-narrative">Money in, money out — but the path matters. Each stream shows how many films flow from budget tier through genre to outcome. Hover any node and watch everything else fade.</p>
-  <div class="controls">
-    <span class="ctrl-label">SHOW</span>
-    <button class="pill active" data-flow="all">All Films</button>
-    <button class="pill" data-flow="hits">Hits Only (&gt;3×)</button>
-    <button class="pill" data-flow="flops">Flops Only (&lt;1×)</button>
-  </div>
-  <div class="viz-frame" id="flow-frame">
-    <div class="viz-corner tl">BUDGET TIER → GENRE → OUTCOME</div>
-    <div class="viz-corner tr" id="flow-count"></div>
-    <div id="flow-viz"></div>
-  </div>
-</section>
-
-<!-- ═══ 03 MATRIX ═══ -->
-<section id="matrix">
-  <div class="scene-header"><div class="scene-tag">03</div><h2>The Profitability Matrix</h2></div>
-  <div class="scene-q">Given a genre and budget tier, what return can you expect?</div>
-  <p class="scene-narrative">Which genre-budget combo gives you the best odds? Each cell is a median ROI. Horror micro-budgets win almost every decade. Animation loves a big budget. Click any cell to see the actual films behind the number.</p>
-  <div class="controls">
-    <span class="ctrl-label">DECADE</span>
-    <button class="pill active" data-decade="all">All Time</button>
-    <button class="pill" data-decade="1970">1970s</button>
-    <button class="pill" data-decade="1980">1980s</button>
-    <button class="pill" data-decade="1990">1990s</button>
-    <button class="pill" data-decade="2000">2000s</button>
-    <button class="pill" data-decade="2010">2010s</button>
-    <div class="divider"></div>
-    <span class="ctrl-label">METRIC</span>
-    <button class="pill active" id="m-roi">Median ROI</button>
-    <button class="pill" id="m-profit">% Profitable</button>
-  </div>
-  <div class="viz-frame" id="matrix-frame">
-    <div class="viz-corner tl" id="matrix-label">GENRE × BUDGET TIER &nbsp;·&nbsp; CELL = MEDIAN ROI</div>
-    <div id="matrix-viz"></div>
-  </div>
-  <div id="matrix-detail" style="display:none" class="matrix-detail">
-    <div class="detail-title" id="md-title"></div>
-    <div id="md-bars"></div>
-  </div>
-</section>
-
-<!-- ═══ 04 DYNASTIES ═══ -->
-<section id="sequels">
-  <div class="scene-header"><div class="scene-tag">04</div><h2>Dynasties</h2></div>
-  <div class="scene-q">Do sequels outperform originals — and under what conditions?</div>
-  <p class="scene-narrative">Above the gold line: the sequel outgrew the original. Below it: peak franchise already passed. Some brands compound like interest, others hit a wall after film three. Click a bubble to see the full arc.</p>
-  <div class="dynasty-layout">
-    <div>
-      <div class="viz-frame" id="sequels-frame">
-        <div class="viz-corner tl">ORIGINAL REVENUE vs PEAK SEQUEL MULTIPLIER</div>
-        <div id="sequels-viz"></div>
+    <div class="shared-controls" id="shared-controls">
+      <div class="shared-title">
+        <span class="section-label">YOUR CUT</span>
+        <strong id="active-count">- films in view</strong>
+      </div>
+      <div class="control-group" id="genre-controls" aria-label="Filter by genre">
+        <span class="control-title">GENRE</span>
+        <button class="pill active" type="button" data-genre="All">All</button>
+        <button class="pill" type="button" data-genre="Action">Action</button>
+        <button class="pill" type="button" data-genre="Drama">Drama</button>
+        <button class="pill" type="button" data-genre="Comedy">Comedy</button>
+        <button class="pill" type="button" data-genre="Horror">Horror</button>
+        <button class="pill" type="button" data-genre="Animation">Animation</button>
+        <button class="pill" type="button" data-genre="Thriller">Thriller</button>
+        <button class="pill" type="button" data-genre="Sci-Fi">Sci-Fi</button>
+        <button class="pill" type="button" data-genre="Other">Other</button>
+      </div>
+      <div class="control-group decade-control">
+        <label class="control-title" for="decade-slider">DECADE</label>
+        <input id="decade-slider" type="range" min="0" max="5" step="1" value="0">
+        <strong id="decade-label">All decades</strong>
       </div>
     </div>
-    <div class="dynasty-panel" id="dynasty-panel">
-      <div class="dynasty-panel-placeholder">← CLICK A FRANCHISE<br>TO SEE ITS ARC</div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══ 05 THE PARADOX ═══ -->
-<section id="paradox">
-  <div class="scene-header"><div class="scene-tag">05</div><h2>The Paradox</h2></div>
-  <div class="scene-q">Is critical acclaim correlated with commercial success — or are they fundamentally at odds?</div>
-  <p class="scene-narrative">Critics vs. audiences — does it actually matter? Most films pick a lane. Top-right wins both. Top-left is the underdog critics loved but nobody saw. Bottom-right is what actually made money. Hover a dot to find where your favorite landed.</p>
-  <div class="controls">
-    <span class="ctrl-label">GENRE</span>
-    <button class="pill active" data-paradox-genre="all">All</button>
-    <button class="pill" data-paradox-genre="Action">Action</button>
-    <button class="pill" data-paradox-genre="Drama">Drama</button>
-    <button class="pill" data-paradox-genre="Comedy">Comedy</button>
-    <button class="pill" data-paradox-genre="Horror">Horror</button>
-    <button class="pill" data-paradox-genre="Animation">Animation</button>
-    <button class="pill" data-paradox-genre="Thriller">Thriller</button>
-    <button class="pill" data-paradox-genre="Sci-Fi">Sci-Fi</button>
-  </div>
-  <div class="viz-frame" id="paradox-frame">
-    <div class="viz-corner tl" id="paradox-count"></div>
-    <div class="viz-corner tr">AUDIENCE RATING vs BOX OFFICE REVENUE</div>
-    <div id="paradox-viz"></div>
-  </div>
-  <div class="legend" id="paradox-legend"></div>
-</section>
-
-<!-- ═══ 06 DIRECTORS' LEAGUE ═══ -->
-<section id="directors">
-  <div class="scene-header"><div class="scene-tag">06</div><h2>Directors' League</h2></div>
-  <div class="scene-q">Which directors repeatedly turn creative risk into box-office return?</div>
-  <p class="scene-narrative">Think of it as a scouting board. Each row is a director, each dot is a film, the gold diamond is their median ROI. Start wide with 1+ films, then tighten the filter — that's where you separate the consistently good from the one-hit lucky.</p>
-
-  <div class="director-kpi-grid" id="director-kpis">
-    <div class="director-kpi" data-reveal><div class="director-kpi-label">ROI Leader</div><div class="director-kpi-value" id="dir-kpi-roi">—</div><div class="director-kpi-note" id="dir-kpi-roi-note">Median return across films</div></div>
-    <div class="director-kpi" data-reveal><div class="director-kpi-label">Most Consistent</div><div class="director-kpi-value" id="dir-kpi-consistency">—</div><div class="director-kpi-note" id="dir-kpi-consistency-note">Best ROI with the tightest spread</div></div>
-    <div class="director-kpi" data-reveal><div class="director-kpi-label">Box Office Engine</div><div class="director-kpi-value" id="dir-kpi-gross">—</div><div class="director-kpi-note" id="dir-kpi-gross-note">Highest cumulative revenue</div></div>
-    <div class="director-kpi" data-reveal><div class="director-kpi-label">Hit-Maker</div><div class="director-kpi-value" id="dir-kpi-hit">—</div><div class="director-kpi-note" id="dir-kpi-hit-note">Best share of films above 3× ROI</div></div>
-  </div>
-
-  <div class="controls director-controls">
-    <div class="director-control-group">
-      <span class="ctrl-label">RANK BY</span>
-      <button class="pill active" data-dir-sort="medianRoi">Median ROI</button>
-      <button class="pill" data-dir-sort="hitRate">Hit Rate</button>
-      <button class="pill" data-dir-sort="consistency">Consistency</button>
-      <button class="pill" data-dir-sort="totalRevenue">Box Office</button>
-      <button class="pill" data-dir-sort="avgRating">Rating</button>
-    </div>
-    <div class="divider"></div>
-    <div class="director-control-group">
-      <span class="ctrl-label">GENRE</span>
-      <button class="pill active" data-dir-genre="all">All</button>
-      <button class="pill" data-dir-genre="Action">Action</button>
-      <button class="pill" data-dir-genre="Drama">Drama</button>
-      <button class="pill" data-dir-genre="Comedy">Comedy</button>
-      <button class="pill" data-dir-genre="Horror">Horror</button>
-      <button class="pill" data-dir-genre="Animation">Animation</button>
-      <button class="pill" data-dir-genre="Thriller">Thriller</button>
-      <button class="pill" data-dir-genre="Sci-Fi">Sci-Fi</button>
-    </div>
-    <div class="divider"></div>
-    <div class="director-control-group">
-      <span class="ctrl-label">MIN FILMS</span>
-      <button class="pill active" data-dir-min="1">1+</button>
-      <button class="pill" data-dir-min="2">2+</button>
-      <button class="pill" data-dir-min="3">3+</button>
-    </div>
-    <div class="divider"></div>
-    <div class="director-control-group">
-      <span class="ctrl-label">SHOW</span>
-      <button class="pill" data-dir-limit="25">25</button>
-      <button class="pill active" data-dir-limit="40">40</button>
-      <button class="pill" data-dir-limit="all">All</button>
-    </div>
-  </div>
-
-  <div class="director-league-layout">
-    <div>
-      <div class="viz-frame" id="directors-frame">
-        <div class="viz-corner tl" id="directors-corner">DIRECTOR ROI DISTRIBUTION &nbsp;·&nbsp; ◆ = MEDIAN</div>
-        <div class="viz-corner tr" id="directors-count">—</div>
-        <div id="directors-viz"></div>
+    <section class="scene" id="dossier">
+      <div class="scene-heading reveal">
+        <p class="section-label">VIEW 01 · THE DOSSIER BOARD</p>
+        <h2>First promise: spend more, earn more.</h2>
+        <p class="scene-lead">Position compares reported cost with box office; bubbles above the diagonal recover production budget. Size repeats budget, color marks genre, and a readable sample of dots represents calculations made on every filtered film.</p>
       </div>
-      <div class="director-legend" id="director-legend"></div>
-      <div class="director-chart-note" id="director-chart-note">Tip: switch SHOW to All for the complete board, then use 2+ or 3+ films to focus on directors with repeated evidence.</div>
-    </div>
-    <aside class="director-panel" id="director-panel">
-      <div class="director-empty">CLICK A DIRECTOR ROW<br>TO OPEN THE DOSSIER</div>
-    </aside>
-  </div>
-</section>
-
-
-
-<!-- ═══ 07 THE TIMELINE ═══ -->
-<section id="timeline">
-  <div class="scene-header"><div class="scene-tag">07</div><h2>The Timeline</h2></div>
-  <div class="scene-q">How has Hollywood changed across the decades?</div>
-  <p class="scene-narrative">Budgets exploded in the 90s. ROI dropped. Ratings barely moved. Switch between metrics to see how each genre rode — or got buried by — the industry's transformation from the 70s to today.</p>
-  <div class="controls">
-    <span class="ctrl-label">METRIC</span>
-    <button class="pill active" data-tl-metric="roi">Median ROI</button>
-    <button class="pill" data-tl-metric="budget">Avg Budget</button>
-    <button class="pill" data-tl-metric="revenue">Avg Revenue</button>
-    <button class="pill" data-tl-metric="rating">Avg Rating</button>
-  </div>
-  <div class="viz-frame" id="timeline-frame">
-    <div class="viz-corner tl" id="timeline-corner">GENRE PERFORMANCE BY DECADE</div>
-    <div class="viz-corner tr">1970s → 2015–19</div>
-    <div id="timeline-viz"></div>
-  </div>
-  <div class="legend" id="timeline-legend"></div>
-</section>
-
-<section id="takeaways" class="final-cut">
-  <div class="scene-header"><div class="scene-tag">08</div><h2>The Final Cut</h2></div>
-  <div class="scene-q">What should the audience remember after the exploration?</div>
-  <p class="scene-narrative">Three things stuck with us after weeks staring at this data. Budget matters less than you'd think. Efficiency is everything. And some directors just keep winning.</p>
-
-  <blockquote class="final-quote" data-reveal>
-    <div class="fq-mark">"</div>
-    <p>Horror with no budget beats a Marvel film on ROI, almost every time. That was the most surprising thing we found.</p>
-    <cite>— 45,697 films later</cite>
-  </blockquote>
-
-  <div class="takeaway-grid">
-    <div class="take-card" data-reveal>
-      <div class="num">TAKE 01</div>
-      <h3>Budget buys scale, not certainty.</h3>
-      <p>Blockbusters make most of the money, yes. But they also miss break-even more often than you'd expect. Spending $200M is not a guarantee — it's a bet.</p>
-      <div class="take-metric" id="take-risk">—</div>
-    </div>
-    <div class="take-card" data-reveal>
-      <div class="num">TAKE 02</div>
-      <h3>Small films can punch absurdly high.</h3>
-      <p>A $15K horror film can return more on investment than a $200M superhero movie. We checked. Multiple times.</p>
-      <div class="take-metric" id="take-efficiency">—</div>
-    </div>
-    <div class="take-card" data-reveal>
-      <div class="num">TAKE 03</div>
-      <h3>Franchises are compounding machines.</h3>
-      <p>A great original becomes a franchise. A franchise becomes a brand. A brand can coast on nostalgia for a decade. Until it can't.</p>
-      <div class="take-metric" id="take-franchise">—</div>
-    </div>
-  </div>
-
-  <div class="methodology-note" data-reveal>
-    <div class="method-label">DATA &amp; METHODOLOGY</div>
-    <p>Dataset spans 1880–2023, sourced from TMDb, IMDb and Box Office Mojo. Budget and revenue figures are nominal (not inflation-adjusted). ROI = revenue ÷ budget. Films with missing financials are excluded from monetary charts. Ratings are averaged user scores on a 1–5 scale.</p>
-  </div>
-
-  <div class="film-credits" data-reveal>
-    <div class="credits-title">A FILM BY</div>
-    <div class="credits-grid">
-      <div class="credit-role">Visualization</div>
-      <div class="credit-name">Barrada &nbsp;·&nbsp; Lakrami &nbsp;·&nbsp; Chentouf &nbsp;·&nbsp; El Yadouni</div>
-      <div class="credit-role">Course</div>
-      <div class="credit-name">COM-480 Data Visualization &nbsp;·&nbsp; EPFL 2026</div>
-      <div class="credit-role">Built with</div>
-      <div class="credit-name">D3.js &nbsp;·&nbsp; Vanilla JS &nbsp;·&nbsp; HTML &nbsp;·&nbsp; CSS</div>
-      <div class="credit-role">Dataset</div>
-      <div class="credit-name">TMDb &nbsp;·&nbsp; IMDb &nbsp;·&nbsp; Box Office Mojo</div>
-    </div>
-    <a class="hero-btn" href="#hero">&#8593; &nbsp; WATCH FROM THE TOP</a>
-  </div>
-</section>
-
-<footer>
-  <div>CINESCOPE &nbsp;·&nbsp; COM-480 Data Visualization &nbsp;·&nbsp; EPFL 2026 &nbsp;·&nbsp; Team XLB</div>
-  <div>Barrada &nbsp;·&nbsp; Lakrami &nbsp;·&nbsp; Chentouf &nbsp;·&nbsp; El Yadouni</div>
-</footer>
-
-
-<div class="palette" id="palette" role="dialog" aria-modal="true" aria-label="Film search">
-  <div class="palette-box">
-    <div class="palette-head"><span>SEARCH THE CINESCOPE SAMPLE</span><button class="palette-close" id="palette-close" aria-label="Close search">×</button></div>
-    <input class="palette-input" id="palette-input" type="text" placeholder="Type a film, director or genre…" autocomplete="off">
-    <div class="palette-results" id="palette-results"></div>
-  </div>
-</div>
-
-<script>
-// ═══════════════════════════════════════════════════════════
-//  FILM DATA  [title, year, budget_M, revenue_M, rating/5, genre, director]
-// ═══════════════════════════════════════════════════════════
-const RAW = [
-  // ACTION
-  ['Jaws',                     1975,   9,  470, 3.9,'Action',   'S. Spielberg'],
-  ['Raiders of the Lost Ark',  1981,  18,  389, 4.1,'Action',   'S. Spielberg'],
-  ['Top Gun',                  1986,  15,  357, 3.5,'Action',   'T. Scott'],
-  ['Die Hard',                 1988,  28,  140, 4.0,'Action',   'J. McTiernan'],
-  ['Batman',                   1989,  35,  411, 3.6,'Action',   'T. Burton'],
-  ['Total Recall',             1990,  65,  261, 3.6,'Action',   'P. Verhoeven'],
-  ['Terminator 2',             1991, 102,  520, 4.0,'Action',   'J. Cameron'],
-  ['Speed',                    1994,  30,  350, 3.6,'Action',   'J. de Bont'],
-  ['Heat',                     1995,  60,  187, 4.1,'Action',   'M. Mann'],
-  ['Waterworld',               1995, 175,  264, 3.0,'Action',   'K. Reynolds'],
-  ['Mission: Impossible',      1996,  80,  457, 3.7,'Action',   'B. De Palma'],
-  ['The Matrix',               1999,  63,  463, 4.2,'Action',   'Wachowskis'],
-  ['Gladiator',                2000, 103,  460, 4.0,'Action',   'R. Scott'],
-  ['The Bourne Identity',      2002,  60,  214, 3.8,'Action',   'D. Liman'],
-  ['Casino Royale',            2006, 150,  594, 4.0,'Action',   'M. Campbell'],
-  ['The Dark Knight',          2008, 185, 1005, 4.4,'Action',   'C. Nolan'],
-  ['Avatar',                   2009, 237, 2788, 3.4,'Action',   'J. Cameron'],
-  ['Inception',                2010, 160,  836, 4.1,'Action',   'C. Nolan'],
-  ['The Dark Knight Rises',    2012, 250, 1085, 3.9,'Action',   'C. Nolan'],
-  ['The Avengers',             2012, 220, 1519, 3.8,'Action',   'J. Whedon'],
-  ['John Carter',              2012, 264,  284, 3.0,'Action',   'A. Stanton'],
-  ['Green Lantern',            2011, 200,  219, 2.5,'Action',   'M. Campbell'],
-  ['Interstellar',             2014, 165,  677, 4.0,'Action',   'C. Nolan'],
-  ['John Wick',                2014,  20,   88, 3.9,'Action',   'C. Stahelski'],
-  ['Mad Max: Fury Road',       2015, 150,  375, 4.0,'Action',   'G. Miller'],
-  ['Black Panther',            2018, 200, 1347, 3.8,'Action',   'R. Coogler'],
-  // DRAMA
-  ['The Godfather',            1972,   6,  246, 4.5,'Drama',    'F. Coppola'],
-  ['Kramer vs Kramer',         1979,   8,  106, 4.0,'Drama',    'R. Benton'],
-  ['Rain Man',                 1988,  25,  355, 4.0,'Drama',    'B. Levinson'],
-  ['The Silence of the Lambs', 1991,  19,  272, 4.2,'Drama',    'J. Demme'],
-  ["Schindler's List",         1993,  22,  322, 4.4,'Drama',    'S. Spielberg'],
-  ['Forrest Gump',             1994,  55,  678, 4.1,'Drama',    'R. Zemeckis'],
-  ['The Shawshank Redemption', 1994,  25,   16, 4.4,'Drama',    'F. Darabont'],
-  ['Good Will Hunting',        1997,  10,  226, 4.1,'Drama',    'G. Van Sant'],
-  ['American Beauty',          1999,  15,  356, 4.0,'Drama',    'S. Mendes'],
-  ['A Beautiful Mind',         2001,  58,  313, 3.9,'Drama',    'R. Howard'],
-  ['Crash',                    2004,   6.5, 98, 3.6,'Drama',    'P. Haggis'],
-  ['No Country for Old Men',   2007,  25,  171, 4.1,'Drama',    'Coen Brothers'],
-  ['Slumdog Millionaire',      2008,  15,  377, 4.0,'Drama',    'D. Boyle'],
-  ['12 Years a Slave',         2013,  20,  187, 4.0,'Drama',    'S. McQueen'],
-  ['Birdman',                  2014,  18,  103, 3.9,'Drama',    'A. Inarritu'],
-  ['Spotlight',                2015,  20,   98, 4.1,'Drama',    'T. McCarthy'],
-  ['Moonlight',                2016,   1.5, 65, 3.8,'Drama',    'B. Jenkins'],
-  ['La La Land',               2016,  30,  446, 3.8,'Drama',    'D. Chazelle'],
-  ['Whiplash',                 2014,   3.3, 49, 4.2,'Drama',    'D. Chazelle'],
-  ['Parasite',                 2019,  11,  258, 4.1,'Drama',    'B. Joon-ho'],
-  ['Joker',                    2019,  55, 1079, 3.9,'Drama',    'T. Phillips'],
-  ['Bohemian Rhapsody',        2018,  52,  903, 3.8,'Drama',    'B. Singer'],
-  ['The Room',                 2003,   6,    2, 1.8,'Drama',    'T. Wiseau'],
-  // COMEDY
-  ['Ghostbusters',             1984,  30,  295, 3.8,'Comedy',   'I. Reitman'],
-  ["Ferris Bueller's Day Off", 1986,   5.8, 70, 3.9,'Comedy',   'J. Hughes'],
-  ['Beetlejuice',              1988,  15,   74, 3.8,'Comedy',   'T. Burton'],
-  ['Home Alone',               1990,  18,  476, 3.6,'Comedy',   'C. Columbus'],
-  ["Mrs. Doubtfire",           1993,  25,  441, 3.7,'Comedy',   'C. Columbus'],
-  ['Dumb and Dumber',          1994,  16,  247, 3.5,'Comedy',   'Farrellys'],
-  ["There's Something About Mary",1998,23,  369, 3.6,'Comedy',  'Farrellys'],
-  ['Meet the Parents',         2000,  35,  330, 3.5,'Comedy',   'J. Roach'],
-  ['Borat',                    2006,  18,  262, 3.6,'Comedy',   'L. Charles'],
-  ['Superbad',                 2007,  17,  170, 3.7,'Comedy',   'G. Mottola'],
-  ['The Hangover',             2009,  35,  467, 3.5,'Comedy',   'T. Phillips'],
-  ['Bridesmaids',              2011,  32,  288, 3.7,'Comedy',   'P. Feig'],
-  ['21 Jump Street',           2012,  42,  201, 3.5,'Comedy',   'Lord & Miller'],
-  ['Cats',                     2019,  95,   75, 1.8,'Comedy',   'T. Hooper'],
-  ["National Lampoon's Vacation",1983,15,   61, 3.5,'Comedy',   'H. Ramis'],
-  // HORROR
-  ['Halloween',                1978,   0.3, 47, 3.7,'Horror',   'J. Carpenter'],
-  ['The Shining',              1980,  19,   44, 4.2,'Horror',   'S. Kubrick'],
-  ['A Nightmare on Elm Street',1984,   1.8, 25, 3.5,'Horror',   'W. Craven'],
-  ['Scream',                   1996,  15,  173, 3.6,'Horror',   'W. Craven'],
-  ['The Sixth Sense',          1999,  40,  672, 3.9,'Horror',   'M.N. Shyamalan'],
-  ['The Blair Witch Project',  1999,   0.06,248,2.9,'Horror',   'D. Myrick'],
-  ['Paranormal Activity',      2009,   0.015,193,3.0,'Horror',  'O. Peli'],
-  ['The Conjuring',            2013,  20,  319, 3.7,'Horror',   'J. Wan'],
-  ['Get Out',                  2017,   4.5,255, 3.9,'Horror',   'J. Peele'],
-  ['It',                       2017,  35,  701, 3.6,'Horror',   'A. Muschietti'],
-  ['Hereditary',               2018,  10,   80, 3.5,'Horror',   'A. Aster'],
-  ['A Quiet Place',            2018,  17,  340, 3.8,'Horror',   'J. Krasinski'],
-  ['Us',                       2019,  20,  255, 3.5,'Horror',   'J. Peele'],
-  ['The Witch',                2015,   3.5, 40, 3.4,'Horror',   'R. Eggers'],
-  // ANIMATION
-  ['The Lion King',            1994,  45,  987, 4.1,'Animation','R. Allers'],
-  ['Toy Story',                1995,  30,  362, 3.9,'Animation','J. Lasseter'],
-  ['Toy Story 2',              1999,  90,  497, 4.0,'Animation','J. Lasseter'],
-  ['Spirited Away',            2001,  19,  395, 4.3,'Animation','H. Miyazaki'],
-  ['Shrek',                    2001,  60,  484, 3.7,'Animation','A. Adamson'],
-  ['Finding Nemo',             2003,  94,  940, 4.1,'Animation','A. Stanton'],
-  ['The Incredibles',          2004,  92,  631, 4.2,'Animation','B. Bird'],
-  ['WALL-E',                   2008, 180,  521, 4.2,'Animation','A. Stanton'],
-  ['Up',                       2009, 175,  735, 4.1,'Animation','P. Docter'],
-  ['Toy Story 3',              2010, 200, 1067, 4.2,'Animation','L. Unkrich'],
-  ['Frozen',                   2013, 150, 1276, 3.8,'Animation','C. Buck'],
-  ['Inside Out',               2015, 175,  857, 4.1,'Animation','P. Docter'],
-  ['Zootopia',                 2016, 150, 1024, 3.9,'Animation','B. Howard'],
-  ['Coco',                     2017, 175,  807, 4.1,'Animation','L. Unkrich'],
-  ['Spider-Verse',             2018,  90,  375, 4.2,'Animation','B. Persichetti'],
-  // THRILLER
-  ['Chinatown',                1974,   6,   29, 4.2,'Thriller', 'R. Polanski'],
-  ["All the President's Men",  1976,   8,   70, 3.9,'Thriller', 'A. Pakula'],
-  ['Alien',                    1979,  11,  104, 4.1,'Thriller', 'R. Scott'],
-  ['Se7en',                    1995,  33,  327, 4.2,'Thriller', 'D. Fincher'],
-  ['The Truman Show',          1998,  60,  264, 4.0,'Thriller', 'P. Weir'],
-  ['Jurassic Park',            1993,  63, 1029, 4.0,'Thriller', 'S. Spielberg'],
-  ['Minority Report',          2002, 102,  358, 3.8,'Thriller', 'S. Spielberg'],
-  ['Zodiac',                   2007,  65,   84, 3.8,'Thriller', 'D. Fincher'],
-  ['Gravity',                  2013, 100,  723, 3.8,'Thriller', 'A. Cuaron'],
-  ['Gone Girl',                2014,  61,  369, 3.9,'Thriller', 'D. Fincher'],
-  ['Prisoners',                2013,  46,  122, 4.0,'Thriller', 'D. Villeneuve'],
-  ['Knives Out',               2019,  40,  311, 4.0,'Thriller', 'R. Johnson'],
-  ['Pulp Fiction',             1994,   8,  213, 4.2,'Thriller', 'Q. Tarantino'],
-  // SCI-FI
-  ['2001: A Space Odyssey',    1968,  10.5, 56, 4.3,'Sci-Fi',  'S. Kubrick'],
-  ['Star Wars: A New Hope',    1977,  11,  775, 4.2,'Sci-Fi',  'G. Lucas'],
-  ['Close Encounters',         1977,  20,  337, 3.9,'Sci-Fi',  'S. Spielberg'],
-  ['E.T.',                     1982,  10.5,793, 4.0,'Sci-Fi',  'S. Spielberg'],
-  ['Blade Runner',             1982,  28,   33, 4.2,'Sci-Fi',  'R. Scott'],
-  ['The Terminator',           1984,   6.4, 78, 3.9,'Sci-Fi',  'J. Cameron'],
-  ['Aliens',                   1986,  18,  183, 4.1,'Sci-Fi',  'J. Cameron'],
-  ['District 9',               2009,  30,  211, 3.8,'Sci-Fi',  'N. Blomkamp'],
-  ['Eternal Sunshine',         2004,  20,   72, 4.2,'Sci-Fi',  'M. Gondry'],
-  ['Children of Men',          2006,  76,   70, 4.1,'Sci-Fi',  'A. Cuaron'],
-  ['Her',                      2013,  23,   48, 4.0,'Sci-Fi',  'S. Jonze'],
-  ['Ex Machina',               2014,  15,   36, 4.0,'Sci-Fi',  'A. Garland'],
-  ['The Martian',              2015, 108,  630, 4.0,'Sci-Fi',  'R. Scott'],
-  ['Arrival',                  2016,  47,  203, 4.0,'Sci-Fi',  'D. Villeneuve'],
-  ['Memento',                  2000,   9,   40, 4.2,'Sci-Fi',  'C. Nolan'],
-  ['Dune',                     2021, 165,  401, 4.0,'Sci-Fi',  'D. Villeneuve'],
-];
-
-const FILMS = RAW.map(([title,year,budget,revenue,rating,genre,director]) => ({
-  title, year, genre, director, rating,
-  budget: budget*1e6, revenue: revenue*1e6, roi: revenue/budget
-}));
-
-// ═══════════════════════════════════════════════════════════
-//  FRANCHISE DATA  (revenues in $M)
-// ═══════════════════════════════════════════════════════════
-const FRANCHISES = [
-  {name:'Marvel (MCU)',        genre:'Action',    films:[{t:'Iron Man',year:2008,rev:585},{t:'The Avengers',year:2012,rev:1519},{t:'Infinity War',year:2018,rev:2048},{t:'Endgame',year:2019,rev:2798}]},
-  {name:'Star Wars',           genre:'Sci-Fi',    films:[{t:'A New Hope',year:1977,rev:775},{t:'Empire Strikes Back',year:1980,rev:538},{t:'Return of the Jedi',year:1983,rev:475},{t:'The Force Awakens',year:2015,rev:2068}]},
-  {name:'Fast & Furious',      genre:'Action',    films:[{t:'The Fast and the Furious',year:2001,rev:207},{t:'Fast Five',year:2011,rev:626},{t:'Furious 7',year:2015,rev:1516},{t:'F9',year:2021,rev:726}]},
-  {name:'Jurassic Park',       genre:'Thriller',  films:[{t:'Jurassic Park',year:1993,rev:1029},{t:'The Lost World',year:1997,rev:618},{t:'JP III',year:2001,rev:369},{t:'Jurassic World',year:2015,rev:1671}]},
-  {name:'James Bond',          genre:'Action',    films:[{t:'Goldfinger',year:1964,rev:124},{t:'The Spy Who Loved Me',year:1977,rev:185},{t:'GoldenEye',year:1995,rev:356},{t:'Casino Royale',year:2006,rev:594},{t:'Skyfall',year:2012,rev:1108}]},
-  {name:'Toy Story',           genre:'Animation', films:[{t:'Toy Story',year:1995,rev:362},{t:'Toy Story 2',year:1999,rev:497},{t:'Toy Story 3',year:2010,rev:1067},{t:'Toy Story 4',year:2019,rev:1073}]},
-  {name:'Harry Potter',        genre:'Action',    films:[{t:"Sorcerer's Stone",year:2001,rev:975},{t:'Chamber of Secrets',year:2002,rev:879},{t:'Prisoner of Azkaban',year:2004,rev:796},{t:'Deathly Hallows Pt2',year:2011,rev:1342}]},
-  {name:'Terminator',          genre:'Sci-Fi',    films:[{t:'The Terminator',year:1984,rev:78},{t:'Terminator 2',year:1991,rev:520},{t:'Terminator 3',year:2003,rev:433},{t:'Genisys',year:2015,rev:440}]},
-  {name:'Mission: Impossible', genre:'Action',    films:[{t:'Mission: Impossible',year:1996,rev:457},{t:'Ghost Protocol',year:2011,rev:694},{t:'Rogue Nation',year:2015,rev:682},{t:'Fallout',year:2018,rev:791}]},
-  {name:'Batman',              genre:'Action',    films:[{t:'Batman (1989)',year:1989,rev:411},{t:'Batman Returns',year:1992,rev:266},{t:'Batman Forever',year:1995,rev:336},{t:'The Dark Knight',year:2008,rev:1005}]},
-  {name:'Shrek',               genre:'Animation', films:[{t:'Shrek',year:2001,rev:484},{t:'Shrek 2',year:2004,rev:919},{t:'Shrek the Third',year:2007,rev:799},{t:'Shrek Forever After',year:2010,rev:752}]},
-  {name:'Pirates of Caribbean',genre:'Action',    films:[{t:'Curse of the Black Pearl',year:2003,rev:654},{t:"Dead Man's Chest",year:2006,rev:1066},{t:"At World's End",year:2007,rev:963},{t:'Dead Men Tell No Tales',year:2017,rev:795}]},
-  {name:'Ice Age',             genre:'Animation', films:[{t:'Ice Age',year:2002,rev:383},{t:'The Meltdown',year:2006,rev:667},{t:'Dawn of the Dinosaurs',year:2009,rev:886},{t:'Continental Drift',year:2012,rev:877}]},
-  {name:'Alien',               genre:'Sci-Fi',    films:[{t:'Alien',year:1979,rev:104},{t:'Aliens',year:1986,rev:183},{t:'Alien 3',year:1992,rev:159},{t:'Prometheus',year:2012,rev:403}]},
-  {name:'Rocky / Creed',       genre:'Drama',     films:[{t:'Rocky',year:1976,rev:225},{t:'Rocky II',year:1979,rev:200},{t:'Rocky IV',year:1985,rev:300},{t:'Creed',year:2015,rev:174}]},
-];
-
-const FDATA = FRANCHISES.map(fr => {
-  const orig    = fr.films[0];
-  const sequels = fr.films.slice(1);
-  const peak    = d3.max(sequels, s => s.rev);
-  return { ...fr, orig, peak, mult: peak/orig.rev, total: d3.sum(fr.films, s => s.rev) };
-});
-
-// ═══════════════════════════════════════════════════════════
-//  CONSTANTS & HELPERS
-// ═══════════════════════════════════════════════════════════
-const COLORS   = {Action:'#c9843a',Drama:'#7a6fbd',Comedy:'#4a9e78',Horror:'#b54a3a',Animation:'#c9558a',Thriller:'#4a8ab5','Sci-Fi':'#4aab9e',Other:'#5a5248'};
-const GENRES   = ['Action','Animation','Comedy','Drama','Horror','Sci-Fi','Thriller'];
-const TIERS    = ['micro','low','mid','block'];
-const TIER_LBL = {micro:'Micro <$5M',low:'Low $5–20M',mid:'Mid $20–60M',block:'Block. >$60M'};
-const OUT_COL  = {hit:'#4a8a5a',even:'#b8882a',flop:'#9b3a28'};
-const OUT_LBL  = {hit:'HIT >3×',even:'EVEN 1–3×',flop:'FLOP <1×'};
-
-function tier(b)    { return b<5e6?'micro':b<20e6?'low':b<60e6?'mid':'block'; }
-function outcome(r) { return r>=3?'hit':r>=1?'even':'flop'; }
-function fmt(n)     { if(n==null)return'—'; if(n>=1e9)return'$'+(n/1e9).toFixed(1)+'B'; if(n>=1e6)return'$'+Math.round(n/1e6)+'M'; return'$'+(n/1e3).toFixed(0)+'K'; }
-
-const TT = document.getElementById('tooltip');
-function showTT(ev, d) {
-  document.getElementById('tt-title').textContent   = d.title;
-  document.getElementById('tt-year').textContent    = d.year;
-  document.getElementById('tt-budget').textContent  = fmt(d.budget);
-  document.getElementById('tt-revenue').textContent = fmt(d.revenue);
-  const re = document.getElementById('tt-roi');
-  re.textContent = d.roi.toFixed(1)+'×';
-  re.className   = d.roi>=3?'gold-txt':d.roi>=1?'':'red-txt';
-  const pf = document.getElementById('tt-profit');
-  if (pf) {
-    const profit = d.revenue - d.budget;
-    pf.textContent = (profit >= 0 ? '+' : '−') + fmt(Math.abs(profit));
-    pf.className = profit >= 0 ? 'gold-txt' : 'red-txt';
-  }
-  document.getElementById('tt-rating').textContent   = d.rating.toFixed(1)+' / 5';
-  document.getElementById('tt-genre').textContent    = d.genre;
-  document.getElementById('tt-director').textContent = d.director;
-  TT.style.opacity = 1;
-}
-function moveTT(ev){ TT.style.left=Math.min(ev.clientX+16,window.innerWidth-240)+'px'; TT.style.top=Math.max(ev.clientY-90,10)+'px'; }
-function hideTT()  { TT.style.opacity = 0; }
-
-// ═══════════════════════════════════════════════════════════
-//  SCENE 01 — DOSSIER BOARD
-// ═══════════════════════════════════════════════════════════
-let g_genre='all', g_yAxis='revenue';
-
-function renderDossier() {
-  const frame = document.getElementById('galaxy-frame');
-  const W = frame.clientWidth, H = Math.min(580, window.innerHeight*.72);
-  const M = {top:44,right:44,bottom:58,left:76};
-  d3.select('#galaxy-viz').selectAll('*').remove();
-
-  const data = FILMS.filter(d => {
-    if(d.budget<=0||d.revenue<=0) return false;
-    if(g_genre!=='all'&&d.genre!==g_genre) return false;
-    if(g_yAxis==='roi'&&d.roi>500) return false;
-    return true;
-  });
-  document.getElementById('galaxy-count').textContent = data.length+' films';
-
-  const svg  = d3.select('#galaxy-viz').append('svg').attr('width',W).attr('height',H);
-  const xSc  = d3.scaleLog().domain([2e4,1e10]).range([M.left,W-M.right]).clamp(true);
-  const yDom = g_yAxis==='revenue'?[3e5,5e9]:[0.04,500];
-  const ySc  = d3.scaleLog().domain(yDom).range([H-M.bottom,M.top]).clamp(true);
-
-  [1e5,1e6,1e7,1e8,1e9].forEach(v=>svg.append('line').attr('x1',xSc(v)).attr('x2',xSc(v)).attr('y1',M.top).attr('y2',H-M.bottom).attr('stroke','#c4aa84').attr('stroke-width',.6).attr('opacity',.4));
-  (g_yAxis==='revenue'?[1e6,1e7,1e8,1e9]:[0.5,1,3,10,30,100]).forEach(v=>svg.append('line').attr('x1',M.left).attr('x2',W-M.right).attr('y1',ySc(v)).attr('y2',ySc(v)).attr('stroke','#c4aa84').attr('stroke-width',.6).attr('opacity',.4));
-
-  if(g_yAxis==='revenue'){
-    svg.append('line').attr('x1',xSc(1e5)).attr('y1',ySc(1e5)).attr('x2',xSc(5e9)).attr('y2',ySc(5e9)).attr('stroke','#b8882a').attr('stroke-width',1.5).attr('stroke-dasharray','7 4');
-    svg.append('text').attr('class','quadrant-label').attr('x',xSc(4e8)+6).attr('y',ySc(4e8)-8).attr('transform','rotate(-30,'+xSc(4e8)+','+ySc(4e8)+')').text('BREAK-EVEN');
-    [{x:8e5,y:4e8,t:'MICRO-BUDGET\nBREAKOUTS'},{x:6e8,y:4e9,t:'BLOCKBUSTERS'},{x:1.5e7,y:1.5e6,t:'FLOPS'},{x:2.5e8,y:1.2e7,t:'BIG-BUDGET MISSES'}].forEach(q=>{
-      const el=svg.append('text').attr('class','quadrant-label').attr('text-anchor','middle');
-      q.t.split('\n').forEach((l,i)=>el.append('tspan').attr('x',xSc(q.x)).attr('y',ySc(q.y)).attr('dy',i?'1.3em':0).text(l));
-    });
-  }
-
-  svg.append('g').attr('transform','translate(0,'+(H-M.bottom)+')').call(d3.axisBottom(xSc).tickValues([1e5,1e6,1e7,1e8,1e9]).tickFormat(fmt));
-  svg.append('g').attr('transform','translate('+M.left+',0)').call(d3.axisLeft(ySc).tickValues(g_yAxis==='revenue'?[1e6,1e7,1e8,1e9]:[0.5,1,3,10,30,100]).tickFormat(v=>g_yAxis==='revenue'?fmt(v):v+'×'));
-  svg.append('text').attr('x',W/2).attr('y',H-6).attr('text-anchor','middle').attr('font-size',10).attr('fill','#6b5a3a').attr('font-family','DM Mono,monospace').attr('letter-spacing',2).text('PRODUCTION BUDGET');
-  svg.append('text').attr('transform','rotate(-90)').attr('x',-H/2).attr('y',18).attr('text-anchor','middle').attr('font-size',10).attr('fill','#6b5a3a').attr('font-family','DM Mono,monospace').attr('letter-spacing',2).text(g_yAxis==='revenue'?'BOX OFFICE REVENUE':'RETURN ON INVESTMENT (×)');
-
-  svg.selectAll('circle').data(data).join('circle')
-    .attr('cx',d=>xSc(d.budget)).attr('cy',d=>ySc(g_yAxis==='revenue'?d.revenue:d.roi))
-    .attr('r',d=>Math.max(5,Math.min(20,Math.sqrt(d.budget/4e6)*5)))
-    .attr('fill',d=>COLORS[d.genre]||COLORS.Other).attr('opacity',.72).attr('stroke','none').style('cursor','pointer')
-    .on('mouseover',function(ev,d){const r0=Math.max(5,Math.min(20,Math.sqrt(d.budget/4e6)*5));d3.select(this).raise().attr('opacity',1).attr('r',r0+2.5).attr('stroke',COLORS[d.genre]||COLORS.Other).attr('stroke-width',2.5).attr('stroke-opacity',.5);showTT(ev,d);})
-    .on('mousemove',moveTT).on('mouseout',function(ev,d){d3.select(this).attr('opacity',.72).attr('r',Math.max(5,Math.min(20,Math.sqrt(d.budget/4e6)*5))).attr('stroke','none');hideTT();});
-
-  const leg=document.getElementById('genre-legend'); leg.innerHTML='';
-  GENRES.forEach(g=>{const it=document.createElement('div');it.className='legend-item';it.innerHTML='<div class="legend-dot" style="background:'+COLORS[g]+'"></div>'+g;it.onclick=()=>{g_genre=(g_genre===g)?'all':g;document.querySelectorAll('[data-genre]').forEach(b=>b.classList.toggle('active',b.dataset.genre===g_genre||(g_genre==='all'&&b.dataset.genre==='all')));renderDossier();};leg.appendChild(it);});
-}
-document.querySelectorAll('[data-genre]').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('[data-genre]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');g_genre=btn.dataset.genre;renderDossier();}));
-document.getElementById('y-revenue').addEventListener('click',()=>{g_yAxis='revenue';document.getElementById('y-revenue').classList.add('active');document.getElementById('y-roi').classList.remove('active');renderDossier();});
-document.getElementById('y-roi').addEventListener('click',()=>{g_yAxis='roi';document.getElementById('y-roi').classList.add('active');document.getElementById('y-revenue').classList.remove('active');renderDossier();});
-
-// ═══════════════════════════════════════════════════════════
-//  CUSTOM SANKEY LAYOUT (pure D3 — no external dependency)
-// ═══════════════════════════════════════════════════════════
-function layoutSankey(rawNodes, rawLinks, {width, height, nodeWidth=14, nodePad=10}) {
-  // Deep clone nodes
-  const nodes = rawNodes.map(n => ({...n, srcLinks:[], tgtLinks:[], value:0}));
-  const idMap  = Object.fromEntries(nodes.map(n => [n.id, n]));
-
-  // Resolve links to node objects
-  const links = rawLinks.map(l => ({
-    ...l, value: +l.value,
-    source: idMap[l.source],
-    target: idMap[l.target],
-  })).filter(l => l.source && l.target && l.value > 0);
-
-  links.forEach(l => { l.source.srcLinks.push(l); l.target.tgtLinks.push(l); });
-
-  // Node values (max of in/out)
-  nodes.forEach(n => {
-    const inV  = n.tgtLinks.reduce((a,l)=>a+l.value,0);
-    const outV = n.srcLinks.reduce((a,l)=>a+l.value,0);
-    n.value = Math.max(inV, outV) || 1;
-  });
-
-  // Assign depths via BFS
-  nodes.forEach(n => { n.depth = undefined; });
-  const roots = nodes.filter(n => n.tgtLinks.length === 0);
-  roots.forEach(n => { n.depth = 0; });
-  const queue = [...roots], seen = new Set(roots.map(n=>n.id));
-  while (queue.length) {
-    const n = queue.shift();
-    n.srcLinks.forEach(l => {
-      if (l.target.depth === undefined || l.target.depth <= n.depth)
-        l.target.depth = n.depth + 1;
-      if (!seen.has(l.target.id)) { seen.add(l.target.id); queue.push(l.target); }
-    });
-  }
-  nodes.forEach(n => { if (n.depth === undefined) n.depth = 0; });
-
-  const maxDepth = d3.max(nodes, n => n.depth) || 1;
-
-  // x positions: evenly spread across [0, width]
-  nodes.forEach(n => {
-    n.x0 = (n.depth / maxDepth) * (width - nodeWidth);
-    n.x1 = n.x0 + nodeWidth;
-    // Last column flush to right edge
-    if (n.depth === maxDepth) { n.x0 = width - nodeWidth; n.x1 = width; }
-  });
-
-  // y positions per column
-  const cols = {};
-  nodes.forEach(n => { (cols[n.depth] = cols[n.depth]||[]).push(n); });
-  Object.values(cols).forEach(col => {
-    const total = col.reduce((a,n)=>a+n.value,0);
-    const scale = (height - nodePad*(col.length-1)) / total;
-    let y = 0;
-    col.forEach(n => { n.y0=y; n.y1=y+n.value*scale; y=n.y1+nodePad; });
-  });
-
-  // Sort links for cleaner crossings
-  nodes.forEach(n => {
-    n.srcLinks.sort((a,b) => (a.target.y0||0)-(b.target.y0||0));
-    n.tgtLinks.sort((a,b) => (a.source.y0||0)-(b.source.y0||0));
-  });
-
-  // Assign link band positions (y0 at source, y1 at target, width = band height)
-  nodes.forEach(n => {
-    const nodeH = n.y1 - n.y0;
-    let sy = n.y0;
-    n.srcLinks.forEach(l => {
-      const h = (l.value / n.value) * nodeH;
-      l.y0 = sy + h/2;
-      l.width = h;
-      sy += h;
-    });
-    let ty = n.y0;
-    n.tgtLinks.forEach(l => {
-      const h = (l.value / n.value) * nodeH;
-      l.y1 = ty + h/2;
-      ty += h;
-    });
-  });
-
-  return { nodes, links };
-}
-
-// Cubic bezier path for a Sankey link (stroke-width = link.width)
-function sankeyPath(l) {
-  const mx = (l.source.x1 + l.target.x0) / 2;
-  return 'M'+l.source.x1+','+l.y0+' C'+mx+','+l.y0+' '+mx+','+l.y1+' '+l.target.x0+','+l.y1;
-}
-
-// ═══════════════════════════════════════════════════════════
-//  SCENE 02 — THE FLOW
-// ═══════════════════════════════════════════════════════════
-let g_flow = 'all';
-
-function renderFlow() {
-  const fin = FILMS.filter(f => {
-    if(f.budget<=0||f.revenue<=0) return false;
-    if(g_flow==='hits')  return f.roi>=3;
-    if(g_flow==='flops') return f.roi<1;
-    return true;
-  });
-
-  const frame = document.getElementById('flow-frame');
-  const W = frame.clientWidth;
-  const H = Math.max(440, Math.min(560, window.innerHeight*.68));
-  const M = {top:40, right:150, bottom:20, left:120};
-
-  d3.select('#flow-viz').selectAll('*').remove();
-  document.getElementById('flow-count').textContent = fin.length+' films';
-
-  if(fin.length < 2) {
-    d3.select('#flow-viz').append('div').style('padding','60px').style('color','var(--muted)').style('font-family','var(--mono)').style('font-size','11px').text('Not enough data for this filter.');
-    return;
-  }
-
-  // Build nodes
-  const genreSet = new Set(fin.map(f=>f.genre).filter(g=>GENRES.includes(g)));
-  const activeG  = GENRES.filter(g=>genreSet.has(g));
-
-  const nodes = [
-    ...TIERS.map(id=>({id:'t_'+id, label:TIER_LBL[id], type:'tier'})),
-    ...activeG.map(g =>({id:'g_'+g,  label:g,            type:'genre'})),
-    {id:'o_hit',  label:OUT_LBL.hit,  type:'outcome'},
-    {id:'o_even', label:OUT_LBL.even, type:'outcome'},
-    {id:'o_flop', label:OUT_LBL.flop, type:'outcome'},
-  ];
-
-  // Aggregate counts
-  const tg={}, go={};
-  fin.forEach(f=>{
-    if(!genreSet.has(f.genre)) return;
-    const ti='t_'+tier(f.budget), gi='g_'+f.genre, oi='o_'+outcome(f.roi);
-    tg[ti+'|'+gi] = (tg[ti+'|'+gi]||0)+1;
-    go[gi+'|'+oi] = (go[gi+'|'+oi]||0)+1;
-  });
-
-  const links=[];
-  Object.entries(tg).forEach(([k,v])=>{const[s,t]=k.split('|');links.push({source:s,target:t,value:v});});
-  Object.entries(go).forEach(([k,v])=>{const[s,t]=k.split('|');links.push({source:s,target:t,value:v});});
-
-  // Run layout
-  const {nodes:sn, links:sl} = layoutSankey(nodes, links, {
-    width: W-M.left-M.right, height: H-M.top-M.bottom,
-    nodeWidth:14, nodePad:10
-  });
-
-  // Shift by margins
-  sn.forEach(n=>{n.x0+=M.left;n.x1+=M.left;n.y0+=M.top;n.y1+=M.top;});
-
-  const svg = d3.select('#flow-viz').append('svg').attr('width',W).attr('height',H);
-
-  // Color helpers
-  const nodeCol = n => n.type==='tier'?'#b8882a':n.type==='genre'?COLORS[n.id.replace('g_','')]||COLORS.Other:OUT_COL[n.id.replace('o_','')];
-  const linkCol = l => l.source.type==='tier'?COLORS[l.target.id.replace('g_','')]||'#b8882a':OUT_COL[l.target.id.replace('o_','')];
-
-  // Draw links
-  const linkSel = svg.append('g').selectAll('path').data(sl).join('path')
-    .attr('fill','none')
-    .attr('d', sankeyPath)
-    .attr('stroke', linkCol)
-    .attr('stroke-width', l => Math.max(1, l.width))
-    .attr('stroke-opacity', .38)
-    .style('cursor','pointer')
-    .on('mouseover', function(ev,d){ linkSel.attr('stroke-opacity',l=>l===d?.75:.07); })
-    .on('mouseout',  ()=>linkSel.attr('stroke-opacity',.38));
-
-  // Draw nodes
-  const nodeSel = svg.append('g').selectAll('g').data(sn).join('g')
-    .style('cursor','pointer')
-    .on('mouseover', function(ev,d){
-      const conn = new Set(sl.filter(l=>l.source.id===d.id||l.target.id===d.id));
-      linkSel.attr('stroke-opacity',l=>conn.has(l)?.75:.07);
-    })
-    .on('mouseout', ()=>linkSel.attr('stroke-opacity',.38));
-
-  nodeSel.append('rect')
-    .attr('x',n=>n.x0).attr('y',n=>n.y0)
-    .attr('width',n=>n.x1-n.x0).attr('height',n=>Math.max(2,n.y1-n.y0))
-    .attr('fill',nodeCol).attr('opacity',.88).attr('rx',2);
-
-  // Value inside node
-  nodeSel.append('text')
-    .filter(n=>(n.y1-n.y0)>=14)
-    .attr('x',n=>(n.x0+n.x1)/2).attr('y',n=>(n.y0+n.y1)/2).attr('dy','0.35em')
-    .attr('text-anchor','middle').attr('font-family','DM Mono,monospace').attr('font-size',9)
-    .attr('fill','rgba(255,255,255,.85)').attr('pointer-events','none')
-    .text(n=>n.value);
-
-  // External labels
-  nodeSel.append('text')
-    .attr('x',n=>n.type==='outcome'?n.x1+7:n.x0-7)
-    .attr('y',n=>(n.y0+n.y1)/2).attr('dy','0.35em')
-    .attr('text-anchor',n=>n.type==='outcome'?'start':'end')
-    .attr('font-family','DM Mono,monospace').attr('font-size',10).attr('fill','var(--muted2)')
-    .attr('pointer-events','none')
-    .each(function(n){
-      const el=d3.select(this);
-      if(n.type==='tier'){
-        const parts=n.label.split(' ');
-        el.text('');
-        parts.forEach((p,i)=>el.append('tspan').attr('x',n.x0-7).attr('dy',i?'1.15em':'-0.15em').text(p));
-      } else {
-        el.text(n.label);
-      }
-    });
-}
-
-document.querySelectorAll('[data-flow]').forEach(btn=>btn.addEventListener('click',()=>{
-  document.querySelectorAll('[data-flow]').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active'); g_flow=btn.dataset.flow; renderFlow();
-}));
-
-// ═══════════════════════════════════════════════════════════
-//  SCENE 03 — PROFITABILITY MATRIX
-// ═══════════════════════════════════════════════════════════
-let g_decade='all', g_metric='roi', g_cell=null;
-
-function computeMatrix() {
-  const fin = FILMS.filter(f=>{
-    if(f.budget<=0||f.revenue<=0) return false;
-    if(g_decade!=='all'&&Math.floor(f.year/10)*10!==+g_decade) return false;
-    return true;
-  });
-  const res={};
-  GENRES.forEach(g=>{
-    res[g]=TIERS.map(ti=>{
-      const cells=fin.filter(f=>f.genre===g&&tier(f.budget)===ti);
-      if(!cells.length) return null;
-      if(g_metric==='roi'){const s=[...cells].map(f=>f.roi).sort((a,b)=>a-b);return s[Math.floor(s.length/2)];}
-      return cells.filter(f=>f.roi>=1).length/cells.length*100;
-    });
-  });
-  return res;
-}
-
-function renderMatrix() {
-  const frame=document.getElementById('matrix-frame');
-  const W=frame.clientWidth, H=340;
-  const M={top:36,right:24,bottom:68,left:100};
-  const cW=(W-M.left-M.right)/TIERS.length, cH=(H-M.top-M.bottom)/GENRES.length;
-  d3.select('#matrix-viz').selectAll('*').remove();
-
-  const data=computeMatrix();
-  const maxV=d3.max(GENRES.flatMap(g=>data[g]).filter(v=>v!=null))||1;
-  const cScale=d3.scaleSequential().domain([0,maxV]).interpolator(d3.interpolate('#1e180e','#d4a830'));
-
-  const svg=d3.select('#matrix-viz').append('svg').attr('width',W).attr('height',H);
-
-  TIERS.forEach((ti,bi)=>{
-    const ps=TIER_LBL[ti].split(' ');
-    ps.forEach((p,li)=>svg.append('text').attr('x',M.left+bi*cW+cW/2).attr('y',M.top-18+li*13).attr('text-anchor','middle').attr('font-family','DM Mono,monospace').attr('font-size',9).attr('fill','#6b5a3a').attr('letter-spacing',1).text(p.toUpperCase()));
-  });
-
-  GENRES.forEach((g,gi)=>{
-    TIERS.forEach((ti,bi)=>{
-      const v=data[g][bi];
-      const cx=M.left+bi*cW, cy=M.top+gi*cH;
-      const isSel=g_cell&&g_cell.g===g&&g_cell.bi===bi;
-      const rect=svg.append('rect').attr('x',cx+1).attr('y',cy+1).attr('width',cW-2).attr('height',cH-2).attr('fill',v!=null?cScale(v):'#2a2218').attr('rx',2).attr('stroke',isSel?'#d4a830':'none').attr('stroke-width',2);
-      if(v!=null){
-        rect.style('cursor','pointer')
-          .on('mouseover',function(){if(!isSel)d3.select(this).attr('stroke','rgba(212,168,48,.5)').attr('stroke-width',1.5);})
-          .on('mouseout', function(){if(!isSel)d3.select(this).attr('stroke','none');})
-          .on('click',()=>{g_cell={g,bi};renderMatrix();showMatrixDetail(g,bi);});
-        svg.append('text').attr('x',cx+cW/2).attr('y',cy+cH/2+4).attr('text-anchor','middle').attr('font-family','DM Mono,monospace').attr('font-size',11).attr('fill',v>maxV*.42?'#f0e6d0':'#4a3820').text(g_metric==='roi'?v.toFixed(1)+'×':Math.round(v)+'%');
-      }
-    });
-    svg.append('text').attr('x',M.left-10).attr('y',M.top+gi*cH+cH/2+4).attr('text-anchor','end').attr('font-family','DM Mono,monospace').attr('font-size',10).attr('fill','#4a3820').attr('letter-spacing',1).text(g.toUpperCase());
-  });
-
-  // Legend
-  const lgW=110,lgX=W-M.right-lgW,lgY=M.top-22;
-  const defs=svg.append('defs'),grad=defs.append('linearGradient').attr('id','m-g').attr('x1','0%').attr('x2','100%');
-  grad.append('stop').attr('offset','0%').attr('stop-color','#1e180e');
-  grad.append('stop').attr('offset','100%').attr('stop-color','#d4a830');
-  svg.append('rect').attr('x',lgX).attr('y',lgY).attr('width',lgW).attr('height',6).attr('fill','url(#m-g)');
-  svg.append('text').attr('x',lgX).attr('y',lgY-4).attr('font-family','DM Mono,monospace').attr('font-size',8).attr('fill','#6b5a3a').text('LOW');
-  svg.append('text').attr('x',lgX+lgW).attr('y',lgY-4).attr('text-anchor','end').attr('font-family','DM Mono,monospace').attr('font-size',8).attr('fill','#a0720c').text('HIGH');
-}
-
-function showMatrixDetail(g,bi){
-  const ti=TIERS[bi];
-  const cells=FILMS.filter(f=>f.genre===g&&f.budget>0&&f.revenue>0&&tier(f.budget)===ti);
-  const maxR=d3.max(cells,f=>f.revenue)||1;
-  const sorted=[...cells].sort((a,b)=>b.revenue-a.revenue).slice(0,12);
-  document.getElementById('md-title').textContent=g+' · '+TIER_LBL[ti];
-  document.getElementById('matrix-detail').style.display='block';
-  const el=document.getElementById('md-bars'); el.innerHTML='';
-  if(!sorted.length){el.innerHTML='<p style="color:var(--muted);font-family:var(--mono);font-size:11px">No data for this segment.</p>';return;}
-  sorted.forEach(f=>{
-    const pct=Math.round(f.revenue/maxR*100);
-    const col=f.roi>=3?'var(--green)':f.roi>=1?'var(--gold-dim)':'var(--red)';
-    const row=document.createElement('div'); row.className='film-row';
-    const lbl=(f.title.length>22?f.title.slice(0,20)+'…':f.title)+' ('+f.year+')';
-    row.innerHTML='<div class="film-row-label">'+lbl+'</div><div class="film-row-track"><div class="film-row-fill" style="width:'+pct+'%;background:'+col+'"></div></div><div class="film-row-val">'+fmt(f.revenue)+'</div>';
-    el.appendChild(row);
-  });
-}
-
-document.querySelectorAll('[data-decade]').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('[data-decade]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');g_decade=btn.dataset.decade;g_cell=null;document.getElementById('matrix-detail').style.display='none';renderMatrix();}));
-document.getElementById('m-roi').addEventListener('click',()=>{g_metric='roi';document.getElementById('m-roi').classList.add('active');document.getElementById('m-profit').classList.remove('active');document.getElementById('matrix-label').textContent='GENRE × BUDGET TIER  ·  CELL = MEDIAN ROI';g_cell=null;document.getElementById('matrix-detail').style.display='none';renderScene('matrix', true);});
-document.getElementById('m-profit').addEventListener('click',()=>{g_metric='profit';document.getElementById('m-profit').classList.add('active');document.getElementById('m-roi').classList.remove('active');document.getElementById('matrix-label').textContent='GENRE × BUDGET TIER  ·  CELL = % PROFITABLE';g_cell=null;document.getElementById('matrix-detail').style.display='none';renderScene('matrix', true);});
-
-// ═══════════════════════════════════════════════════════════
-//  SCENE 04 — DYNASTIES
-// ═══════════════════════════════════════════════════════════
-let g_fr=null;
-
-function renderDynasties(){
-  const frame=document.getElementById('sequels-frame');
-  const W=frame.clientWidth, H=Math.min(500,window.innerHeight*.65);
-  const M={top:44,right:50,bottom:72,left:88};
-  d3.select('#sequels-viz').selectAll('*').remove();
-
-  const svg=d3.select('#sequels-viz').append('svg').attr('width',W).attr('height',H);
-  const xSc=d3.scaleLog().domain([d3.min(FDATA,d=>d.orig.rev)*.4, d3.max(FDATA,d=>d.orig.rev)*2.2]).range([M.left,W-M.right]).clamp(true);
-  const ySc=d3.scaleLinear().domain([0,d3.max(FDATA,d=>d.mult)*1.12]).range([H-M.bottom,M.top]);
-  const rSc=d3.scaleSqrt().domain([0,d3.max(FDATA,d=>d.total)]).range([10,38]);
-
-  // Grid
-  [100,300,500,1000,2000].forEach(v=>svg.append('line').attr('x1',xSc(v)).attr('x2',xSc(v)).attr('y1',M.top).attr('y2',H-M.bottom).attr('stroke','#c4aa84').attr('stroke-width',.6).attr('opacity',.35));
-  [1,2,3,4,5,6,7,8].forEach(v=>svg.append('line').attr('x1',M.left).attr('x2',W-M.right).attr('y1',ySc(v)).attr('y2',ySc(v)).attr('stroke','#c4aa84').attr('stroke-width',.6).attr('opacity',.35));
-
-  // Reference line y=1
-  svg.append('line').attr('x1',M.left).attr('x2',W-M.right).attr('y1',ySc(1)).attr('y2',ySc(1)).attr('stroke','#d4a830').attr('stroke-width',1.8).attr('stroke-dasharray','8 5');
-  svg.append('text').attr('x',W-M.right-6).attr('y',ySc(1)-7).attr('text-anchor','end').attr('font-family','DM Mono,monospace').attr('font-size',9).attr('letter-spacing',2).attr('fill','#b8882a').text('SEQUEL = ORIGINAL');
-
-  svg.append('g').attr('transform','translate(0,'+(H-M.bottom)+')').call(d3.axisBottom(xSc).tickValues([100,300,500,1000,2000]).tickFormat(v=>'$'+v+'M'));
-  svg.append('g').attr('transform','translate('+M.left+',0)').call(d3.axisLeft(ySc).tickValues([0,1,2,3,4,5,6,7,8]).tickFormat(v=>v+'×'));
-  svg.append('text').attr('x',W/2).attr('y',H-8).attr('text-anchor','middle').attr('font-size',10).attr('fill','#6b5a3a').attr('font-family','DM Mono,monospace').attr('letter-spacing',2).text('ORIGINAL FILM REVENUE');
-  svg.append('text').attr('transform','rotate(-90)').attr('x',-H/2).attr('y',18).attr('text-anchor','middle').attr('font-size',10).attr('fill','#6b5a3a').attr('font-family','DM Mono,monospace').attr('letter-spacing',1).text('BEST SEQUEL / ORIGINAL (MULTIPLIER)');
-
-  const hoverTip=svg.append('text').attr('id','dy-tip').attr('text-anchor','middle').attr('font-family','DM Mono,monospace').attr('font-size',10).attr('fill','var(--muted2)').attr('pointer-events','none').attr('opacity',0);
-
-  const bubbles=svg.selectAll('g.bub').data(FDATA).join('g').attr('class','bub')
-    .attr('transform',d=>'translate('+xSc(d.orig.rev)+','+ySc(d.mult)+')').style('cursor','pointer');
-
-  bubbles.append('circle')
-    .attr('r',d=>rSc(d.total))
-    .attr('fill',d=>COLORS[d.genre]||COLORS.Other)
-    .attr('opacity',d=>g_fr&&g_fr.name!==d.name?.28:.78)
-    .attr('stroke',d=>g_fr&&g_fr.name===d.name?'#f0e6d0':'none')
-    .attr('stroke-width',2.5);
-
-  bubbles.append('text').attr('dy',d=>rSc(d.total)+12).attr('text-anchor','middle')
-    .attr('font-family','DM Mono,monospace').attr('font-size',8.5).attr('fill','#4a3820').attr('letter-spacing',.3).attr('pointer-events','none')
-    .text(d=>d.name.length>18?d.name.slice(0,16)+'…':d.name);
-
-  bubbles
-    .on('mouseover',function(ev,d){
-      d3.select(this).select('circle').attr('opacity',1).attr('stroke','#f0e6d0').attr('stroke-width',2.5);
-      hoverTip.attr('x',xSc(d.orig.rev)).attr('y',ySc(d.mult)-rSc(d.total)-7).attr('opacity',1).text(d.mult.toFixed(1)+'×  '+d.name);
-    })
-    .on('mouseout',function(ev,d){
-      if(!(g_fr&&g_fr.name===d.name)) d3.select(this).select('circle').attr('opacity',g_fr?.28:.78).attr('stroke','none');
-      hoverTip.attr('opacity',0);
-    })
-    .on('click',function(ev,d){ g_fr=d; renderDynasties(); renderDynastyPanel(d); });
-}
-
-function renderDynastyPanel(fr){
-  const panel=document.getElementById('dynasty-panel');
-  const maxR=d3.max(fr.films,f=>f.rev);
-  panel.innerHTML=
-    '<div class="detail-title">'+fr.name+'</div>'+
-    '<div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:2px;margin-bottom:6px">'+fr.genre.toUpperCase()+' &nbsp;·&nbsp; '+fr.films.length+' FILMS &nbsp;·&nbsp; $'+Math.round(fr.total)+'M TOTAL</div>'+
-    '<div style="font-family:var(--mono);font-size:9px;color:var(--muted);margin-bottom:16px">PEAK MULTIPLIER: <span style="color:var(--gold-bright)">'+fr.mult.toFixed(1)+'×</span></div>';
-  fr.films.forEach((f,i)=>{
-    const pct=Math.round(f.rev/maxR*100);
-    const isO=i===0, isP=f.rev===fr.peak&&i>0;
-    const color=isP?'var(--green)':isO?'var(--gold-dim)':'#7a6a52';
-    const cls=isP?'c-green':isO?'c-gold':'';
-    const prefix=isO?'○ ':isP?'★ ':'  ';
-    const lbl=(prefix+f.t+" '"+String(f.year).slice(2));
-    const row=document.createElement('div'); row.className='film-row';
-    row.innerHTML=
-      '<div class="film-row-label '+cls+'" title="'+f.t+'">'+lbl+'</div>'+
-      '<div class="film-row-track"><div class="film-row-fill" style="width:'+pct+'%;background:'+color+'"></div></div>'+
-      '<div class="film-row-val '+cls+'">$'+f.rev+'M</div>';
-    panel.appendChild(row);
-  });
-  const note=document.createElement('div');
-  note.style.cssText='margin-top:14px;font-size:9px;color:var(--muted);line-height:1.7;font-family:var(--mono)';
-  note.textContent=fr.mult>=3?'Strong franchise growth: peak revenue '+fr.mult.toFixed(1)+'× the original.':fr.mult>=1.5?'Moderate sequel growth over the original.':'Sequels did not significantly outperform the original.';
-  panel.appendChild(note);
-}
-
-
-// ═══════════════════════════════════════════════════════════
-//  COMPUTED DIRECTOR DATA
-// ═══════════════════════════════════════════════════════════
-function medianOf(arr) {
-  if(!arr.length) return 0;
-  const s=[...arr].sort((a,b)=>a-b), m=Math.floor(s.length/2);
-  return s.length%2?s[m]:(s[m-1]+s[m])/2;
-}
-function quantileOf(arr, q) {
-  if(!arr.length) return 0;
-  const s=[...arr].sort((a,b)=>a-b);
-  return d3.quantile(s, q) ?? 0;
-}
-function topVal(arr) {
-  if(!arr.length) return '—';
-  const cnt={}; arr.forEach(v=>{cnt[v]=(cnt[v]||0)+1;});
-  return Object.entries(cnt).sort((a,b)=>b[1]-a[1] || a[0].localeCompare(b[0]))[0][0];
-}
-function escapeHtml(s){return String(s ?? '').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
-function fmtCompactMoney(n){ if(!isFinite(n))return '—'; if(Math.abs(n)>=1e9)return '$'+(n/1e9).toFixed(1)+'B'; if(Math.abs(n)>=1e6)return '$'+Math.round(n/1e6)+'M'; return '$'+Math.round(n/1e3)+'K'; }
-function fmtPct(n){return Math.round((n||0)*100)+'%';}
-function directorStats(name, fs) {
-  const rois = fs.map(f=>f.roi);
-  const q1 = quantileOf(rois,.25), q3 = quantileOf(rois,.75);
-  const iqr = Math.max(.01, q3-q1);
-  const medianRoi = medianOf(rois);
-  return {
-    name, films:fs, count:fs.length,
-    medianRoi,
-    q1, q3,
-    spread: iqr,
-    consistency: medianRoi / (1 + Math.log1p(iqr)),
-    hitRate: fs.filter(f=>f.roi>=3).length/fs.length,
-    flopRate: fs.filter(f=>f.roi<1).length/fs.length,
-    avgRating: d3.mean(fs,f=>f.rating) || 0,
-    totalRevenue: d3.sum(fs,f=>f.revenue),
-    totalBudget: d3.sum(fs,f=>f.budget),
-    totalProfit: d3.sum(fs,f=>f.revenue-f.budget),
-    topGenre: topVal(fs.map(f=>f.genre)),
-    topFilm: [...fs].sort((a,b)=>b.roi-a.roi)[0],
-    biggestFilm: [...fs].sort((a,b)=>b.revenue-a.revenue)[0],
-  };
-}
-const dirMap={};
-FILMS.filter(f=>f.budget>0&&f.revenue>0).forEach(f=>{
-  (dirMap[f.director]=dirMap[f.director]||[]).push(f);
-});
-const DIRECTORS_ALL = Object.entries(dirMap)
-  .map(([name,fs])=>directorStats(name,fs));
-
-let directorState = { sort:'medianRoi', genre:'all', minFilms:1, limit:40 };
-let selectedDirectorName = null;
-function getEligibleDirectorRows() {
-  const rows = DIRECTORS_ALL.map(d=>{
-    const fs = directorState.genre==='all' ? d.films : d.films.filter(f=>f.genre===directorState.genre);
-    if(fs.length < directorState.minFilms) return null;
-    return directorStats(d.name, fs);
-  }).filter(Boolean);
-  const key = directorState.sort;
-  rows.sort((a,b)=>{
-    const diff = (b[key] ?? 0) - (a[key] ?? 0);
-    return diff || b.medianRoi-a.medianRoi || b.count-a.count || a.name.localeCompare(b.name);
-  });
-  return rows;
-}
-function getDirectorRows() {
-  const rows = getEligibleDirectorRows();
-  if(directorState.limit === 'all') return rows;
-  return rows.slice(0, +directorState.limit || 40);
-}
-// ═══════════════════════════════════════════════════════════
-//  SCENE 01 — SEARCH / SPOTLIGHT  (patch onto renderDossier)
-// ═══════════════════════════════════════════════════════════
-let g_search = '';
-
-document.getElementById('film-search').addEventListener('input', function() {
-  g_search = this.value.trim().toLowerCase();
-  document.getElementById('search-clear').style.display = g_search ? 'inline-block' : 'none';
-  applySearch();
-});
-document.getElementById('search-clear').addEventListener('click', function() {
-  g_search = '';
-  document.getElementById('film-search').value = '';
-  this.style.display = 'none';
-  document.getElementById('search-hint').textContent = '';
-  applySearch();
-});
-
-function applySearch() {
-  const svgEl = document.querySelector('#galaxy-viz svg');
-  if (!svgEl) return;
-  const svg = d3.select(svgEl);
-
-  svg.selectAll('text.spotlight-lbl').remove();
-
-  if (!g_search) {
-    svg.selectAll('circle').attr('opacity', .72).attr('stroke','none');
-    document.getElementById('search-hint').textContent = '';
-    return;
-  }
-
-  let hits = 0;
-  svg.selectAll('circle').each(function(d) {
-    const match = d.title.toLowerCase().includes(g_search);
-    d3.select(this)
-      .attr('opacity', match ? 1 : 0.07)
-      .attr('stroke', match ? '#f0e6d0' : 'none')
-      .attr('stroke-width', match ? 2 : 0);
-    if (match) hits++;
-  });
-
-  // Labels for matched films
-  const xSc = d3.scaleLog().domain([2e4,1e10]).range([76, svgEl.clientWidth-44]).clamp(true);
-  const yDom = g_yAxis==='revenue'?[3e5,5e9]:[0.04,500];
-  const ySc  = d3.scaleLog().domain(yDom).range([svgEl.clientHeight-58, 44]).clamp(true);
-
-  FILMS.filter(f=>f.budget>0&&f.revenue>0&&f.title.toLowerCase().includes(g_search)).forEach(d=>{
-    const cx = xSc(d.budget);
-    const cy = ySc(g_yAxis==='revenue'?d.revenue:d.roi);
-    svg.append('text').attr('class','spotlight-lbl')
-      .attr('x', cx+10).attr('y', cy-8)
-      .attr('font-family','DM Mono,monospace').attr('font-size',10)
-      .attr('fill','#f0e6d0').attr('font-weight','bold')
-      .attr('pointer-events','none')
-      .text(d.title+' ('+d.year+')');
-  });
-
-  document.getElementById('search-hint').textContent = hits ? hits+' match'+(hits>1?'es':'') : 'no match';
-}
-
-// Re-apply search after each re-render of the dossier
-const _origRenderDossier = renderDossier;
-
-// ═══════════════════════════════════════════════════════════
-//  SCENE 05 — THE PARADOX  (Rating vs Revenue)
-// ═══════════════════════════════════════════════════════════
-let g_paradoxGenre = 'all';
-
-function renderParadox() {
-  const frame = document.getElementById('paradox-frame');
-  const W = frame.clientWidth, H = Math.min(560, window.innerHeight*.7);
-  const M = {top:44, right:44, bottom:58, left:68};
-  d3.select('#paradox-viz').selectAll('*').remove();
-
-  const base = FILMS.filter(f=>f.budget>0&&f.revenue>0&&f.rating>0);
-  const data = g_paradoxGenre==='all' ? base : base.filter(f=>f.genre===g_paradoxGenre);
-  document.getElementById('paradox-count').textContent = data.length+' films';
-
-  const xSc = d3.scaleLog().domain([d3.min(base,f=>f.revenue)*.5, d3.max(base,f=>f.revenue)*1.5]).range([M.left,W-M.right]).clamp(true);
-  const ySc = d3.scaleLinear().domain([1.2, 4.7]).range([H-M.bottom, M.top]);
-
-  const medRev = medianOf(base.map(f=>f.revenue));
-  const medRat = medianOf(base.map(f=>f.rating));
-
-  const svg = d3.select('#paradox-viz').append('svg').attr('width',W).attr('height',H);
-
-  // Subtle quadrant backgrounds
-  const qAlpha = 0.035;
-  [[medRev*1.5, medRat+0.1, W-M.right, M.top,        '#d4a830', 'ACCLAIMED & LOADED'],
-   [M.left,     medRat+0.1, medRev*.7,  M.top,         '#4aab9e', "CRITIC'S DARLINGS"],
-   [medRev*1.5, H-M.bottom, W-M.right,  medRat-0.1,   '#c9843a', 'CROWD PLEASERS'],
-   [M.left,     H-M.bottom, medRev*.7,  medRat-0.1,   '#5a5248', 'FORGOTTEN FILMS'],
-  ].forEach(([anchorX, anchorY, cx, cy, col, lbl])=>{
-    const rx=Math.min(xSc(anchorX),W-M.right), lx=Math.max(xSc(anchorX),M.left);
-    // just draw labels, skip complex region drawing
-  });
-
-  // Grid
-  [1e6,1e7,1e8,1e9].forEach(v=>svg.append('line').attr('x1',xSc(v)).attr('x2',xSc(v)).attr('y1',M.top).attr('y2',H-M.bottom).attr('stroke','#c4aa84').attr('stroke-width',.6).attr('opacity',.35));
-  [2,2.5,3,3.5,4,4.5].forEach(v=>svg.append('line').attr('x1',M.left).attr('x2',W-M.right).attr('y1',ySc(v)).attr('y2',ySc(v)).attr('stroke','#c4aa84').attr('stroke-width',.6).attr('opacity',.35));
-
-  // Median reference lines
-  svg.append('line').attr('x1',xSc(medRev)).attr('x2',xSc(medRev)).attr('y1',M.top).attr('y2',H-M.bottom).attr('stroke','#d4a830').attr('stroke-width',1.5).attr('stroke-dasharray','6 4');
-  svg.append('line').attr('x1',M.left).attr('x2',W-M.right).attr('y1',ySc(medRat)).attr('y2',ySc(medRat)).attr('stroke','#d4a830').attr('stroke-width',1.5).attr('stroke-dasharray','6 4');
-
-  // Quadrant labels
-  const qx = xSc(medRev), qy = ySc(medRat);
-  [
-    {x:(qx+W-M.right)/2, y:(M.top+qy)/2,         t:'ACCLAIMED & LOADED',  col:'#b8882a'},
-    {x:(M.left+qx)/2,    y:(M.top+qy)/2,          t:"CRITIC'S DARLINGS",   col:'#4aab9e'},
-    {x:(qx+W-M.right)/2, y:(qy+H-M.bottom)/2,    t:'CROWD PLEASERS',      col:'#c9843a'},
-    {x:(M.left+qx)/2,    y:(qy+H-M.bottom)/2,    t:'FORGOTTEN FILMS',     col:'#5a5248'},
-  ].forEach(q=>
-    svg.append('text').attr('x',q.x).attr('y',q.y).attr('text-anchor','middle')
-      .attr('font-family','DM Mono,monospace').attr('font-size',8.5).attr('letter-spacing',2)
-      .attr('fill',q.col).attr('opacity',.55).text(q.t)
-  );
-
-  // Median labels
-  svg.append('text').attr('x',xSc(medRev)+5).attr('y',M.top+14).attr('font-family','DM Mono,monospace').attr('font-size',8).attr('fill','#b8882a').text('MEDIAN REVENUE');
-  svg.append('text').attr('x',W-M.right-5).attr('y',ySc(medRat)-5).attr('text-anchor','end').attr('font-family','DM Mono,monospace').attr('font-size',8).attr('fill','#b8882a').text('MEDIAN RATING');
-
-  // Axes
-  svg.append('g').attr('transform','translate(0,'+(H-M.bottom)+')').call(d3.axisBottom(xSc).tickValues([1e6,1e7,1e8,1e9]).tickFormat(fmt));
-  svg.append('g').attr('transform','translate('+M.left+',0)').call(d3.axisLeft(ySc).tickValues([2,2.5,3,3.5,4,4.5]).tickFormat(v=>v.toFixed(1)+' ★'));
-  svg.append('text').attr('x',W/2).attr('y',H-6).attr('text-anchor','middle').attr('font-size',10).attr('fill','#6b5a3a').attr('font-family','DM Mono,monospace').attr('letter-spacing',2).text('BOX OFFICE REVENUE');
-  svg.append('text').attr('transform','rotate(-90)').attr('x',-H/2).attr('y',18).attr('text-anchor','middle').attr('font-size',10).attr('fill','#6b5a3a').attr('font-family','DM Mono,monospace').attr('letter-spacing',2).text('AUDIENCE RATING (/ 5)');
-
-  // Dots
-  svg.selectAll('circle').data(data).join('circle')
-    .attr('cx',f=>xSc(f.revenue)).attr('cy',f=>ySc(f.rating))
-    .attr('r', f=>Math.max(4.5,Math.min(14,Math.sqrt(f.budget/8e6)*5)))
-    .attr('fill',f=>COLORS[f.genre]||COLORS.Other).attr('opacity',.72).attr('stroke','none').style('cursor','pointer')
-    .on('mouseover',function(ev,d){
-      d3.select(this).raise().attr('opacity',1).attr('r',Math.max(6,Math.min(16,Math.sqrt(d.budget/8e6)*5+2))).attr('stroke','#f0e6d0').attr('stroke-width',2.5).attr('stroke-opacity',.5);
-      showTT(ev,d);
-    })
-    .on('mousemove',moveTT).on('mouseout',function(ev,d){d3.select(this).attr('opacity',.72).attr('r',Math.max(4.5,Math.min(14,Math.sqrt(d.budget/8e6)*5))).attr('stroke','none');hideTT();});
-
-  // Paradox legend
-  const leg=document.getElementById('paradox-legend'); leg.innerHTML='';
-  GENRES.forEach(g=>{
-    const it=document.createElement('div');it.className='legend-item';
-    it.innerHTML='<div class="legend-dot" style="background:'+COLORS[g]+'"></div>'+g;
-    it.onclick=()=>{g_paradoxGenre=(g_paradoxGenre===g)?'all':g;document.querySelectorAll('[data-paradox-genre]').forEach(b=>b.classList.toggle('active',b.dataset.paradoxGenre===g_paradoxGenre||(g_paradoxGenre==='all'&&b.dataset.paradoxGenre==='all')));renderParadox();};
-    leg.appendChild(it);
-  });
-}
-
-document.querySelectorAll('[data-paradox-genre]').forEach(btn=>btn.addEventListener('click',()=>{
-  document.querySelectorAll('[data-paradox-genre]').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active'); g_paradoxGenre=btn.dataset.paradoxGenre; renderParadox();
-}));
-
-// ═══════════════════════════════════════════════════════════
-//  SCENE 06 — DIRECTORS' LEAGUE  (interactive league board)
-// ═══════════════════════════════════════════════════════════
-function metricLabel(key){
-  return ({medianRoi:'median ROI',hitRate:'hit rate',consistency:'consistency',totalRevenue:'box office',avgRating:'rating'})[key] || key;
-}
-function directorVerdict(d){
-  if(!d) return '';
-  const lead = d.medianRoi>=10 ? 'Elite efficiency profile' : d.medianRoi>=4 ? 'Strong commercial converter' : d.hitRate>=.6 ? 'Reliable hit-maker' : d.avgRating>=4 ? 'Critically strong, commercially mixed' : 'High-variance profile';
-  const risk = d.flopRate===0 ? 'no flops in this filtered sample' : fmtPct(d.flopRate)+' of films below break-even';
-  return lead + ': ' + d.name + ' combines a '+d.medianRoi.toFixed(1)+'× median ROI with '+fmtPct(d.hitRate)+' hit rate and '+risk+'.';
-}
-function renderDirectorKPIs(rows){
-  const set = (id,txt)=>{const el=document.getElementById(id); if(el)el.textContent=txt;};
-  if(!rows.length){
-    ['dir-kpi-roi','dir-kpi-consistency','dir-kpi-gross','dir-kpi-hit'].forEach(id=>set(id,'—'));
-    ['dir-kpi-roi-note','dir-kpi-consistency-note','dir-kpi-gross-note','dir-kpi-hit-note'].forEach(id=>set(id,'No directors match this filter'));
-    return;
-  }
-  const roi=[...rows].sort((a,b)=>b.medianRoi-a.medianRoi)[0];
-  const cons=[...rows].sort((a,b)=>b.consistency-a.consistency)[0];
-  const gross=[...rows].sort((a,b)=>b.totalRevenue-a.totalRevenue)[0];
-  const hit=[...rows].sort((a,b)=>b.hitRate-a.hitRate || b.medianRoi-a.medianRoi)[0];
-  set('dir-kpi-roi', roi.name); set('dir-kpi-roi-note', roi.medianRoi.toFixed(1)+'× median ROI · '+roi.count+' films');
-  set('dir-kpi-consistency', cons.name); set('dir-kpi-consistency-note', 'Score '+cons.consistency.toFixed(1)+' · IQR '+cons.spread.toFixed(1)+'×');
-  set('dir-kpi-gross', gross.name); set('dir-kpi-gross-note', fmtCompactMoney(gross.totalRevenue)+' revenue · '+fmtCompactMoney(gross.totalProfit)+' profit');
-  set('dir-kpi-hit', hit.name); set('dir-kpi-hit-note', fmtPct(hit.hitRate)+' of films above 3× ROI');
-}
-function renderDirectorLegend(){
-  const leg=document.getElementById('director-legend'); if(!leg) return;
-  leg.innerHTML='';
-  GENRES.forEach(g=>{
-    const it=document.createElement('div'); it.className='legend-item';
-    it.innerHTML='<div class="legend-dot" style="background:'+COLORS[g]+'"></div>'+g;
-    leg.appendChild(it);
-  });
-}
-function renderDirectorPanel(d, rank){
-  const panel=document.getElementById('director-panel'); if(!panel) return;
-  if(!d){ panel.innerHTML='<div class="director-empty">NO DIRECTORS MATCH<br>THE CURRENT FILTERS</div>'; return; }
-  const maxRoi = Math.max(3, d3.max(d.films,f=>f.roi) || 3);
-  const films = [...d.films].sort((a,b)=>b.roi-a.roi).map(f=>{
-    const w=Math.max(4, Math.min(100, (f.roi/maxRoi)*100));
-    return '<div class="director-film-row" title="'+escapeHtml(f.title)+'">'+
-      '<div><div class="director-film-title">'+escapeHtml(f.title)+' · '+f.year+'</div><div class="director-film-bar"><div class="director-film-fill" style="width:'+w+'%;background:'+(COLORS[f.genre]||COLORS.Other)+'"></div></div></div>'+
-      '<div class="director-film-value">'+f.roi.toFixed(1)+'×</div>'+
-    '</div>';
-  }).join('');
-  panel.innerHTML =
-    '<div class="director-panel-kicker">Director dossier</div>'+
-    '<div class="director-panel-name">'+escapeHtml(d.name)+'</div>'+
-    '<div class="director-panel-rank">RANK #'+rank+' · '+escapeHtml(metricLabel(directorState.sort).toUpperCase())+'</div>'+
-    '<div class="director-panel-metrics">'+
-      '<div class="director-panel-metric"><div class="label">Median ROI</div><div class="value">'+d.medianRoi.toFixed(1)+'×</div><div class="sub">Q1–Q3: '+d.q1.toFixed(1)+'×–'+d.q3.toFixed(1)+'×</div></div>'+
-      '<div class="director-panel-metric"><div class="label">Hit Rate</div><div class="value">'+fmtPct(d.hitRate)+'</div><div class="sub">Films above 3× ROI</div></div>'+
-      '<div class="director-panel-metric"><div class="label">Total Gross</div><div class="value">'+fmtCompactMoney(d.totalRevenue)+'</div><div class="sub">Profit '+fmtCompactMoney(d.totalProfit)+'</div></div>'+
-      '<div class="director-panel-metric"><div class="label">Avg Rating</div><div class="value">'+d.avgRating.toFixed(1)+'</div><div class="sub">Signature: '+escapeHtml(d.topGenre)+'</div></div>'+
-    '</div>'+
-    '<div class="director-verdict">'+escapeHtml(directorVerdict(d))+'</div>'+
-    '<div class="director-panel-kicker">Film-level ROI</div>'+
-    '<div class="director-film-list">'+films+'</div>';
-}
-function renderDirectors() {
-  const frame = document.getElementById('directors-frame');
-  if(!frame) return;
-  const eligibleRows = getEligibleDirectorRows();
-  const rows = getDirectorRows();
-  renderDirectorKPIs(eligibleRows);
-  renderDirectorLegend();
-  if(!selectedDirectorName || !rows.some(d=>d.name===selectedDirectorName)) selectedDirectorName = rows[0]?.name || null;
-
-  const countEl=document.getElementById('directors-count');
-  if(countEl) countEl.textContent = rows.length ? 'showing '+rows.length+' of '+eligibleRows.length+' directors · '+metricLabel(directorState.sort) : '0 directors';
-  const corner=document.getElementById('directors-corner');
-  if(corner) corner.textContent = 'SORTED BY '+metricLabel(directorState.sort).toUpperCase()+' · '+(directorState.genre==='all'?'ALL GENRES':directorState.genre.toUpperCase())+' · MIN '+directorState.minFilms+' FILM'+(directorState.minFilms>1?'S':'')+' · ◆ = MEDIAN';
-
-  const W = frame.clientWidth;
-  const ROW = rows.length > 70 ? 34 : rows.length > 40 ? 36 : rows.length > 25 ? 40 : 46;
-  const ML = W < 760 ? 148 : 236, MR = W < 760 ? 52 : 70, MT = 76, MB = 74;
-  const H = Math.max(280, MT + rows.length*ROW + MB);
-  const CAP = 1000;
-
-  d3.select('#directors-viz').selectAll('*').remove();
-  const svg = d3.select('#directors-viz').append('svg').attr('width',W).attr('height',H);
-
-  if(!rows.length){
-    svg.append('text').attr('x',W/2).attr('y',H/2).attr('text-anchor','middle').attr('font-family','DM Mono,monospace').attr('font-size',10).attr('letter-spacing',2).attr('fill','var(--muted)').text('NO DIRECTORS MATCH THE CURRENT FILTERS');
-    renderDirectorPanel(null,0);
-    return;
-  }
-
-  const xSc = d3.scaleLog().domain([0.08,CAP]).range([ML,W-MR]).clamp(true);
-  const yFor = i => MT + i*ROW + ROW/2;
-  const ticks = [0.1,0.3,1,3,10,30,100,300,1000];
-
-  ticks.forEach(v=>{
-    svg.append('line').attr('x1',xSc(v)).attr('x2',xSc(v)).attr('y1',MT-10).attr('y2',H-MB+6).attr('stroke',v===1?'#9b3a28':v===3?'#4a8a5a':'#c4aa84').attr('stroke-width',v===1||v===3?1.15:.55).attr('stroke-dasharray',v===1||v===3?'5 4':null).attr('opacity',v===1||v===3?.75:.36);
-    svg.append('text').attr('x',xSc(v)).attr('y',H-MB+24).attr('text-anchor','middle').attr('class','director-axis-label').text(v===1000?'>1000×':v+'×');
-    svg.append('text').attr('x',xSc(v)).attr('y',MT-36).attr('text-anchor','middle').attr('class','director-axis-label').attr('opacity',.72).text(v===1000?'>1000×':v+'×');
-  });
-  svg.append('text').attr('x',xSc(1)).attr('y',MT-18).attr('text-anchor','middle').attr('class','director-axis-label').attr('fill','#9b3a28').text('BREAK-EVEN');
-  svg.append('text').attr('x',xSc(3)).attr('y',MT-18).attr('text-anchor','middle').attr('class','director-axis-label').attr('fill','#4a8a5a').text('HIT LINE');
-  svg.append('text').attr('x',(ML+W-MR)/2).attr('y',H-14).attr('text-anchor','middle').attr('class','director-axis-label').text('RETURN ON INVESTMENT · LOG SCALE');
-  svg.append('text').attr('x',18).attr('y',MT-34).attr('class','director-guide-label').attr('fill','var(--muted)').text('RANK');
-  svg.append('text').attr('x',ML-10).attr('y',MT-34).attr('text-anchor','end').attr('class','director-guide-label').attr('fill','var(--muted)').text('DIRECTOR / EVIDENCE');
-  svg.append('text').attr('x',ML).attr('y',MT-34).attr('class','director-guide-label').attr('fill','var(--muted)').text('FILM ROI DISTRIBUTION');
-  svg.append('line').attr('x1',8).attr('x2',W-16).attr('y1',MT-18).attr('y2',MT-18).attr('stroke','var(--border)').attr('opacity',.65);
-
-  rows.forEach((dir,i)=>{
-    const cy = yFor(i);
-    const selected = dir.name === selectedDirectorName;
-    const group = svg.append('g').attr('class','director-row').style('cursor','pointer').on('click',()=>{selectedDirectorName=dir.name;renderDirectors();});
-    group.append('rect').attr('class','director-row-bg'+(i%2?' alt':'')+(selected?' selected':''))
-      .attr('x',8).attr('y',cy-ROW/2+3).attr('width',W-16).attr('height',ROW-6).attr('rx',12);
-    group.append('text').attr('class','director-rank').attr('x',18).attr('y',cy-7).text('#'+String(i+1).padStart(2,'0'));
-    group.append('text').attr('class','director-row-label').attr('x',ML-12).attr('y',cy-7).attr('text-anchor','end').text(dir.name);
-    group.append('text').attr('class','director-row-small').attr('x',ML-12).attr('y',cy+9).attr('text-anchor','end').text(dir.count+' film'+(dir.count>1?'s':'')+' · '+dir.topGenre+' · '+fmtPct(dir.hitRate)+' hits');
-
-    const medPreviewX = xSc(Math.max(.08,Math.min(CAP,dir.medianRoi)));
-    group.append('line').attr('x1',xSc(1)).attr('x2',medPreviewX).attr('y1',cy).attr('y2',cy).attr('stroke','#d4a830').attr('stroke-width',3.5).attr('stroke-linecap','round').attr('opacity',dir.medianRoi>=1?.28:.18);
-    const q1x = xSc(Math.max(.08,Math.min(CAP,dir.q1))), q3x = xSc(Math.max(.08,Math.min(CAP,dir.q3)));
-    group.append('line').attr('x1',q1x).attr('x2',q3x).attr('y1',cy).attr('y2',cy).attr('stroke',COLORS[dir.topGenre]||COLORS.Other).attr('stroke-width',9).attr('stroke-linecap','round').attr('opacity',.22);
-    group.append('line').attr('x1',xSc(Math.max(.08,Math.min(CAP,d3.min(dir.films,f=>f.roi))))).attr('x2',xSc(Math.max(.08,Math.min(CAP,d3.max(dir.films,f=>f.roi))))).attr('y1',cy).attr('y2',cy).attr('stroke',COLORS[dir.topGenre]||COLORS.Other).attr('stroke-width',1.2).attr('opacity',.32);
-
-    dir.films.forEach((f,j)=>{
-      const roi = Math.max(.08, Math.min(CAP, f.roi));
-      const jitter = ((j%5)-2)*2.9;
-      group.append('circle')
-        .attr('cx',xSc(roi)).attr('cy',cy+jitter).attr('r',Math.max(rows.length>40?3.4:4.2,Math.min(rows.length>40?6.2:9,Math.sqrt(f.revenue/120e6))))
-        .attr('fill',COLORS[f.genre]||COLORS.Other).attr('opacity',selected?.95:.74)
-        .attr('stroke',f.roi>CAP?'#f0e6d0':'rgba(13,11,8,.35)').attr('stroke-width',f.roi>CAP?1.7:.45)
-        .on('mouseover',function(ev){d3.select(this).raise().attr('opacity',1).attr('stroke','#f0e6d0').attr('stroke-width',2);showTT(ev,f);})
-        .on('mousemove',moveTT)
-        .on('mouseout',function(){d3.select(this).attr('opacity',selected?.95:.74).attr('stroke',f.roi>CAP?'#f0e6d0':'rgba(13,11,8,.35)').attr('stroke-width',f.roi>CAP?1.7:.45);hideTT();});
-    });
-
-    const medX = xSc(Math.max(.08,Math.min(CAP,dir.medianRoi)));
-    group.append('path')
-      .attr('d','M'+medX+','+(cy-7)+' L'+(medX+7)+','+cy+' L'+medX+','+(cy+7)+' L'+(medX-7)+','+cy+' Z')
-      .attr('fill','#d4a830').attr('stroke',selected?'#fff1bc':'rgba(13,11,8,.35)').attr('stroke-width',selected?2:.75).attr('opacity',.96);
-    group.append('text').attr('class','director-median-label')
-      .attr('x',medX+(dir.medianRoi>250?-9:10)).attr('y',cy+4).attr('text-anchor',dir.medianRoi>250?'end':'start')
-      .text(dir.medianRoi.toFixed(1)+'×');
-  });
-
-  const selected = rows.find(d=>d.name===selectedDirectorName) || rows[0];
-  renderDirectorPanel(selected, rows.findIndex(d=>d.name===selected.name)+1);
-}
-
-document.querySelectorAll('[data-dir-sort]').forEach(btn=>btn.addEventListener('click',()=>{
-  directorState.sort = btn.dataset.dirSort;
-  document.querySelectorAll('[data-dir-sort]').forEach(b=>b.classList.toggle('active', b===btn));
-  selectedDirectorName = null;
-  renderScene('directors', true);
-}));
-document.querySelectorAll('[data-dir-genre]').forEach(btn=>btn.addEventListener('click',()=>{
-  directorState.genre = btn.dataset.dirGenre;
-  document.querySelectorAll('[data-dir-genre]').forEach(b=>b.classList.toggle('active', b===btn));
-  selectedDirectorName = null;
-  renderScene('directors', true);
-}));
-document.querySelectorAll('[data-dir-min]').forEach(btn=>btn.addEventListener('click',()=>{
-  directorState.minFilms = +btn.dataset.dirMin;
-  document.querySelectorAll('[data-dir-min]').forEach(b=>b.classList.toggle('active', b===btn));
-  selectedDirectorName = null;
-  renderScene('directors', true);
-}));
-
-document.querySelectorAll('[data-dir-limit]').forEach(btn=>btn.addEventListener('click',()=>{
-  directorState.limit = btn.dataset.dirLimit === 'all' ? 'all' : +btn.dataset.dirLimit;
-  document.querySelectorAll('[data-dir-limit]').forEach(b=>b.classList.toggle('active', b===btn));
-  selectedDirectorName = null;
-  renderScene('directors', true);
-}));
-
-
-// ═══════════════════════════════════════════════════════════
-//  WOW EXPERIENCE LAYER — cinematic UI, search palette, progress
-// ═══════════════════════════════════════════════════════════
-renderDossier = function(){ _origRenderDossier(); applySearch(); };
-
-function byMax(arr, fn){ return arr.reduce((best,d)=>fn(d)>fn(best)?d:best, arr[0]); }
-function moneyM(n){ return fmt(n); }
-function pct(n){ return Math.round(n*100)+'%'; }
-
-function setupCinematicExperience(){
-  setupLoadingCurtain();
-  setupInsightCards();
-  setupScrollProgress();
-  setupReveals();
-  setupPointerGlow();
-  setupCommandPalette();
-  setupThemeToggle();
-  setupStoryMode();
-  setupBetterNavObserver();
-  animateHeroCounters();
-}
-
-function setupLoadingCurtain(){
-  const loader = document.getElementById('preloader');
-  window.setTimeout(()=>{
-    if(loader) loader.classList.add('loaded');
-    document.body.classList.remove('is-loading');
-  }, 650);
-}
-
-function setupInsightCards(){
-  const financial = FILMS.filter(f=>f.budget>0 && f.revenue>0);
-  const topRoi = byMax(financial, f=>f.roi);
-  const topRevenue = byMax(financial, f=>f.revenue);
-  const blockbusters = financial.filter(f=>f.budget>=60e6);
-  const blockbusterFlops = blockbusters.filter(f=>f.roi<1).length;
-  const micro = financial.filter(f=>f.budget<5e6);
-  const topMicro = micro.length ? byMax(micro, f=>f.roi) : topRoi;
-
-  const genreStats = GENRES.map(g=>{
-    const rows = financial.filter(f=>f.genre===g);
-    return {genre:g, count:rows.length, med:medianOf(rows.map(f=>f.roi)), hit:rows.filter(f=>f.roi>=3).length/(rows.length||1)};
-  }).filter(d=>d.count>=3).sort((a,b)=>b.med-a.med);
-  const efficient = genreStats[0];
-  const biggestFranchise = FDATA.slice().sort((a,b)=>b.total-a.total)[0];
-  const peakFranchise = FDATA.slice().sort((a,b)=>b.mult-a.mult)[0];
-
-  setText('dash-roi-title', topRoi.title);
-  setText('dash-roi-note', topRoi.roi.toFixed(0)+'× ROI · '+topRoi.genre+' · '+topRoi.year);
-  setText('dash-rev-title', topRevenue.title);
-  setText('dash-rev-note', moneyM(topRevenue.revenue)+' box office · budget '+moneyM(topRevenue.budget));
-  setText('dash-genre-title', efficient.genre);
-  setText('dash-genre-note', 'median '+efficient.med.toFixed(1)+'× ROI · '+pct(efficient.hit)+' hit rate');
-
-  const marquee = financial.slice().sort((a,b)=>b.revenue-a.revenue).slice(0,8)
-    .map((f,i)=>'0'+(i+1)+' '+f.title+' · '+moneyM(f.revenue)).join('   ✦   ');
-  setText('hero-marquee-text', marquee);
-  setText('take-risk', blockbusterFlops+' of '+blockbusters.length+' sampled blockbusters fall below 1× ROI.');
-  setText('take-efficiency', topMicro.title+' reaches '+topMicro.roi.toFixed(0)+'× from a '+moneyM(topMicro.budget)+' budget.');
-  setText('take-franchise', biggestFranchise.name+' totals '+moneyM(biggestFranchise.total*1e6)+'; '+peakFranchise.name+' peaks at '+peakFranchise.mult.toFixed(1)+'× its original.');
-}
-
-function setText(id, value){ const el=document.getElementById(id); if(el) el.textContent=value; }
-
-function setupScrollProgress(){
-  const bar = document.getElementById('progress-bar');
-  let ticking = false;
-  const update = () => {
-    const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-    const p = Math.min(1, Math.max(0, window.scrollY / max));
-    if(bar) bar.style.transform = 'scaleX(' + p.toFixed(4) + ')';
-    ticking = false;
-  };
-  const onScroll = () => {
-    if(!ticking){ ticking = true; requestAnimationFrame(update); }
-  };
-  if(bar){ bar.style.width = '100%'; bar.style.transformOrigin = '0 50%'; bar.style.transform = 'scaleX(0)'; }
-  update();
-  window.addEventListener('scroll', onScroll, {passive:true});
-}
-
-function setupReveals(){
-  document.querySelectorAll('section, .viz-frame, .chapter-card, .take-card, .hero-dashboard, .hero-content').forEach((el,i)=>{
-    if(!el.hasAttribute('data-reveal')) el.setAttribute('data-reveal','');
-    el.style.transitionDelay = Math.min(i%5,4)*55+'ms';
-  });
-  const io = new IntersectionObserver(entries=>entries.forEach(e=>{
-    if(e.isIntersecting){ e.target.classList.add('is-visible'); io.unobserve(e.target); }
-  }), {threshold:.12, rootMargin:'0px 0px -8% 0px'});
-  document.querySelectorAll('[data-reveal]').forEach(el=>io.observe(el));
-}
-
-function setupPointerGlow(){
-  const cursor = document.getElementById('cinema-cursor');
-  const hero = document.getElementById('hero');
-  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
-  if(reduce || coarse || (!cursor && !hero)) return;
-  let lastEv = null, ticking = false;
-  const paint = () => {
-    if(!lastEv){ ticking = false; return; }
-    const ev = lastEv;
-    if(cursor){ cursor.style.transform = 'translate('+(ev.clientX-140)+'px,'+(ev.clientY-140)+'px)'; }
-    if(hero){
-      const rect = hero.getBoundingClientRect();
-      if(rect.bottom > 0 && rect.top < window.innerHeight){
-        const mx = ((ev.clientX-rect.left)/Math.max(rect.width,1)*100).toFixed(1)+'%';
-        const my = ((ev.clientY-rect.top)/Math.max(rect.height,1)*100).toFixed(1)+'%';
-        hero.style.setProperty('--mx', mx); hero.style.setProperty('--my', my);
-      }
-    }
-    ticking = false;
-  };
-  window.addEventListener('pointermove', ev=>{
-    lastEv = ev;
-    if(!ticking){ ticking = true; requestAnimationFrame(paint); }
-  }, {passive:true});
-}
-
-function setupCommandPalette(){
-  const palette = document.getElementById('palette');
-  const input = document.getElementById('palette-input');
-  const results = document.getElementById('palette-results');
-  const openBtn = document.getElementById('open-palette');
-  const closeBtn = document.getElementById('palette-close');
-  if(!palette || !input || !results) return;
-  let activeIndex = 0;
-  const open = () => { palette.classList.add('open'); input.value=''; renderPalette(''); window.setTimeout(()=>input.focus(),30); };
-  const close = () => { palette.classList.remove('open'); };
-  const choose = (film) => {
-    close();
-    g_search = film.title.toLowerCase();
-    const s = document.getElementById('film-search');
-    if(s) s.value = film.title;
-    const c = document.getElementById('search-clear');
-    if(c) c.style.display='inline-block';
-    document.getElementById('galaxy').scrollIntoView({behavior:'smooth', block:'start'});
-    renderScene ? renderScene('galaxy', true) : renderDossier();
-  };
-  const renderPalette = (q) => {
-    const query = q.trim().toLowerCase();
-    const rows = FILMS.filter(f=>!query || f.title.toLowerCase().includes(query) || f.director.toLowerCase().includes(query) || f.genre.toLowerCase().includes(query))
-      .sort((a,b)=>b.revenue-a.revenue).slice(0,9);
-    activeIndex = Math.min(activeIndex, Math.max(rows.length-1,0));
-    results.innerHTML = rows.map((f,i)=>'<div class="palette-item '+(i===activeIndex?'active':'')+'" data-i="'+i+'"><div><div class="palette-title">'+escapeHtml(f.title)+'</div><div class="palette-meta">'+f.year+' · '+f.genre+' · '+escapeHtml(f.director)+'</div></div><div class="palette-meta">'+f.roi.toFixed(1)+'× ROI<br>'+moneyM(f.revenue)+'</div></div>').join('') || '<div class="palette-meta" style="padding:18px">No matching film in the sample.</div>';
-    results.querySelectorAll('.palette-item').forEach((el,i)=>el.addEventListener('click',()=>choose(rows[i])));
-    results._rows = rows;
-  };
-  input.addEventListener('input',()=>{activeIndex=0;renderPalette(input.value);});
-  input.addEventListener('keydown',ev=>{
-    const rows = results._rows || [];
-    if(ev.key==='ArrowDown'){ ev.preventDefault(); activeIndex=Math.min(rows.length-1,activeIndex+1); renderPalette(input.value); }
-    if(ev.key==='ArrowUp'){ ev.preventDefault(); activeIndex=Math.max(0,activeIndex-1); renderPalette(input.value); }
-    if(ev.key==='Enter' && rows[activeIndex]) choose(rows[activeIndex]);
-    if(ev.key==='Escape') close();
-  });
-  document.addEventListener('keydown',ev=>{
-    const combo = (ev.metaKey || ev.ctrlKey) && ev.key.toLowerCase()==='k';
-    if(combo){ ev.preventDefault(); open(); }
-    if(ev.key==='Escape') { close(); document.body.classList.remove('story-mode'); setText('story-mode-btn','TRAILER MODE'); }
-  });
-  palette.addEventListener('click',ev=>{ if(ev.target===palette) close(); });
-  if(openBtn) openBtn.addEventListener('click',open);
-  if(closeBtn) closeBtn.addEventListener('click',close);
-}
-
-function escapeHtml(s){ return String(s).replace(/[&<>'"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[c])); }
-
-function setupThemeToggle(){
-  const btn = document.getElementById('theme-toggle');
-  let saved = null;
-  try { saved = localStorage.getItem('cinescope-theme'); } catch(e) { saved = null; }
-  if(saved==='dark') document.body.classList.add('dark-room');
-  const update = () => setText('theme-toggle', document.body.classList.contains('dark-room') ? 'LIGHT ROOM' : 'DARK ROOM');
-  update();
-  if(btn) btn.addEventListener('click',()=>{
-    document.body.classList.toggle('dark-room');
-    try { localStorage.setItem('cinescope-theme', document.body.classList.contains('dark-room')?'dark':'light'); } catch(e) {}
-    update();
-  });
-}
-
-function setupStoryMode(){
-  const btn = document.getElementById('story-mode-btn');
-  const chapters = ['hero','story','galaxy','flow','matrix','sequels','paradox','directors','timeline','takeaways'];
-  const currentIndex = () => {
-    const y = window.scrollY + window.innerHeight*.38;
-    let idx = 0;
-    chapters.forEach((id,i)=>{ const el=document.getElementById(id); if(el && el.offsetTop<=y) idx=i; });
-    return idx;
-  };
-  const go = (dir) => {
-    const idx = Math.max(0, Math.min(chapters.length-1, currentIndex()+dir));
-    const el = document.getElementById(chapters[idx]);
-    if(el) el.scrollIntoView({behavior:'smooth'});
-  };
-  if(btn) btn.addEventListener('click',()=>{
-    document.body.classList.toggle('story-mode');
-    setText('story-mode-btn', document.body.classList.contains('story-mode') ? 'EXIT TRAILER' : 'TRAILER MODE');
-    if(document.body.classList.contains('story-mode')) document.getElementById('story').scrollIntoView({behavior:'smooth'});
-  });
-  document.addEventListener('keydown',ev=>{
-    if(!document.body.classList.contains('story-mode')) return;
-    if(ev.key==='ArrowDown' || ev.key==='PageDown'){ ev.preventDefault(); go(1); }
-    if(ev.key==='ArrowUp' || ev.key==='PageUp'){ ev.preventDefault(); go(-1); }
-  });
-}
-
-function setupBetterNavObserver(){
-  const links = Array.from(document.querySelectorAll('.nav-links a'));
-  const ids = links.map(a=>a.getAttribute('href')).filter(h=>h && h.startsWith('#')).map(h=>h.slice(1));
-  const io = new IntersectionObserver(entries=>{
-    entries.forEach(entry=>{
-      if(entry.isIntersecting){
-        links.forEach(a=>a.classList.toggle('active', a.getAttribute('href')==='#'+entry.target.id));
-      }
-    });
-  }, {threshold:.28, rootMargin:'-12% 0px -58% 0px'});
-  ids.forEach(id=>{ const el=document.getElementById(id); if(el) io.observe(el); });
-}
-
-function animateHeroCounters(){
-  const nums = document.querySelectorAll('[data-count]');
-  const formatter = new Intl.NumberFormat('en-US');
-  const run = (el) => {
-    const target = +el.dataset.count;
-    const start = performance.now();
-    const dur = 1050;
-    const tick = (now) => {
-      const t = Math.min(1, (now-start)/dur);
-      const eased = 1 - Math.pow(1-t, 3);
-      el.textContent = formatter.format(Math.round(target*eased));
-      if(t<1) requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
-  };
-  const io = new IntersectionObserver(entries=>entries.forEach(e=>{ if(e.isIntersecting){ run(e.target); io.unobserve(e.target); } }), {threshold:.4});
-  nums.forEach(n=>io.observe(n));
-}
-
-// ═══════════════════════════════════════════════════════════
-//  SCENE 07 — THE TIMELINE  (genre trends across decades)
-// ═══════════════════════════════════════════════════════════
-let g_tlMetric = 'roi';
-function decadeOf(y){ return y >= 2015 ? 2019 : Math.floor(y/10)*10; }
-
-function renderTimeline(){
-  const frame = document.getElementById('timeline-frame');
-  if(!frame) return;
-  const W = frame.clientWidth;
-  const H = Math.min(500, window.innerHeight*.68);
-  const M = {top:52, right:110, bottom:64, left:76};
-
-  d3.select('#timeline-viz').selectAll('*').remove();
-
-  const decades = [1970,1980,1990,2000,2010,2019].filter(dec=>FILMS.some(f=>decadeOf(f.year)===dec));
-
-  // Aggregate per genre per decade
-  const genreLines = GENRES.map(genre=>{
-    const pts = decades.map(dec=>{
-      const films = FILMS.filter(f=>
-        f.genre===genre && decadeOf(f.year)===dec && f.budget>0 && f.revenue>0
-      );
-      if(films.length<2) return null;
-      let val;
-      if(g_tlMetric==='roi')     val = medianOf(films.map(f=>f.roi));
-      else if(g_tlMetric==='budget')  val = films.reduce((s,f)=>s+f.budget,0)/films.length/1e6;
-      else if(g_tlMetric==='revenue') val = films.reduce((s,f)=>s+f.revenue,0)/films.length/1e6;
-      else                            val = films.reduce((s,f)=>s+f.rating,0)/films.length;
-      return {decade:dec, value:val, count:films.length};
-    }).filter(Boolean);
-    return {genre, pts};
-  }).filter(d=>d.pts.length>=2);
-
-  if(!genreLines.length) return;
-
-  const allVals = genreLines.flatMap(d=>d.pts.map(p=>p.value));
-  const yMin = Math.max(0, d3.min(allVals)*.82);
-  const yMax = d3.max(allVals)*1.14;
-
-  const xSc = d3.scaleLinear().domain([1970,2019]).range([M.left, W-M.right]);
-  const ySc = d3.scaleLinear().domain([yMin,yMax]).range([H-M.bottom, M.top]);
-
-  const svg = d3.select('#timeline-viz').append('svg').attr('width',W).attr('height',H);
-
-  // Decade grid
-  decades.forEach(dec=>{
-    svg.append('line')
-      .attr('x1',xSc(dec)).attr('x2',xSc(dec))
-      .attr('y1',M.top).attr('y2',H-M.bottom)
-      .attr('stroke','#c4aa84').attr('stroke-width',.6).attr('opacity',.38);
-  });
-
-  const lineGen = d3.line()
-    .x(d=>xSc(d.decade)).y(d=>ySc(d.value))
-    .curve(d3.curveCatmullRom.alpha(0.5));
-
-  genreLines.forEach(({genre,pts})=>{
-    const color = COLORS[genre]||COLORS.Other;
-
-    // Glow shadow
-    svg.append('path').datum(pts)
-      .attr('d',lineGen).attr('fill','none')
-      .attr('stroke',color).attr('stroke-width',7).attr('opacity',.10)
-      .attr('stroke-linecap','round');
-
-    // Main line with draw animation
-    const path = svg.append('path').datum(pts)
-      .attr('d',lineGen).attr('fill','none')
-      .attr('stroke',color).attr('stroke-width',2.5).attr('opacity',.88)
-      .attr('stroke-linecap','round').attr('stroke-linejoin','round');
-    try{
-      const len = path.node().getTotalLength();
-      path.attr('stroke-dasharray',len).attr('stroke-dashoffset',len)
-        .transition().duration(900).delay(200).ease(d3.easeCubicOut)
-        .attr('stroke-dashoffset',0);
-    }catch(e){}
-
-    // Dots
-    svg.selectAll(null).data(pts).join('circle')
-      .attr('cx',d=>xSc(d.decade)).attr('cy',d=>ySc(d.value))
-      .attr('r',5.5).attr('fill',color)
-      .attr('stroke','var(--bg)').attr('stroke-width',2)
-      .style('cursor','pointer')
-      .on('mouseover',function(ev,d){
-        d3.select(this).attr('r',8).attr('stroke-width',2.5);
-        const metFmt = g_tlMetric==='roi'   ? v=>v.toFixed(1)+'×' :
-                       g_tlMetric==='rating'? v=>v.toFixed(2)+' ★':
-                       v=>'$'+v.toFixed(0)+'M';
-        const TT=document.getElementById('tooltip');
-        const decLabel = d.decade===2019 ? '2015–19' : d.decade+'s';
-        document.getElementById('tt-title').textContent  = genre+' — '+decLabel;
-        document.getElementById('tt-year').textContent   = decLabel;
-        document.getElementById('tt-budget').textContent = d.count+' films in sample';
-        document.getElementById('tt-revenue').textContent= metFmt(d.value);
-        document.getElementById('tt-roi').textContent='';
-        document.getElementById('tt-roi').className='';
-        document.getElementById('tt-profit').textContent='';
-        document.getElementById('tt-rating').textContent='';
-        document.getElementById('tt-genre').textContent =genre;
-        document.getElementById('tt-director').textContent='';
-        TT.style.opacity=1;
-        TT.style.left=Math.min(ev.clientX+16,window.innerWidth-240)+'px';
-        TT.style.top=Math.max(ev.clientY-90,10)+'px';
-      })
-      .on('mousemove',function(ev){
-        const TT=document.getElementById('tooltip');
-        TT.style.left=Math.min(ev.clientX+16,window.innerWidth-240)+'px';
-        TT.style.top=Math.max(ev.clientY-90,10)+'px';
-      })
-      .on('mouseout',function(){
-        d3.select(this).attr('r',5.5).attr('stroke-width',2);
-        document.getElementById('tooltip').style.opacity=0;
-      });
-
-    // End label (right of last point)
-    const last = pts[pts.length-1];
-    svg.append('text')
-      .attr('x',xSc(last.decade)+10).attr('y',ySc(last.value))
-      .attr('dy','0.35em')
-      .attr('font-family','DM Mono,monospace').attr('font-size',9.5)
-      .attr('fill',color).attr('opacity',.9)
-      .text(genre);
-  });
-
-  // Axes
-  svg.append('g').attr('transform','translate(0,'+(H-M.bottom)+')')
-    .call(d3.axisBottom(xSc).tickValues(decades).tickFormat(d=>d===2019?'2015–19':d+'s'));
-
-  const yFmt = g_tlMetric==='roi'   ? v=>v.toFixed(0)+'×' :
-               g_tlMetric==='rating'? v=>v.toFixed(1)+'★' :
-               v=>'$'+v.toFixed(0)+'M';
-  svg.append('g').attr('transform','translate('+M.left+',0)')
-    .call(d3.axisLeft(ySc).ticks(5).tickFormat(yFmt));
-
-  const yLabel = g_tlMetric==='roi'    ? 'MEDIAN ROI' :
-                 g_tlMetric==='budget' ? 'AVG BUDGET ($M)' :
-                 g_tlMetric==='revenue'? 'AVG REVENUE ($M)':'AVG RATING';
-  svg.append('text').attr('transform','rotate(-90)')
-    .attr('x',-H/2).attr('y',20).attr('text-anchor','middle')
-    .attr('font-size',10).attr('fill','#6b5a3a')
-    .attr('font-family','DM Mono,monospace').attr('letter-spacing',2)
-    .text(yLabel);
-  svg.append('text').attr('x',W/2).attr('y',H-8)
-    .attr('text-anchor','middle').attr('font-size',10).attr('fill','#6b5a3a')
-    .attr('font-family','DM Mono,monospace').attr('letter-spacing',2)
-    .text('DECADE');
-
-  // Update corner label
-  const corner=document.getElementById('timeline-corner');
-  if(corner) corner.textContent='GENRE '+yLabel+' BY DECADE';
-}
-
-document.querySelectorAll('[data-tl-metric]').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    document.querySelectorAll('[data-tl-metric]').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    g_tlMetric=btn.dataset.tlMetric;
-    renderTimeline();
-  });
-});
-
-// ═══════════════════════════════════════════════════════════
-//  INIT — optimized: render the first viz immediately, lazy-render the rest
-// ═══════════════════════════════════════════════════════════
-const SCENE_RENDERERS = {
-  galaxy: renderDossier,
-  flow: renderFlow,
-  matrix: renderMatrix,
-  sequels: renderDynasties,
-  paradox: renderParadox,
-  directors: renderDirectors,
-  timeline: renderTimeline
-};
-const renderedScenes = new Set();
-let resizeTimer = null;
-
-function renderScene(id, force=false){
-  const fn = SCENE_RENDERERS[id];
-  if(!fn) return;
-  if(!force && renderedScenes.has(id)) return;
-  requestAnimationFrame(()=>{
-    fn();
-    renderedScenes.add(id);
-  });
-}
-
-function setupLazyVizRendering(){
-  renderScene('galaxy');
-  const ids = Object.keys(SCENE_RENDERERS).filter(id=>id!=='galaxy');
-  if(!('IntersectionObserver' in window)){
-    ids.forEach(id=>renderScene(id));
-    return;
-  }
-  const io = new IntersectionObserver(entries=>{
-    entries.forEach(entry=>{
-      if(entry.isIntersecting){
-        renderScene(entry.target.id);
-        io.unobserve(entry.target);
-      }
-    });
-  }, {rootMargin:'420px 0px 420px 0px', threshold:.01});
-  ids.forEach(id=>{ const el=document.getElementById(id); if(el) io.observe(el); });
-}
-
-function rerenderVisibleScenes(){
-  window.clearTimeout(resizeTimer);
-  resizeTimer = window.setTimeout(()=>{
-    renderedScenes.forEach(id=>renderScene(id, true));
-  }, 160);
-}
-
-setupCinematicExperience();
-setupLazyVizRendering();
-window.addEventListener('resize', rerenderVisibleScenes, {passive:true});
-
-// Fix: content-visibility:auto skews anchor scroll positions until sections are rendered.
-// Pre-render all scenes before scrolling so every section has its real height.
-document.querySelectorAll('.chapter-card[href^="#"]').forEach(card=>{
-  card.addEventListener('click',function(e){
-    const id = this.getAttribute('href').slice(1);
-    const target = document.getElementById(id);
-    if(!target) return;
-    e.preventDefault();
-    Object.keys(SCENE_RENDERERS).forEach(sid=>renderScene(sid));
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{
-      target.scrollIntoView({behavior:'smooth',block:'start'});
-    }));
-  });
-});
-</script>
+      <div class="controls reveal">
+        <span class="control-title">Y AXIS</span>
+        <button class="pill active" type="button" data-dossier-mode="revenue">Revenue</button>
+        <button class="pill" type="button" data-dossier-mode="roi">ROI</button>
+        <button class="pill" id="brush-toggle" type="button">Brush select</button>
+        <label class="search">
+          <span class="control-title">SPOTLIGHT</span>
+          <input id="film-search" type="search" placeholder="Search a title">
+        </label>
+      </div>
+      <div class="viz-shell dossier-shell reveal">
+        <div class="viz-bar">
+          <span>BUDGET VS <b id="dossier-metric-label">REVENUE</b> · LOG SCALE</span>
+          <span id="dossier-count"></span>
+        </div>
+        <p class="viz-decoder">$1M → $10M SPANS THE SAME DISTANCE AS $10M → $100M · HOVER DOSSIER · SEARCH TITLE · DRAG TO BRUSH</p>
+        <div id="dossier-viz" class="chart"></div>
+      </div>
+      <div class="under-chart reveal">
+        <div class="legend" id="dossier-legend"></div>
+        <p id="brush-result" class="annotation">Drag on the chart to inspect a selection of films.</p>
+      </div>
+      <div class="editorial-bridge reveal">
+        <p id="dossier-reading"></p>
+        <p>A scatterplot makes exceptions unforgettable, but films are financed through repeatable choices. The next chapter folds individual titles into routes to see whether budget and genre repeatedly move releases toward the same outcomes.</p>
+      </div>
+    </section>
+
+    <section class="scene" id="flow">
+      <div class="scene-heading reveal">
+        <p class="section-label">VIEW 02 · THE FLOW</p>
+        <h2>Some routes are less risky than others.</h2>
+        <p class="scene-lead">Budget tier enters on the left, genre organizes the middle, and outcome collects on the right. Width counts films, while the toggle distinguishes efficient returns from absolute reach.</p>
+      </div>
+      <div class="controls reveal">
+        <span class="control-title">OUTCOME DEFINITION</span>
+        <button class="pill active" type="button" data-flow-mode="roi">ROI</button>
+        <button class="pill" type="button" data-flow-mode="revenue">Box Office</button>
+      </div>
+      <div class="viz-shell flow-shell reveal">
+        <div class="viz-bar">
+          <span>BUDGET TIER → GENRE → OUTCOME</span>
+          <span id="flow-count"></span>
+        </div>
+        <p class="viz-decoder">WIDTH = NUMBER OF FILMS · ROI HIT = AT LEAST 2x BUDGET · HOVER TO TRACE · CLICK GENRE TO FILTER ALL SCENES</p>
+        <div class="split-chart">
+          <div id="flow-viz" class="chart"></div>
+          <aside class="insight-card" id="flow-insight">
+            <p class="section-label">READ THE FLOW</p>
+            <h3>Hover a genre</h3>
+            <p>Its budget origins and outcomes will remain in focus.</p>
+          </aside>
+        </div>
+      </div>
+      <div class="editorial-bridge reveal">
+        <p id="flow-reading"></p>
+        <p>Volume alone can hide the economics of a route: a common path may still deliver mediocre returns. The matrix therefore isolates each genre-budget combination and tests whether its typical film actually rewards the risk.</p>
+      </div>
+    </section>
+
+    <section class="scene" id="matrix">
+      <div class="scene-heading reveal">
+        <p class="section-label">VIEW 03 · THE PROFITABILITY MATRIX</p>
+        <h2>Budget works differently by genre.</h2>
+        <p class="scene-lead">Each cell pairs genre with budget tier; darker color indicates stronger median return or recovery rate. The selected cell opens its distribution beside the matrix.</p>
+      </div>
+      <div class="controls reveal">
+        <span class="control-title">CELL METRIC</span>
+        <button class="pill active" type="button" data-matrix-mode="median">Median ROI</button>
+        <button class="pill" type="button" data-matrix-mode="profitable">% Profitable</button>
+      </div>
+      <div class="viz-shell matrix-shell reveal">
+        <div class="viz-bar">
+          <span>GENRE × BUDGET TIER</span>
+          <span id="matrix-count"></span>
+        </div>
+        <p class="viz-decoder">MEDIAN ROI 3.0x = HALF THE CELL REACHED AT LEAST 3x BUDGET · CLICK A CELL FOR ITS DISTRIBUTION</p>
+        <div class="matrix-layout">
+          <div id="matrix-viz" class="chart"></div>
+          <aside class="drilldown" id="matrix-detail">
+            <p class="section-label">CELL DRILL-DOWN</p>
+            <h3>Select a cell</h3>
+            <p class="muted">Compare its return distribution with all visible films.</p>
+          </aside>
+        </div>
+      </div>
+      <div class="editorial-bridge reveal">
+        <p id="matrix-reading"></p>
+        <p>That matrix describes fresh production choices. Cinema also sells familiarity: once a film earns a following, sequels are supposed to inherit demand. Dynasties tests whether that inherited audience survives installment after installment.</p>
+      </div>
+    </section>
+
+    <section class="scene" id="dynasties">
+      <div class="scene-heading reveal">
+        <p class="section-label">VIEW 04 · DYNASTIES</p>
+        <h2>A hit can launch a series. It cannot command an encore.</h2>
+        <p class="scene-lead">Every eligible sequel is compared with its original: above the diagonal it surpassed the first film; below it fell short. Select a collection for its chronological reel.</p>
+      </div>
+      <div class="controls reveal">
+        <span class="control-title">COMPARE</span>
+        <button class="pill active" type="button" data-dynasty-mode="revenue">Revenue</button>
+        <button class="pill" type="button" data-dynasty-mode="roi">ROI</button>
+        <button class="pill" type="button" data-dynasty-mode="rating">Rating</button>
+        <label class="select-control">
+          <span class="control-title">OPEN COLLECTION</span>
+          <select id="franchise-select"></select>
+        </label>
+      </div>
+      <div class="viz-shell reveal">
+        <div class="viz-bar">
+          <span>ORIGINAL → EACH ELIGIBLE SEQUEL</span>
+          <span id="dynasty-count"></span>
+        </div>
+        <p class="viz-decoder">DIAGONAL = EQUAL TO ORIGINAL · REEL BASELINE = ORIGINAL · SELECT COLLECTION · HOVER INSTALLMENT · SWITCH METRIC</p>
+        <div class="dynasty-layout">
+          <div id="dynasty-viz" class="chart"></div>
+          <aside class="drilldown radial-panel" id="dynasty-detail"></aside>
+        </div>
+      </div>
+      <div class="editorial-bridge reveal">
+        <p id="dynasty-reading"></p>
+        <p>A franchise can begin with awareness already purchased by its original, yet even that advantage proves unstable. Audience affection is another form of momentum; the next scene tests whether better-liked films systematically occupy the richer end of the box office.</p>
+      </div>
+    </section>
+
+    <section class="scene" id="applause">
+      <div class="scene-heading reveal">
+        <p class="section-label">VIEW 05 · APPLAUSE VS RECEIPTS</p>
+        <h2>Applause measures a different kind of success.</h2>
+        <p class="scene-lead">Films with at least 50 MovieLens ratings form audience bands. Dots are titles, the thick bar is the middle half of results, and the gold diamond is the band median.</p>
+      </div>
+      <div class="controls reveal">
+        <span class="control-title">COMMERCIAL MEASURE</span>
+        <button class="pill active" type="button" data-applause-mode="revenue">Revenue</button>
+        <button class="pill" type="button" data-applause-mode="roi">ROI</button>
+      </div>
+      <div class="viz-shell reveal">
+        <div class="viz-bar">
+          <span>MOVIELENS RATING BAND → COMMERCIAL RANGE</span>
+          <span id="applause-count"></span>
+        </div>
+        <p class="viz-decoder">RIGHT = MORE RESULT · THICK BAR = MIDDLE 50% · DIAMOND = MEDIAN · HOVER TITLE · CLICK RATING BAND</p>
+        <div class="applause-layout">
+          <div id="applause-viz" class="chart"></div>
+          <aside class="insight-card" id="applause-insight"></aside>
+        </div>
+      </div>
+      <div class="editorial-bridge reveal">
+        <p id="applause-reading"></p>
+        <p>The overlap between rating bands separates cultural approval from commercial certainty. The final promise is a professional signature: whether repeat directors turn past success into a reliably stronger financial record.</p>
+      </div>
+    </section>
+
+    <section class="scene" id="directors">
+      <div class="scene-heading reveal">
+        <p class="section-label">VIEW 06 · THE NAME ABOVE THE TITLE</p>
+        <h2>A name on the poster still has to perform again.</h2>
+        <p class="scene-lead">This marquee ranks directors with repeated eligible releases as portfolios, not anecdotes. Median ROI rewards efficiency; total gross rewards career-scale reach.</p>
+      </div>
+      <div class="controls reveal">
+        <span class="control-title">RANK BY</span>
+        <button class="pill active" type="button" data-director-rank="roi">Median ROI</button>
+        <button class="pill" type="button" data-director-rank="gross">Total gross</button>
+        <span class="control-title">MINIMUM FILMS</span>
+        <button class="pill" type="button" data-director-min="4">4+</button>
+        <button class="pill active" type="button" data-director-min="6">6+</button>
+        <button class="pill" type="button" data-director-min="10">10+</button>
+      </div>
+      <div class="viz-shell reveal">
+        <div class="viz-bar">
+          <span>DIRECTOR MARQUEE · REPEATED FINANCIAL RECORD</span>
+          <span id="director-count"></span>
+        </div>
+        <p class="viz-decoder">BAR LENGTH = ACTIVE RANKING METRIC · CLICK A CREDIT LINE FOR ITS PORTFOLIO</p>
+        <div class="directors-layout">
+          <div id="directors-viz" class="chart"></div>
+          <aside class="drilldown" id="director-detail"></aside>
+        </div>
+      </div>
+      <div class="editorial-bridge reveal">
+        <p id="director-reading"></p>
+        <p>No credit line, audience score, franchise name, genre, or budget eliminates variance. The final cut preserves that uncertainty rather than pretending the industry has a single winning script.</p>
+      </div>
+    </section>
+
+    <section class="finale" id="finale">
+      <div class="scene-heading reveal">
+        <p class="section-label">FINAL CUT</p>
+        <h2>Success is plural. Certainty is fiction.</h2>
+        <p class="final-prose" id="final-summary"></p>
+      </div>
+      <blockquote class="closing-quote reveal">
+        <p>A movie can buy scale, earn applause, or inherit a name.<br><strong>None of them buys certainty.</strong></p>
+        <cite>CineScope · Team XLB</cite>
+      </blockquote>
+      <div class="takeaways final-reel reveal">
+        <article>
+          <span>01 · SCALE</span>
+          <h3 id="take-scale-title"></h3>
+          <p id="take-scale-copy"></p>
+        </article>
+        <article>
+          <span>02 · GENRE</span>
+          <h3 id="take-genre-title"></h3>
+          <p id="take-genre-copy"></p>
+        </article>
+        <article>
+          <span>03 · LEGACY</span>
+          <h3 id="take-franchise-title"></h3>
+          <p id="take-franchise-copy"></p>
+        </article>
+      </div>
+      <div class="methodology reveal">
+        <p class="section-label">DATA & METHODOLOGY</p>
+        <p>CineScope uses <em>The Movies Dataset</em> (Kaggle/TMDb) joined with MovieLens audience ratings. Monetary views include films with a positive reported revenue and a recorded production budget of at least <strong>$10,000</strong>, excluding implausible near-zero budget records. ROI is gross box-office revenue divided by production budget; it does not include marketing costs or ancillary revenues. Rating analysis requires at least <strong>50 MovieLens ratings</strong>. All displayed financial releases occur no later than 2017.</p>
+      </div>
+      <div class="credits reveal">
+        <p class="section-label">A FILM BY</p>
+        <h3>Hamza Barrada · Amer Lakrami · Ziad Chentouf · Salma El Yadouni</h3>
+        <p>COM-480 Data Visualization · EPFL 2026 · D3.js and Vanilla JavaScript</p>
+      </div>
+    </section>
+  </main>
+
+  <div class="tooltip" id="tooltip" role="tooltip"></div>
+
+  <footer>
+    <strong>CINESCOPE</strong>
+    <span>What makes a movie successful? · Team XLB · EPFL COM-480 · 2026</span>
+    <a href="#hero">BACK TO TOP</a>
+  </footer>
 </body>
 </html>
