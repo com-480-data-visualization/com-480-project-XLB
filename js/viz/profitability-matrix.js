@@ -14,7 +14,7 @@ import {
   roiForLogScale,
   setActiveButtons,
   showTooltip,
-} from "../utils.js?v=20260526-final4";
+} from "../utils.js?v=20260526-final6";
 
 function kernelDensity(values, thresholds, bandwidth) {
   return thresholds.map((threshold) => [
@@ -84,7 +84,7 @@ export function createProfitabilityMatrix(movies) {
     const pairReading = `The selected ${cell.genre} / ${TIER_LABELS[cell.tier].toLowerCase()} cell pairs a ${formatRoi(cell.medianRoi)} median return with ${formatPercent(cell.profitable)} budget recovery, against visible baselines of ${formatRoi(overallMedian)} and ${formatPercent(overallProfitable)}. Toggle the metric to compare payoff with reliability.`;
     if (mode === "median") {
       reading.textContent = strongest && weakest
-        ? `Among strategies with at least ten visible films, ${strongest.genre} at ${TIER_LABELS[strongest.tier].toLowerCase()} leads median return at ${formatRoi(strongest.medianRoi)}, while ${weakest.genre} at ${TIER_LABELS[weakest.tier].toLowerCase()} sits at ${formatRoi(weakest.medianRoi)}. ${pairReading}`
+        ? `The efficiency gap concentrates in specific combinations: among strategies with at least ten visible films, ${strongest.genre} at ${TIER_LABELS[strongest.tier].toLowerCase()} leads median return at ${formatRoi(strongest.medianRoi)}, while ${weakest.genre} at ${TIER_LABELS[weakest.tier].toLowerCase()} sits at ${formatRoi(weakest.medianRoi)}. ${pairReading}`
         : pairReading;
     } else {
       reading.textContent = strongest && weakest

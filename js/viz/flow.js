@@ -13,7 +13,7 @@ import {
   median,
   motionDuration,
   setActiveButtons,
-} from "../utils.js?v=20260526-final4";
+} from "../utils.js?v=20260526-final6";
 
 const ROI_OUTCOMES = [
   { key: "Flop", label: "FLOP < 0.5x", color: "#b54a3a" },
@@ -134,7 +134,7 @@ export function createFlow(movies, setGenre) {
     const grossLeader = d3.greatest(grossRoutes, (route) => route.medianGross);
     const reachLeader = d3.greatest(grossRoutes, (route) => route.majorShare);
     if (mode === "roi" && strongest && strongestTier && weakestTier && grossLeader) {
-      reading.textContent = `When success means at least twice the recorded budget, ${TIER_LABELS[strongestTier.tier].toLowerCase()} sends ${formatPercent(strongestTier.hitShare)} of films to Hit or Megahit outcomes, compared with ${formatPercent(weakestTier.hitShare)} from ${TIER_LABELS[weakestTier.tier].toLowerCase()}. ${strongest.genre} leads visible median ROI at ${formatRoi(strongest.roi)}; toggle Box Office and the leading median gross is ${grossLeader.genre} at ${formatMoney(grossLeader.medianGross)}.`;
+      reading.textContent = `The micro-budget advantage persists when films become routes: defining success as at least twice recorded budget, ${TIER_LABELS[strongestTier.tier].toLowerCase()} sends ${formatPercent(strongestTier.hitShare)} of films to Hit or Megahit outcomes, compared with ${formatPercent(weakestTier.hitShare)} from ${TIER_LABELS[weakestTier.tier].toLowerCase()}. ${strongest.genre} leads visible median ROI at ${formatRoi(strongest.roi)}, while the Box Office lens instead puts ${grossLeader.genre} first at ${formatMoney(grossLeader.medianGross)} median gross.`;
     } else if (mode === "revenue") {
       reading.textContent = grossLeader && reachLeader
         ? `On absolute box office, ${grossLeader.genre} has the highest visible genre median at ${formatMoney(grossLeader.medianGross)}, while ${reachLeader.genre} sends the largest share past $100M (${formatPercent(reachLeader.majorShare)}). Toggle ROI and ${strongest.genre} leads the return test at ${formatRoi(strongest.roi)}: reach and efficiency are not the same outcome.`

@@ -16,7 +16,7 @@ import {
   regression,
   roiForLogScale,
   setActiveButtons,
-} from "../utils.js?v=20260526-final4";
+} from "../utils.js?v=20260526-final6";
 
 const RATING_BANDS = [
   { key: "under-2.5", label: "< 2.5", test: (rating) => rating < 2.5 },
@@ -104,6 +104,12 @@ export function createApplause(movies) {
     const topFilm = d3.greatest(selected.films, metric.value);
     const sampleMiddle = median(rated.map(metric.value));
     const position = (value) => mode === "roi" ? roiForLogScale(value) : value;
+    const grossRelationship = Math.abs(revenueRelation?.correlation || 0) < 0.1
+      ? "Audience approval barely orders box-office reach"
+      : "In this selected cut, audience approval has a stronger box-office relationship";
+    const financialComparison = Math.abs(roiRelation?.correlation || 0) > Math.abs(revenueRelation?.correlation || 0)
+      ? `Rating relates more to logged ROI here (${formatCorrelation(roiRelation?.correlation)}) than to gross`
+      : `Switching to ROI leaves the association at ${formatCorrelation(roiRelation?.correlation)}, no stronger than its gross relationship`;
     insight.innerHTML = `
       <p class="section-label">SELECTED AUDIENCE BAND</p>
       <h3>${selected.label} / 5</h3>
@@ -118,7 +124,7 @@ export function createApplause(movies) {
       </div>
       <p class="muted">Largest ${metric.short}: ${limitText(topFilm.title, 27)} · ${metric.format(metric.value(topFilm))}</p>
     `;
-    reading.textContent = `On ${metric.label.toLowerCase()}, the largest median sits in the ${leadingMedian.label} rating band at ${metric.format(leadingMedian.middle)}, while the highest-rated ${highestRated.label} band records ${metric.format(highestRated.middle)} and the ${lowestRated.label} band records ${metric.format(lowestRated.middle)}. Compare both commercial lenses: rating relates to logged gross at ${formatCorrelation(revenueRelation?.correlation)} and to logged ROI at ${formatCorrelation(roiRelation?.correlation)} in this cut. The overlapping middle ranges show why applause is evidence of approval, not a financial guarantee; click a band to inspect its titles.`;
+    reading.textContent = `${grossRelationship}: rating versus logged gross is ${formatCorrelation(revenueRelation?.correlation)}. On ${metric.label.toLowerCase()}, the largest median sits in the ${leadingMedian.label} band at ${metric.format(leadingMedian.middle)}, while the highest-rated ${highestRated.label} band records ${metric.format(highestRated.middle)}. ${financialComparison}, separating audience approval from box-office scale; click a band to inspect the films behind that split.`;
 
     const width = Math.max(container.clientWidth, 620);
     const height = 505;

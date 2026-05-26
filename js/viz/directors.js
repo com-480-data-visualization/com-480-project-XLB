@@ -14,7 +14,7 @@ import {
   moveTooltip,
   setActiveButtons,
   showTooltip,
-} from "../utils.js?v=20260526-final4";
+} from "../utils.js?v=20260526-final6";
 
 function buildRecords(movies, minimumFilms) {
   return d3
@@ -163,7 +163,7 @@ export function createDirectors(movies, precomputedDirectors, portraits = {}) {
     const selectedReading = selected
       ? ` The opened ${selected.name} dossier combines ${formatRoi(selected.medianRoi)} median ROI with ${formatMoney(selected.totalRevenue)} total gross across ${formatInteger(selected.filmCount)} films; click another credit line to make the same comparison.`
       : "";
-    reading.textContent = `A directing reputation changes meaning with the metric: among filmmakers with ${minimumFilms}+ eligible releases, ${roiLeader.name} leads sustained efficiency at ${formatRoi(roiLeader.medianRoi)}, while ${grossLeader.name} leads accumulated scale at ${formatMoney(grossLeader.totalRevenue)}. Toggle the ranking to test whether the same name wins both definitions.${selectedReading}`;
+    reading.textContent = `At the active evidence threshold of ${minimumFilms}+ eligible releases, a directing reputation still has two meanings: ${roiLeader.name} leads sustained efficiency at ${formatRoi(roiLeader.medianRoi)}, while ${grossLeader.name} leads accumulated scale at ${formatMoney(grossLeader.totalRevenue)}. Toggle the ranking or raise the threshold to compare repeated records under stricter evidence.${selectedReading}`;
 
     const width = Math.max(container.clientWidth, 630);
     const rowHeight = 28;

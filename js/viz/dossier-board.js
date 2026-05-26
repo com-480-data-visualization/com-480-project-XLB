@@ -17,7 +17,7 @@ import {
   renderLegend,
   roiForLogScale,
   setActiveButtons,
-} from "../utils.js?v=20260526-final4";
+} from "../utils.js?v=20260526-final6";
 
 export function createDossierBoard(movies) {
   const container = document.getElementById("dossier-viz");
@@ -86,7 +86,7 @@ export function createDossierBoard(movies) {
     const microReturn = median(eligible.filter((movie) => movie.tier === "Micro").map((movie) => movie.roi));
     const blockbusterReturn = median(eligible.filter((movie) => movie.tier === "Blockbuster").map((movie) => movie.roi));
     const scaleComparison = microReturn != null && blockbusterReturn != null
-      ? ` Median return is ${formatRoi(microReturn)} for micro-budget films versus ${formatRoi(blockbusterReturn)} for blockbusters: more capital raises the ceiling without guaranteeing efficiency.`
+      ? ` Median return is ${formatRoi(microReturn)} for micro-budget films versus ${formatRoi(blockbusterReturn)} for blockbusters: the smaller-budget segment multiplies its recorded cost more effectively even while blockbusters reach larger grosses.`
       : "";
     const lensReading = !eligible.length ? "" : mode === "revenue"
       ? `On the box-office lens, ${largestGross.title} reaches ${formatMoney(largestGross.revenue)}; switch to ROI and ${strongestReturn.title} becomes the exceptional return at ${formatRoi(strongestReturn.roi)}.`

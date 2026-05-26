@@ -13,7 +13,7 @@ import {
   moveTooltip,
   setActiveButtons,
   showTooltip,
-} from "../utils.js?v=20260526-final4";
+} from "../utils.js?v=20260526-final6";
 
 function matchesComparison(comparison, state) {
   return (
@@ -505,7 +505,7 @@ export function createDynasties(data) {
     const eraReading = state.decade === "all"
       ? " Filter decade to compare franchise launch eras."
       : ` Showing franchises launched in the ${state.decade}s.`;
-    reading.textContent = `Across this cut, ${formatPercent(grossOverview.share)} of ${formatInteger(grossOverview.count)} sequels outgross their original, but only ${formatPercent(roiOverview.share)} beat its ROI; ${globalRating}.${selectionReading} Toggle Revenue, ROI, and Rating on the open reel, then hover each chapter for its step-by-step change.${eraReading}`;
+    reading.textContent = `Franchise scale rarely preserves efficiency: across this cut, ${formatPercent(grossOverview.share)} of ${formatInteger(grossOverview.count)} sequels outgross their original, but only ${formatPercent(roiOverview.share)} beat its ROI; ${globalRating}.${selectionReading} Toggle Revenue, ROI, and Rating on the open reel, then hover each chapter for its step-by-step change.${eraReading}`;
     renderReel(selectedFranchise);
   }
 

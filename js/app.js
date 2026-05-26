@@ -1,21 +1,20 @@
-import { loadData } from "./data-loader.js?v=20260526-final4";
-import { getState, setState, subscribe } from "./state.js?v=20260526-final4";
+import { loadData } from "./data-loader.js?v=20260526-final6";
+import { getState, setState, subscribe } from "./state.js?v=20260526-final6";
 import {
   DECADES,
   filterMovies,
   formatCorrelation,
   formatInteger,
-  formatMoney,
   formatPercent,
   formatRoi,
   median,
-} from "./utils.js?v=20260526-final4";
-import { createDossierBoard } from "./viz/dossier-board.js?v=20260526-final4";
-import { createFlow } from "./viz/flow.js?v=20260526-final4";
-import { createProfitabilityMatrix } from "./viz/profitability-matrix.js?v=20260526-final4";
-import { createDynasties } from "./viz/dynasties.js?v=20260526-final4";
-import { createApplause } from "./viz/applause.js?v=20260526-final4";
-import { createDirectors } from "./viz/directors.js?v=20260526-final4";
+} from "./utils.js?v=20260526-final6";
+import { createDossierBoard } from "./viz/dossier-board.js?v=20260526-final6";
+import { createFlow } from "./viz/flow.js?v=20260526-final6";
+import { createProfitabilityMatrix } from "./viz/profitability-matrix.js?v=20260526-final6";
+import { createDynasties } from "./viz/dynasties.js?v=20260526-final6";
+import { createApplause } from "./viz/applause.js?v=20260526-final6";
+import { createDirectors } from "./viz/directors.js?v=20260526-final6";
 
 function text(id, value) {
   const element = document.getElementById(id);
@@ -24,13 +23,15 @@ function text(id, value) {
   }
 }
 
-function populateStory(summary, movies) {
+function populateStory(summary, movies, franchises) {
   const { counts, headline } = summary;
   const microFilms = movies.filter((movie) => movie.tier === "Micro");
   const blockbusterFilms = movies.filter((movie) => movie.tier === "Blockbuster");
-  const recoveryShare = movies.filter((movie) => movie.roi >= 1).length / movies.length;
   const microMedian = median(microFilms.map((movie) => movie.roi));
   const blockbusterMedian = median(blockbusterFilms.map((movie) => movie.roi));
+  const sequelRoiImprovementShare = franchises.comparisons.filter(
+    (comparison) => comparison.sequelRoi >= comparison.originalRoi,
+  ).length / franchises.comparisons.length;
   text("stat-all-films", formatInteger(counts.processedRows));
   text("stat-financial", formatInteger(counts.financialMovies));
   text("stat-franchises", formatInteger(counts.franchises));
@@ -39,22 +40,22 @@ function populateStory(summary, movies) {
 
   text(
     "final-summary",
-    `Across ${formatInteger(counts.financialMovies)} cleaned financial records, ${formatPercent(recoveryShare)} recover their recorded production budget, yet the median micro-budget release returns ${formatRoi(microMedian)} against ${formatRoi(blockbusterMedian)} for blockbusters. ${headline.strongestGenre.genre} leads genre median return; audience ratings barely order logged gross revenue (${formatCorrelation(headline.ratingRevenueCorrelation)}); and only ${formatPercent(headline.sequelImprovementShare)} of measured sequels outgross the original that created their audience. Success has several forms, but no dependable shortcut.`,
+    `The sharpest split is between applause and receipts: audience ratings barely order logged gross revenue (${formatCorrelation(headline.ratingRevenueCorrelation)}). Across ${formatInteger(counts.financialMovies)} financial records, micro-budget films return ${formatRoi(microMedian)} at the median against ${formatRoi(blockbusterMedian)} for blockbusters. Franchises expand attention without preserving efficiency: ${formatPercent(headline.sequelImprovementShare)} of measured sequels outgross their original, but only ${formatPercent(sequelRoiImprovementShare)} beat its ROI. Success has several forms, but no dependable shortcut.`,
   );
-  text("take-scale-title", "Scale raises the ceiling.");
+  text("take-scale-title", "Small bets multiply harder.");
   text(
     "take-scale-copy",
-    `A very large budget can reach exceptional grosses: ${headline.highestRevenue.title} reaches ${formatMoney(headline.highestRevenue.revenue)}. But micro-budget films post the stronger median return, separating reach from efficiency.`,
+    `Micro-budget films return ${formatRoi(microMedian)} at the median versus ${formatRoi(blockbusterMedian)} for blockbusters. ${headline.strongestGenre.genre} leads genre median return at ${formatRoi(headline.strongestGenre.medianRoi)}; reach and efficiency are different victories.`,
   );
-  text("take-genre-title", "Fit matters more than formula.");
+  text("take-genre-title", "Applause is not reach.");
   text(
     "take-genre-copy",
-    `${headline.strongestGenre.genre} leads displayed genres at ${formatRoi(headline.strongestGenre.medianRoi)} median return, with ${formatPercent(headline.strongestGenre.profitableShare)} recovering reported production budget. Genre changes the value of scale.`,
+    `MovieLens audience rating and logged box-office gross are nearly unrelated in this eligible sample (${formatCorrelation(headline.ratingRevenueCorrelation)}). A film can be loved without becoming the largest commercial event.`,
   );
-  text("take-franchise-title", "Recognition is only an opening.");
+  text("take-franchise-title", "Scale is not sequel efficiency.");
   text(
     "take-franchise-copy",
-    `Only ${formatPercent(headline.sequelImprovementShare)} of ${formatInteger(counts.sequelComparisons)} eligible sequel installments outgross their collection's original film.`,
+    `Of ${formatInteger(counts.sequelComparisons)} eligible sequels, ${formatPercent(headline.sequelImprovementShare)} outgross their original, but just ${formatPercent(sequelRoiImprovementShare)} improve its ROI. Familiarity can finance expansion without preserving return.`,
   );
 }
 
@@ -170,7 +171,7 @@ async function start() {
   const openHashSection = setupChrome();
   try {
     const data = await loadData();
-    populateStory(data.summary, data.movies);
+    populateStory(data.summary, data.movies, data.franchises);
     const syncControls = bindSharedControls(data.movies);
     const scenes = [
       { id: "dossier", visualization: createDossierBoard(data.movies) },
