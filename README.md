@@ -83,7 +83,7 @@ Open <http://localhost:8080/>.
 ├── index.html                    # Narrative page structure and view containers
 ├── assets/images/cover.webp      # Optimized cinematic hero artwork
 ├── assets/images/directors/      # Attributed Commons portrait thumbnails
-├── css/styles.css                # Cinematic visual system and responsive layouts
+├── css/styles.css                # Parchment/light default, dark-room option and responsive layouts
 ├── js/
 │   ├── app.js                    # Story text, loading, navigation and shared controls
 │   ├── data-loader.js            # Browser JSON loading
@@ -101,10 +101,34 @@ Open <http://localhost:8080/>.
 ├── eda/                          # Preprocessing notebook, EDA notebook and figures
 ├── sketches/                     # Milestone 2 visual design proposals
 ├── MS2_XLB.pdf                   # Milestone 2 report
-├── process_book_XLB.tex          # Editable Milestone 3 report source
-├── process_book_XLB.pdf          # Milestone 3 process book
-└── screencast_XLB.md             # Two-minute recording plan and scripts
+└── process_book_XLB.pdf          # Milestone 3 process book
 ```
+
+### Code Structure And Interface Components
+
+| Module | Responsibility |
+| --- | --- |
+| `index.html` | Orders the editorial chapters, visualization containers, accessible controls and closing statement. |
+| `css/styles.css` | Defines the parchment presentation, optional dark-room palette, responsive chart framing and restrained motion. |
+| `js/app.js` | Starts the narrative, writes data-derived copy, controls navigation/theme and coordinates all scene renderers. |
+| `js/data-loader.js` | Loads compact JSON resources needed by the browser application. |
+| `js/state.js` | Holds the shared genre and decade selection and publishes changes to coordinated views. |
+| `js/utils.js` | Supplies shared number formatting, tooltips, sampling, scales and statistical helpers. |
+| `js/viz/dossier-board.js` | Renders the log-scale film scatter, search, revenue/ROI mode, brush and film dossier. |
+| `js/viz/flow.js` | Renders the budget-to-genre-to-outcome Sankey and linked genre selection. |
+| `js/viz/profitability-matrix.js` | Renders the genre/budget heatmap and selected-cell ROI distribution. |
+| `js/viz/dynasties.js` | Renders all-sequel comparisons and the ordered franchise reel. |
+| `js/viz/applause.js` | Renders MovieLens rating-band intervals against revenue or ROI. |
+| `js/viz/directors.js` | Renders repeat-director rankings and the selected portfolio dossier. |
+| `scripts/*.py` | Rebuilds visualization exports and contextual image metadata from the documented inputs. |
+
+| Interface Component | Role |
+| --- | --- |
+| `.hero`, `.prologue`, `.finale` | Establish the question, six-scene route and final claim. |
+| `.shared-controls` | Applies persistent genre and decade cuts across relevant scenes. |
+| `.viz-shell`, `.viz-bar`, `.viz-decoder` | Keeps chart titles, encodings and interaction instructions legible. |
+| `.editorial-bridge` | Connects each result to the next question without replacing chart evidence. |
+| `.dark-room` | Provides an optional projection-screen palette; parchment light room is the default. |
 
 ---
 
@@ -157,7 +181,7 @@ Preprocessing produced a clean dataset of 45,697 films. The financial subset (fi
 
 ### Related work
 
-The Movies Dataset has been widely used on Kaggle, primarily for revenue prediction and recommendation systems. Most existing work focuses on a single axis (predicting box office from budget, or collaborative filtering on ratings data) and visualizations are typically static exploratory notebooks without a designed narrative.
+The Movies Dataset has been widely used on Kaggle, primarily for revenue prediction and recommendation systems. Most existing work focuses on a single axis (predicting box office from budget, or rating-based recommendation) and visualizations are typically static exploratory notebooks without a designed narrative.
 
 Our approach differs in two key ways. First, we treat financial and critical success as two parallel dimensions and examine where they align or diverge. Second, we build an interactive visualization that lets users explore these relationships themselves, rather than presenting fixed conclusions.
 
@@ -223,14 +247,12 @@ The story tests a series of familiar promises: spend more, select the right genr
 
 - **Framework:** semantic HTML, modular vanilla JavaScript ES modules, CSS, and D3.js v7.
 - **Specialized layouts:** `d3-sankey` for the flow diagram plus custom D3 heatmap, interval, reel, and ranked-marquee layouts.
-- **Data delivery:** compact generated JSON files in `data/web/`, suitable for static GitHub Pages deployment.
+- **Data delivery:** compact JSON exports in `data/web/`, suitable for static GitHub Pages deployment.
 - **Architecture:** shared application state for genre and decade; independent view modules under `js/viz/`.
-- **Presentation mode:** the default `Dark Room` palette provides cinematic contrast, with an optional light-room toggle.
+- **Presentation mode:** the default parchment `Light Room` follows the sketch language, with an optional dark-room toggle for projection-screen contrast.
 - **Contextual imagery:** selected-film posters are requested from TMDb; director dossier portraits are locally optimized Commons thumbnails with per-image attribution.
 - **Use:** an exploratory editorial visualization for observed relationships, not a causal or revenue-prediction model.
 
 ### Process Book
 
-The full design process, evolution from the Milestone 2 sketches, data decisions, technical challenges, and peer-assessment breakdown are documented in the [Milestone 3 process book](process_book_XLB.pdf), with its editable [LaTeX source](process_book_XLB.tex) included in the repository.
-
-The [screencast plan](screencast_XLB.md) provides two alternative scripts and recording guidance for producing the required single final video of no more than two minutes.
+The full design process, evolution from the Milestone 2 sketches to the final visual forms, data decisions, technical challenges, and peer-assessment breakdown are documented in the [Milestone 3 process book](process_book_XLB.pdf).

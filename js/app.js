@@ -1,5 +1,5 @@
-import { loadData } from "./data-loader.js?v=20260526-final1";
-import { getState, setState, subscribe } from "./state.js?v=20260526-final1";
+import { loadData } from "./data-loader.js?v=20260526-final2";
+import { getState, setState, subscribe } from "./state.js?v=20260526-final2";
 import {
   DECADES,
   filterMovies,
@@ -9,13 +9,13 @@ import {
   formatPercent,
   formatRoi,
   median,
-} from "./utils.js?v=20260526-final1";
-import { createDossierBoard } from "./viz/dossier-board.js?v=20260526-final1";
-import { createFlow } from "./viz/flow.js?v=20260526-final1";
-import { createProfitabilityMatrix } from "./viz/profitability-matrix.js?v=20260526-final1";
-import { createDynasties } from "./viz/dynasties.js?v=20260526-final1";
-import { createApplause } from "./viz/applause.js?v=20260526-final1";
-import { createDirectors } from "./viz/directors.js?v=20260526-final1";
+} from "./utils.js?v=20260526-final2";
+import { createDossierBoard } from "./viz/dossier-board.js?v=20260526-final2";
+import { createFlow } from "./viz/flow.js?v=20260526-final2";
+import { createProfitabilityMatrix } from "./viz/profitability-matrix.js?v=20260526-final2";
+import { createDynasties } from "./viz/dynasties.js?v=20260526-final2";
+import { createApplause } from "./viz/applause.js?v=20260526-final2";
+import { createDirectors } from "./viz/directors.js?v=20260526-final2";
 
 function text(id, value) {
   const element = document.getElementById(id);
@@ -151,13 +151,18 @@ function setupChrome() {
   window.addEventListener("hashchange", () => openHashSection());
 
   const toggle = document.getElementById("theme-toggle");
-  const setDarkRoom = (dark) => {
+  const themeColor = document.querySelector('meta[name="theme-color"]');
+  const themeKey = "cinescope-theme-v2";
+  const setDarkRoom = (dark, persist = true) => {
     document.body.classList.toggle("dark-room", dark);
     toggle.textContent = dark ? "LIGHT ROOM" : "DARK ROOM";
     toggle.setAttribute("aria-pressed", String(dark));
-    window.localStorage.setItem("cinescope-theme", dark ? "dark" : "light");
+    themeColor?.setAttribute("content", dark ? "#100d09" : "#f5f0e6");
+    if (persist) {
+      window.localStorage.setItem(themeKey, dark ? "dark" : "light");
+    }
   };
-  setDarkRoom(window.localStorage.getItem("cinescope-theme") !== "light");
+  setDarkRoom(window.localStorage.getItem(themeKey) === "dark", false);
   toggle.addEventListener("click", () => {
     setDarkRoom(!document.body.classList.contains("dark-room"));
   });

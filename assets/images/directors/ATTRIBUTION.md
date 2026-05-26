@@ -81,4 +81,4 @@ Portraits shown in the CineScope director dossier are resized, unmodified thumbn
 | Zack Snyder | Gage Skidmore | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0) | [Commons file](https://commons.wikimedia.org/wiki/File:Zack_Snyder_by_Gage_Skidmore_2.jpg) |
 
 No compliant Commons portrait was selected for: Guy Hamilton, John Hughes, Randal Kleiser, Terence Young, Wolfgang Reitherman.
-The website shows a generated typographic slate for these entries.
+The website shows a typographic slate for these entries.

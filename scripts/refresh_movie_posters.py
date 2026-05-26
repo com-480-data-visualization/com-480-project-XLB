@@ -27,7 +27,6 @@ ROOT = Path(__file__).resolve().parents[1]
 MOVIES_DATA = ROOT / "data" / "web" / "movies.json"
 FRANCHISE_DATA = ROOT / "data" / "web" / "franchises.json"
 POSTER_CACHE = ROOT / "data" / "web" / "movie_posters.json"
-USER_AGENT = "CineScope-EPFL/1.0 (academic visualization project)"
 IMAGE_PATTERN = re.compile(
     r'<meta[^>]+property="og:image"[^>]+content="([^"]+)"',
     re.IGNORECASE,
@@ -75,7 +74,7 @@ def current_poster(movie_id: int) -> str | None:
     for _ in range(2):
         request = urllib.request.Request(
             f"https://www.themoviedb.org/movie/{movie_id}",
-            headers={"User-Agent": USER_AGENT, "Accept-Language": "en-US,en;q=0.8"},
+            headers={"Accept-Language": "en-US,en;q=0.8"},
         )
         try:
             with urllib.request.urlopen(request, timeout=20) as response:

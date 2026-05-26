@@ -31,7 +31,9 @@ ATTRIBUTION = OUTPUT_IMAGES / "ATTRIBUTION.md"
 MINIMUM_FILM_OPTIONS = (4, 6, 10)
 RANKING_FIELDS = ("medianRoi", "totalRevenue")
 VISIBLE_ROWS = 24
-USER_AGENT = "CineScope-EPFL/1.0 (academic data visualization; https://github.com/com-480-data-visualization/com-480-project-XLB)"
+REQUEST_HEADERS = {
+    "User-Agent": "CineScope-EPFL/1.0 (academic data visualization; https://github.com/com-480-data-visualization/com-480-project-XLB)"
+}
 WIKIPEDIA_API = "https://en.wikipedia.org/w/api.php"
 COMMONS_API = "https://commons.wikimedia.org/w/api.php"
 ALIASES = {
@@ -44,7 +46,7 @@ ALIASES = {
 
 def request_json(base_url: str, params: dict[str, str]) -> dict[str, Any]:
     url = f"{base_url}?{urllib.parse.urlencode(params)}"
-    request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+    request = urllib.request.Request(url, headers=REQUEST_HEADERS)
     with urllib.request.urlopen(request, timeout=20) as response:
         return json.load(response)
 
@@ -122,7 +124,7 @@ def commons_details(filename: str) -> dict[str, str] | None:
 
 
 def download_portrait(source_url: str, destination: Path) -> None:
-    request = urllib.request.Request(source_url, headers={"User-Agent": USER_AGENT})
+    request = urllib.request.Request(source_url, headers=REQUEST_HEADERS)
     with urllib.request.urlopen(request, timeout=30) as response:
         image_bytes = response.read()
     with Image.open(BytesIO(image_bytes)) as source:
@@ -151,7 +153,7 @@ def write_attribution(portraits: dict[str, dict[str, str]], missing: list[str]) 
         [
             "",
             "No compliant Commons portrait was selected for: " + ", ".join(missing) + ".",
-            "The website shows a generated typographic slate for these entries.",
+            "The website shows a typographic slate for these entries.",
             "",
         ]
     )
