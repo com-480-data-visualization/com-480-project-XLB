@@ -10,10 +10,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,500;0,700;1,500;1,700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=20260526-final3">
+  <link rel="stylesheet" href="css/styles.css?v=20260526-final4">
   <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
-  <script type="module" src="js/app.js?v=20260526-final3"></script>
+  <script type="module" src="js/app.js?v=20260526-final4"></script>
 </head>
 <body class="is-loading">
   <div class="loader" id="loader" aria-hidden="true">
@@ -110,7 +110,7 @@
       <div class="scene-heading reveal">
         <p class="section-label">VIEW 01 · THE DOSSIER BOARD</p>
         <h2>First promise: spend more, earn more.</h2>
-        <p class="scene-lead">Position compares reported cost with box office; bubbles above the diagonal gross more than their recorded budget. Size repeats budget and color marks genre. Switch to ROI to judge efficiency instead of reach, or change genre and decade above to test the same promise in a different cinema market.</p>
+        <p class="scene-lead">Position compares reported cost with box office; bubbles above the diagonal gross more than their recorded budget. Size repeats budget and color marks genre. Toggle ROI to see whether costly winners are also efficient, then change genre or decade to test whether the pattern survives.</p>
       </div>
       <div class="controls reveal">
         <span class="control-title">Y AXIS</span>
@@ -144,7 +144,7 @@
       <div class="scene-heading reveal">
         <p class="section-label">VIEW 02 · THE FLOW</p>
         <h2>Some routes are less risky than others.</h2>
-        <p class="scene-lead">Budget tier enters on the left, genre organizes the middle, and outcome collects on the right. Switch between ROI outcomes and box-office milestones; hover a genre to trace its routes, then click it or change decade to carry that question through the story.</p>
+        <p class="scene-lead">Budget tier enters on the left, genre organizes the middle, and outcome collects on the right. Toggle ROI versus Box Office: a route can create large receipts without multiplying its budget. Hover a genre to isolate its stream; click it or change decade to continue the comparison.</p>
       </div>
       <div class="controls reveal">
         <span class="control-title">OUTCOME DEFINITION</span>
@@ -176,7 +176,7 @@
       <div class="scene-heading reveal">
         <p class="section-label">VIEW 03 · THE PROFITABILITY MATRIX</p>
         <h2>Budget works differently by genre.</h2>
-        <p class="scene-lead">Each cell pairs a genre with a budget tier. Toggle between typical return and the share that recovers budget; click a cell for its distribution, then move the decade cut above to see whether a strategy endures or belongs to one era.</p>
+        <p class="scene-lead">Each cell pairs a genre with a budget tier. Compare Median ROI with % Profitable: one rewards a spectacular typical payoff, the other asks how reliably budget is recovered. Click a cell for its distribution, then change decade to test durability.</p>
       </div>
       <div class="controls reveal">
         <span class="control-title">CELL METRIC</span>
@@ -208,7 +208,7 @@
       <div class="scene-heading reveal">
         <p class="section-label">VIEW 04 · DYNASTIES</p>
         <h2>A hit can launch a series. It cannot command an encore.</h2>
-        <p class="scene-lead">Every eligible sequel is compared with its original, not only part two: above the diagonal it beats the first film on the selected measure. Switch Revenue, ROI, or Rating; open a collection to follow every chapter; change decade above to compare franchises launched in different eras.</p>
+        <p class="scene-lead">Every eligible sequel is compared with its original, not only part two: above the diagonal it beats the first film on the selected measure. Keep one collection open and toggle Revenue, ROI, and Rating to see whether money, efficiency, and approval rise together or split apart. Hover a chapter for its change from the original and previous film; change decade to compare franchise eras.</p>
       </div>
       <div class="controls reveal">
         <span class="control-title">COMPARE</span>
@@ -225,7 +225,7 @@
           <span>ORIGINAL → EACH ELIGIBLE SEQUEL</span>
           <span id="dynasty-count"></span>
         </div>
-        <p class="viz-decoder">POINT = ONE SEQUEL VS ORIGINAL · ABOVE DIAGONAL = IMPROVED · CLICK POINT / CHOOSE COLLECTION FOR REEL · HOVER = VS PREVIOUS · DECADE = ORIGINAL'S ERA</p>
+        <p class="viz-decoder">POINT = ONE SEQUEL VS ORIGINAL · ABOVE DIAGONAL = IMPROVED · TOGGLE REVENUE / ROI / RATING ON THE SAME REEL · HOVER = VS PREVIOUS · DECADE = ORIGINAL'S ERA</p>
         <div class="dynasty-layout">
           <div id="dynasty-viz" class="chart"></div>
           <aside class="drilldown radial-panel" id="dynasty-detail"></aside>
@@ -241,7 +241,7 @@
       <div class="scene-heading reveal">
         <p class="section-label">VIEW 05 · APPLAUSE VS RECEIPTS</p>
         <h2>Applause measures a different kind of success.</h2>
-        <p class="scene-lead">Films with at least 50 MovieLens ratings form audience bands. Dots are titles, the thick bar is the middle half of results, and the gold diamond is the band median. Toggle revenue and ROI or change decade to test whether applause predicts either kind of commercial success.</p>
+        <p class="scene-lead">Films with at least 50 MovieLens ratings form audience bands. Dots are titles, the thick bar is the middle half, and the gold diamond is the median. Toggle Revenue and ROI to test separately whether applause predicts reach or efficiency; click a band for its evidence.</p>
       </div>
       <div class="controls reveal">
         <span class="control-title">COMMERCIAL MEASURE</span>
@@ -269,7 +269,7 @@
       <div class="scene-heading reveal">
         <p class="section-label">VIEW 06 · THE NAME ABOVE THE TITLE</p>
         <h2>A name on the poster still has to perform again.</h2>
-        <p class="scene-lead">This marquee ranks directors with repeated eligible releases, not one lucky hit. Median ROI rewards typical efficiency; total gross rewards career-scale reach. Tighten the minimum-film rule or change the shared cut to test how stable a reputation really is.</p>
+        <p class="scene-lead">This marquee ranks directors with repeated eligible releases, not one lucky hit. Toggle Median ROI against Total Gross to see whether the most efficient signature is also the largest commercial career. Click a director for the film record, or tighten the minimum-film rule to demand stronger evidence.</p>
       </div>
       <div class="controls reveal">
         <span class="control-title">RANK BY</span>

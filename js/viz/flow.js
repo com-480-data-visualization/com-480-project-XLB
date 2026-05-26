@@ -13,7 +13,7 @@ import {
   median,
   motionDuration,
   setActiveButtons,
-} from "../utils.js?v=20260526-final3";
+} from "../utils.js?v=20260526-final4";
 
 const ROI_OUTCOMES = [
   { key: "Flop", label: "FLOP < 0.5x", color: "#b54a3a" },
@@ -123,21 +123,21 @@ export function createFlow(movies, setGenre) {
     }).filter((route) => route.count);
     const strongestTier = d3.greatest(tierRoutes, (route) => route.hitShare);
     const weakestTier = d3.least(tierRoutes, (route) => route.hitShare);
-    if (mode === "roi" && strongest && strongestTier && weakestTier) {
-      reading.textContent = `When success means at least twice the recorded budget, ${TIER_LABELS[strongestTier.tier].toLowerCase()} sends ${formatPercent(strongestTier.hitShare)} of films to Hit or Megahit outcomes, compared with ${formatPercent(weakestTier.hitShare)} from ${TIER_LABELS[weakestTier.tier].toLowerCase()}. Genre prevents budget from being the full explanation: ${strongest.genre} records the strongest visible genre median at ${formatRoi(strongest.roi)}.`;
+    const grossRoutes = d3
+      .groups(visible, (movie) => movie.genre)
+      .filter(([, films]) => films.length >= 5)
+      .map(([genre, films]) => ({
+        genre,
+        medianGross: median(films.map((movie) => movie.revenue)),
+        majorShare: films.filter((movie) => movie.revenue >= 100e6).length / films.length,
+      }));
+    const grossLeader = d3.greatest(grossRoutes, (route) => route.medianGross);
+    const reachLeader = d3.greatest(grossRoutes, (route) => route.majorShare);
+    if (mode === "roi" && strongest && strongestTier && weakestTier && grossLeader) {
+      reading.textContent = `When success means at least twice the recorded budget, ${TIER_LABELS[strongestTier.tier].toLowerCase()} sends ${formatPercent(strongestTier.hitShare)} of films to Hit or Megahit outcomes, compared with ${formatPercent(weakestTier.hitShare)} from ${TIER_LABELS[weakestTier.tier].toLowerCase()}. ${strongest.genre} leads visible median ROI at ${formatRoi(strongest.roi)}; toggle Box Office and the leading median gross is ${grossLeader.genre} at ${formatMoney(grossLeader.medianGross)}.`;
     } else if (mode === "revenue") {
-      const grossRoutes = d3
-        .groups(visible, (movie) => movie.genre)
-        .filter(([, films]) => films.length >= 5)
-        .map(([genre, films]) => ({
-          genre,
-          medianGross: median(films.map((movie) => movie.revenue)),
-          majorShare: films.filter((movie) => movie.revenue >= 100e6).length / films.length,
-        }));
-      const grossLeader = d3.greatest(grossRoutes, (route) => route.medianGross);
-      const reachLeader = d3.greatest(grossRoutes, (route) => route.majorShare);
       reading.textContent = grossLeader && reachLeader
-        ? `On absolute box office, ${grossLeader.genre} has the highest visible genre median at ${formatMoney(grossLeader.medianGross)}, while ${reachLeader.genre} sends the largest share past $100M (${formatPercent(reachLeader.majorShare)}). This view rewards reach rather than efficiency, so it need not crown the same route as ROI.`
+        ? `On absolute box office, ${grossLeader.genre} has the highest visible genre median at ${formatMoney(grossLeader.medianGross)}, while ${reachLeader.genre} sends the largest share past $100M (${formatPercent(reachLeader.majorShare)}). Toggle ROI and ${strongest.genre} leads the return test at ${formatRoi(strongest.roi)}: reach and efficiency are not the same outcome.`
         : "No route is large enough for a stable comparison in this cut; widen the shared filters.";
     } else {
       reading.textContent = "No route is large enough for a stable comparison in this cut; widen the shared filters.";

@@ -11,9 +11,10 @@ import {
   median,
   motionDuration,
   moveTooltip,
+  roiForLogScale,
   setActiveButtons,
   showTooltip,
-} from "../utils.js?v=20260526-final3";
+} from "../utils.js?v=20260526-final4";
 
 function kernelDensity(values, thresholds, bandwidth) {
   return thresholds.map((threshold) => [
@@ -80,16 +81,15 @@ export function createProfitabilityMatrix(movies) {
     const metricValue = (candidate) => mode === "median" ? candidate.medianRoi : candidate.profitable;
     const strongest = d3.greatest(reliableCells, metricValue);
     const weakest = d3.least(reliableCells, metricValue);
+    const pairReading = `The selected ${cell.genre} / ${TIER_LABELS[cell.tier].toLowerCase()} cell pairs a ${formatRoi(cell.medianRoi)} median return with ${formatPercent(cell.profitable)} budget recovery, against visible baselines of ${formatRoi(overallMedian)} and ${formatPercent(overallProfitable)}. Toggle the metric to compare payoff with reliability.`;
     if (mode === "median") {
-      const selectedComparison = cell.medianRoi >= overallMedian ? "above" : "below";
       reading.textContent = strongest && weakest
-        ? `Among strategies with at least ten visible films, ${strongest.genre} at ${TIER_LABELS[strongest.tier].toLowerCase()} leads with ${formatRoi(strongest.medianRoi)} median return, while ${weakest.genre} at ${TIER_LABELS[weakest.tier].toLowerCase()} sits at ${formatRoi(weakest.medianRoi)}. The selected ${cell.genre} cell is ${selectedComparison} the full-cut baseline of ${formatRoi(overallMedian)}, and its violin shows whether that summary is broad or fragile.`
-        : `The selected ${cell.genre} strategy records ${formatRoi(cell.medianRoi)} median return across ${formatInteger(cell.count)} films, ${selectedComparison} the visible baseline of ${formatRoi(overallMedian)}.`;
+        ? `Among strategies with at least ten visible films, ${strongest.genre} at ${TIER_LABELS[strongest.tier].toLowerCase()} leads median return at ${formatRoi(strongest.medianRoi)}, while ${weakest.genre} at ${TIER_LABELS[weakest.tier].toLowerCase()} sits at ${formatRoi(weakest.medianRoi)}. ${pairReading}`
+        : pairReading;
     } else {
-      const selectedComparison = cell.profitable >= overallProfitable ? "above" : "below";
       reading.textContent = strongest && weakest
-        ? `Measured by the share that recovers its recorded budget, ${strongest.genre} at ${TIER_LABELS[strongest.tier].toLowerCase()} leads reliable cells at ${formatPercent(strongest.profitable)}, compared with ${formatPercent(weakest.profitable)} for ${weakest.genre} at ${TIER_LABELS[weakest.tier].toLowerCase()}. The selected cell is ${selectedComparison} the visible baseline of ${formatPercent(overallProfitable)}.`
-        : `The selected ${cell.genre} cell recovers its reported budget in ${formatPercent(cell.profitable)} of films, ${selectedComparison} the visible baseline of ${formatPercent(overallProfitable)}.`;
+        ? `Measured by budget recovery, ${strongest.genre} at ${TIER_LABELS[strongest.tier].toLowerCase()} leads reliable cells at ${formatPercent(strongest.profitable)}, compared with ${formatPercent(weakest.profitable)} for ${weakest.genre} at ${TIER_LABELS[weakest.tier].toLowerCase()}. ${pairReading}`
+        : pairReading;
     }
     detail.innerHTML = `
       <p class="section-label">CELL DRILL-DOWN</p>
@@ -108,8 +108,9 @@ export function createProfitabilityMatrix(movies) {
     const height = 198;
     const margin = { top: 12, right: 22, bottom: 29, left: 39 };
     const cap = d3.quantile(visible.map((movie) => movie.roi).sort(d3.ascending), 0.98) || 10;
-    const baselineValues = visible.map((movie) => Math.log10(Math.min(movie.roi, cap)));
-    const cellValues = cell.films.map((movie) => Math.log10(Math.min(movie.roi, cap)));
+    const displayedRoi = (value) => Math.max(0.05, Math.min(roiForLogScale(value), cap));
+    const baselineValues = visible.map((movie) => Math.log10(displayedRoi(movie.roi)));
+    const cellValues = cell.films.map((movie) => Math.log10(displayedRoi(movie.roi)));
     const domain = [Math.log10(0.05), Math.log10(cap)];
     const thresholds = d3.range(domain[0], domain[1] + 0.001, (domain[1] - domain[0]) / 30);
     const baselineDensity = kernelDensity(baselineValues, thresholds, 0.21);
@@ -157,7 +158,7 @@ export function createProfitabilityMatrix(movies) {
       .duration(detailDuration)
       .attr("d", shape(cellDensity))
       .attr("opacity", 0.62);
-    const medianY = y(Math.log10(Math.min(cell.medianRoi, cap)));
+    const medianY = y(Math.log10(displayedRoi(cell.medianRoi)));
     svg
       .append("line")
       .attr("x1", detailDuration ? center : center - 66)

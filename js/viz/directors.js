@@ -14,7 +14,7 @@ import {
   moveTooltip,
   setActiveButtons,
   showTooltip,
-} from "../utils.js?v=20260526-final3";
+} from "../utils.js?v=20260526-final4";
 
 function buildRecords(movies, minimumFilms) {
   return d3
@@ -149,7 +149,6 @@ export function createDirectors(movies, precomputedDirectors, portraits = {}) {
       selectedName = marquee[0]?.name || null;
     }
     const selected = records.find((director) => director.name === selectedName);
-    const leader = marquee[0];
     count.textContent = `${formatInteger(records.length)} qualify · top ${formatInteger(marquee.length)} on marquee`;
     container.replaceChildren();
 
@@ -161,7 +160,10 @@ export function createDirectors(movies, precomputedDirectors, portraits = {}) {
     }
     const roiLeader = d3.greatest(records, (director) => director.medianRoi);
     const grossLeader = d3.greatest(records, (director) => director.totalRevenue);
-    reading.textContent = `A directing reputation changes meaning with the metric: among filmmakers with ${minimumFilms}+ eligible releases, ${roiLeader.name} leads sustained efficiency at ${formatRoi(roiLeader.medianRoi)}, while ${grossLeader.name} leads accumulated scale at ${formatMoney(grossLeader.totalRevenue)}. The marquee currently ranks by ${metric.label.toLowerCase()}, letting the same careers be judged as return generators or box-office institutions.`;
+    const selectedReading = selected
+      ? ` The opened ${selected.name} dossier combines ${formatRoi(selected.medianRoi)} median ROI with ${formatMoney(selected.totalRevenue)} total gross across ${formatInteger(selected.filmCount)} films; click another credit line to make the same comparison.`
+      : "";
+    reading.textContent = `A directing reputation changes meaning with the metric: among filmmakers with ${minimumFilms}+ eligible releases, ${roiLeader.name} leads sustained efficiency at ${formatRoi(roiLeader.medianRoi)}, while ${grossLeader.name} leads accumulated scale at ${formatMoney(grossLeader.totalRevenue)}. Toggle the ranking to test whether the same name wins both definitions.${selectedReading}`;
 
     const width = Math.max(container.clientWidth, 630);
     const rowHeight = 28;

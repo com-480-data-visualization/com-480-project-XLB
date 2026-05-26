@@ -14,8 +14,9 @@ import {
   motionDuration,
   moveTooltip,
   regression,
+  roiForLogScale,
   setActiveButtons,
-} from "../utils.js?v=20260526-final3";
+} from "../utils.js?v=20260526-final4";
 
 const RATING_BANDS = [
   { key: "under-2.5", label: "< 2.5", test: (rating) => rating < 2.5 },
@@ -71,9 +72,13 @@ export function createApplause(movies) {
     const metric = mode === "revenue"
       ? { value: (movie) => movie.revenue, label: "BOX OFFICE", short: "gross", format: formatMoney }
       : { value: (movie) => movie.roi, label: "ROI", short: "return", format: formatRoi };
-    const relation = regression(rated.map((movie) => ({
+    const revenueRelation = regression(rated.map((movie) => ({
       x: movie.rating,
-      y: Math.log10(metric.value(movie)),
+      y: Math.log10(movie.revenue),
+    })));
+    const roiRelation = regression(rated.map((movie) => ({
+      x: movie.rating,
+      y: Math.log10(roiForLogScale(movie.roi)),
     })));
     const groups = RATING_BANDS
       .map((band) => ({ ...band, films: rated.filter((movie) => band.test(movie.rating)) }))
@@ -98,7 +103,7 @@ export function createApplause(movies) {
     const lowestRated = groups[0];
     const topFilm = d3.greatest(selected.films, metric.value);
     const sampleMiddle = median(rated.map(metric.value));
-    const selectedPosition = selected.middle >= sampleMiddle ? "above" : "below";
+    const position = (value) => mode === "roi" ? roiForLogScale(value) : value;
     insight.innerHTML = `
       <p class="section-label">SELECTED AUDIENCE BAND</p>
       <h3>${selected.label} / 5</h3>
@@ -113,12 +118,12 @@ export function createApplause(movies) {
       </div>
       <p class="muted">Largest ${metric.short}: ${limitText(topFilm.title, 27)} · ${metric.format(metric.value(topFilm))}</p>
     `;
-    reading.textContent = `The most highly rated films do not automatically own the commercial peak. In this cut, the largest median ${metric.short} sits in the ${leadingMedian.label} rating band at ${metric.format(leadingMedian.middle)}, while the ${highestRated.label} band records ${metric.format(highestRated.middle)} and the ${lowestRated.label} band records ${metric.format(lowestRated.middle)}. Because the middle-50% bars overlap heavily and the full relationship is ${formatCorrelation(relation?.correlation)}, applause identifies audience approval more reliably than financial certainty. The selected band sits ${selectedPosition} the full rated-sample median.`;
+    reading.textContent = `On ${metric.label.toLowerCase()}, the largest median sits in the ${leadingMedian.label} rating band at ${metric.format(leadingMedian.middle)}, while the highest-rated ${highestRated.label} band records ${metric.format(highestRated.middle)} and the ${lowestRated.label} band records ${metric.format(lowestRated.middle)}. Compare both commercial lenses: rating relates to logged gross at ${formatCorrelation(revenueRelation?.correlation)} and to logged ROI at ${formatCorrelation(roiRelation?.correlation)} in this cut. The overlapping middle ranges show why applause is evidence of approval, not a financial guarantee; click a band to inspect its titles.`;
 
     const width = Math.max(container.clientWidth, 620);
     const height = 505;
     const margin = { top: 70, right: 46, bottom: 60, left: 125 };
-    const rawValues = rated.map(metric.value).sort(d3.ascending);
+    const rawValues = rated.map((movie) => position(metric.value(movie))).sort(d3.ascending);
     const lower = d3.min(rawValues);
     const upper = mode === "roi" ? d3.quantile(rawValues, 0.985) : d3.max(rawValues);
     const x = d3.scaleLog().domain([lower, upper]).nice().clamp(true).range([margin.left, width - margin.right]);
@@ -149,8 +154,8 @@ export function createApplause(movies) {
       .call(d3.axisBottom(x).tickValues(ticks).tickSize(-(height - margin.top - margin.bottom)).tickFormat(""));
     svg
       .append("line")
-      .attr("x1", x(sampleMiddle))
-      .attr("x2", x(sampleMiddle))
+      .attr("x1", x(position(sampleMiddle)))
+      .attr("x2", x(position(sampleMiddle)))
       .attr("y1", margin.top - 10)
       .attr("y2", height - margin.bottom)
       .attr("stroke", "#b8a060")
@@ -162,7 +167,7 @@ export function createApplause(movies) {
     svg
       .append("text")
       .attr("class", "zone-label")
-      .attr("x", x(sampleMiddle) + 6)
+      .attr("x", x(position(sampleMiddle)) + 6)
       .attr("y", margin.top - 15)
       .text("ALL RATED FILMS · MEDIAN");
 
@@ -205,16 +210,16 @@ export function createApplause(movies) {
       .text((band) => `n=${formatInteger(band.films.length)}`);
     const whiskers = rows
       .append("line")
-      .attr("x1", (band) => revealDuration ? x(band.middle) : x(band.q10))
-      .attr("x2", (band) => revealDuration ? x(band.middle) : x(Math.min(band.q90, upper)))
+      .attr("x1", (band) => revealDuration ? x(position(band.middle)) : x(position(band.q10)))
+      .attr("x2", (band) => revealDuration ? x(position(band.middle)) : x(Math.min(position(band.q90), upper)))
       .attr("y1", (band) => y(band.key) + y.bandwidth() / 2)
       .attr("y2", (band) => y(band.key) + y.bandwidth() / 2)
       .attr("stroke", "var(--line)")
       .attr("stroke-width", 1.1);
     const ranges = rows
       .append("line")
-      .attr("x1", (band) => revealDuration ? x(band.middle) : x(band.q25))
-      .attr("x2", (band) => revealDuration ? x(band.middle) : x(Math.min(band.q75, upper)))
+      .attr("x1", (band) => revealDuration ? x(position(band.middle)) : x(position(band.q25)))
+      .attr("x2", (band) => revealDuration ? x(position(band.middle)) : x(Math.min(position(band.q75), upper)))
       .attr("y1", (band) => y(band.key) + y.bandwidth() / 2)
       .attr("y2", (band) => y(band.key) + y.bandwidth() / 2)
       .attr("stroke", (band) => band.key === selectedBand ? "#c9843a" : "#8b6410")
@@ -226,15 +231,15 @@ export function createApplause(movies) {
       .delay((_, index) => revealDuration ? 70 + index * 44 : 0)
       .duration(revealDuration)
       .ease(d3.easeCubicOut)
-      .attr("x1", (band) => x(band.q10))
-      .attr("x2", (band) => x(Math.min(band.q90, upper)));
+      .attr("x1", (band) => x(position(band.q10)))
+      .attr("x2", (band) => x(Math.min(position(band.q90), upper)));
     ranges
       .transition()
       .delay((_, index) => revealDuration ? 100 + index * 44 : 0)
       .duration(revealDuration)
       .ease(d3.easeCubicOut)
-      .attr("x1", (band) => x(band.q25))
-      .attr("x2", (band) => x(Math.min(band.q75, upper)));
+      .attr("x1", (band) => x(position(band.q25)))
+      .attr("x2", (band) => x(Math.min(position(band.q75), upper)));
 
     ordered.forEach((band, bandIndex) => {
       const dots = svg
@@ -242,7 +247,7 @@ export function createApplause(movies) {
         .selectAll("circle")
         .data(sampleFilms(band.films, metric.value), (movie) => movie.id)
         .join("circle")
-        .attr("cx", (movie) => x(Math.min(metric.value(movie), upper)))
+        .attr("cx", (movie) => x(Math.min(position(metric.value(movie)), upper)))
         .attr("cy", (movie) => {
           const jitter = ((((movie.id * 2654435761) >>> 0) / 4294967295) - 0.5) * (y.bandwidth() - 10);
           return y(band.key) + y.bandwidth() / 2 + jitter;
@@ -267,7 +272,7 @@ export function createApplause(movies) {
     const medians = rows
       .append("path")
       .attr("d", d3.symbol().type(d3.symbolDiamond).size(70))
-      .attr("transform", (band) => `translate(${x(Math.min(band.middle, upper))},${y(band.key) + y.bandwidth() / 2}) scale(${revealDuration ? 0 : 1})`)
+      .attr("transform", (band) => `translate(${x(Math.min(position(band.middle), upper))},${y(band.key) + y.bandwidth() / 2}) scale(${revealDuration ? 0 : 1})`)
       .attr("fill", "#d4a830")
       .attr("stroke", "var(--paper-2)")
       .attr("stroke-width", 1.1);
@@ -276,11 +281,11 @@ export function createApplause(movies) {
       .delay((_, index) => revealDuration ? 300 + index * 44 : 0)
       .duration(motionDuration(420))
       .ease(d3.easeBackOut.overshoot(1.25))
-      .attr("transform", (band) => `translate(${x(Math.min(band.middle, upper))},${y(band.key) + y.bandwidth() / 2}) scale(1)`);
+      .attr("transform", (band) => `translate(${x(Math.min(position(band.middle), upper))},${y(band.key) + y.bandwidth() / 2}) scale(1)`);
     const medianText = rows
       .append("text")
       .attr("class", "chart-label")
-      .attr("x", (band) => Math.min(x(Math.min(band.middle, upper)) + 10, width - margin.right - 30))
+      .attr("x", (band) => Math.min(x(Math.min(position(band.middle), upper)) + 10, width - margin.right - 30))
       .attr("y", (band) => y(band.key) + y.bandwidth() / 2 - 12)
       .attr("opacity", revealDuration ? 0 : 1)
       .text((band) => metric.format(band.middle));

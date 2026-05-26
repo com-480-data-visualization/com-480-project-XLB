@@ -13,7 +13,7 @@ import {
   moveTooltip,
   setActiveButtons,
   showTooltip,
-} from "../utils.js?v=20260526-final3";
+} from "../utils.js?v=20260526-final4";
 
 function matchesComparison(comparison, state) {
   return (
@@ -58,8 +58,8 @@ export function createDynasties(data) {
     return [comparison.originalRevenue, comparison.sequelRevenue];
   }
 
-  function eligibleForMode(comparison) {
-    if (mode !== "rating") {
+  function eligibleForMetric(comparison, type) {
+    if (type !== "rating") {
       return true;
     }
     return (
@@ -68,6 +68,23 @@ export function createDynasties(data) {
       comparison.originalRatingVotes >= 50 &&
       comparison.sequelRatingVotes >= 50
     );
+  }
+
+  function eligibleForMode(comparison) {
+    return eligibleForMetric(comparison, mode);
+  }
+
+  function improvementSummary(entries, type) {
+    const eligible = entries.filter((comparison) => eligibleForMetric(comparison, type));
+    const improved = eligible.filter((comparison) => {
+      const [original, sequel] = metricValue(comparison, type);
+      return sequel >= original;
+    }).length;
+    return {
+      count: eligible.length,
+      improved,
+      share: eligible.length ? improved / eligible.length : null,
+    };
   }
 
   function filmMetric(film) {
@@ -291,9 +308,9 @@ export function createDynasties(data) {
   function render(state) {
     hideTooltip();
     currentState = state;
-    let comparisons = data.comparisons
-      .filter((comparison) => matchesComparison(comparison, state))
-      .filter(eligibleForMode);
+    const availableComparisons = data.comparisons
+      .filter((comparison) => matchesComparison(comparison, state));
+    const comparisons = availableComparisons.filter(eligibleForMode);
     const visibleFranchiseIds = new Set(comparisons.map((comparison) => comparison.franchiseId));
     const visibleFranchises = data.franchises.filter((franchise) => visibleFranchiseIds.has(franchise.id));
     if (!visibleFranchiseIds.has(selectedId)) {
@@ -468,29 +485,27 @@ export function createDynasties(data) {
       .filter((comparison) => comparison.franchiseId === selectedId)
       .raise();
 
-    const improving = comparisons.filter((comparison) => {
-      const [original, sequel] = metricValue(comparison, mode);
-      return sequel >= original;
-    }).length;
-    const collectionsWithoutGain = d3
-      .groups(comparisons, (comparison) => comparison.franchiseId)
-      .filter(([, entries]) => !entries.some((comparison) => {
-        const [original, sequel] = metricValue(comparison, mode);
-        return sequel >= original;
-      })).length;
     const selectedFranchise = visibleFranchises.find((franchise) => franchise.id === selectedId);
-    const selectedComparisons = comparisons.filter((comparison) => comparison.franchiseId === selectedId);
-    const selectedBest = d3.greatest(selectedComparisons, sequelMetric);
-    const selectedWins = selectedComparisons.filter((comparison) => (
-      sequelMetric(comparison) >= originalMetric(comparison)
-    )).length;
-    const selectionReading = selectedFranchise && selectedBest
-      ? ` In the opened ${selectedFranchise.name} reel, ${formatInteger(selectedWins)} of ${formatInteger(selectedComparisons.length)} eligible sequels reach the original on this measure; ${selectedBest.title} is its strongest displayed sequel at ${formatMetric(sequelMetric(selectedBest))}.`
+    const grossOverview = improvementSummary(availableComparisons, "revenue");
+    const roiOverview = improvementSummary(availableComparisons, "roi");
+    const ratingOverview = improvementSummary(availableComparisons, "rating");
+    const selectedEntries = availableComparisons.filter((comparison) => comparison.franchiseId === selectedId);
+    const selectedGross = improvementSummary(selectedEntries, "revenue");
+    const selectedRoi = improvementSummary(selectedEntries, "roi");
+    const selectedRating = improvementSummary(selectedEntries, "rating");
+    const selectionRating = selectedRating.count
+      ? `${formatInteger(selectedRating.improved)}/${formatInteger(selectedRating.count)} improve rating`
+      : "no rating-qualified sequel pair remains";
+    const selectionReading = selectedFranchise && selectedGross.count
+      ? ` ${selectedFranchise.name} makes the split visible: ${formatInteger(selectedGross.improved)}/${formatInteger(selectedGross.count)} sequels outgross its original, ${formatInteger(selectedRoi.improved)}/${formatInteger(selectedRoi.count)} beat its ROI, and ${selectionRating}.`
       : "";
+    const globalRating = ratingOverview.count
+      ? `among ${formatInteger(ratingOverview.count)} rating-qualified comparisons, ${formatPercent(ratingOverview.share)} improve rating`
+      : "no rating-qualified comparisons remain";
     const eraReading = state.decade === "all"
-      ? " Move the decade control above to compare collections by the era in which their original film opened."
-      : ` This ${state.decade}s cut keeps collections whose original opened in that decade; slide it again to compare another launch era.`;
-    reading.textContent = `Across ${formatInteger(visibleFranchises.length)} visible collections, only ${formatPercent(improving / comparisons.length)} of ${formatInteger(comparisons.length)} sequels meet or exceed their original on ${metricLabel.toLowerCase()}; ${formatPercent(collectionsWithoutGain / visibleFranchises.length)} of collections never manage it once.${selectionReading} Hover a reel chapter to compare it with both the original and the previous installment.${eraReading}`;
+      ? " Filter decade to compare franchise launch eras."
+      : ` Showing franchises launched in the ${state.decade}s.`;
+    reading.textContent = `Across this cut, ${formatPercent(grossOverview.share)} of ${formatInteger(grossOverview.count)} sequels outgross their original, but only ${formatPercent(roiOverview.share)} beat its ROI; ${globalRating}.${selectionReading} Toggle Revenue, ROI, and Rating on the open reel, then hover each chapter for its step-by-step change.${eraReading}`;
     renderReel(selectedFranchise);
   }
 

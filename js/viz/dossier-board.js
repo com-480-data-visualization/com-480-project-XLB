@@ -15,8 +15,9 @@ import {
   moveTooltip,
   regression,
   renderLegend,
+  roiForLogScale,
   setActiveButtons,
-} from "../utils.js?v=20260526-final3";
+} from "../utils.js?v=20260526-final4";
 
 export function createDossierBoard(movies) {
   const container = document.getElementById("dossier-viz");
@@ -75,6 +76,10 @@ export function createDossierBoard(movies) {
       x: Math.log10(movie.budget),
       y: Math.log10(movie.revenue),
     })));
+    const roiRelation = regression(eligible.map((movie) => ({
+      x: Math.log10(movie.budget),
+      y: Math.log10(roiForLogScale(movie.roi)),
+    })));
     const recovering = eligible.length
       ? eligible.filter((movie) => movie.roi >= 1).length / eligible.length
       : null;
@@ -83,8 +88,11 @@ export function createDossierBoard(movies) {
     const scaleComparison = microReturn != null && blockbusterReturn != null
       ? ` Median return is ${formatRoi(microReturn)} for micro-budget films versus ${formatRoi(blockbusterReturn)} for blockbusters: more capital raises the ceiling without guaranteeing efficiency.`
       : "";
+    const lensReading = !eligible.length ? "" : mode === "revenue"
+      ? `On the box-office lens, ${largestGross.title} reaches ${formatMoney(largestGross.revenue)}; switch to ROI and ${strongestReturn.title} becomes the exceptional return at ${formatRoi(strongestReturn.roi)}.`
+      : `The ROI lens promotes efficiency over scale: ${strongestReturn.title} reaches ${formatRoi(strongestReturn.roi)}, while the budget-to-return relationship is ${formatCorrelation(roiRelation?.correlation)}; switch back to Revenue to locate ${largestGross.title}'s ${formatMoney(largestGross.revenue)} gross.`;
     reading.textContent = eligible.length
-      ? `Budget and gross move together in this cut (${formatCorrelation(relation?.correlation)}), yet only ${formatPercent(recovering)} of films recover their reported production budget.${scaleComparison} ${strongestReturn.title} (${formatRoi(strongestReturn.roi)}) is evidence of the breakout tail, while ${largestGross.title} (${formatMoney(largestGross.revenue)}) represents scale.`
+      ? `Budget and gross move together in this cut (${formatCorrelation(relation?.correlation)}), yet only ${formatPercent(recovering)} of films recover their reported production budget.${scaleComparison} ${lensReading}`
       : "No financial releases remain in this cut; widen the shared filters to restore the board.";
     metricLabel.textContent = mode.toUpperCase();
     count.textContent = sample.sampled
@@ -225,7 +233,7 @@ export function createDossierBoard(movies) {
     const baseStroke = (movie) => isMatch(movie) ? "var(--gold)" : "var(--paper-2)";
     const baseStrokeWidth = (movie) => isMatch(movie) ? 1.8 : 0.75;
     const revealDuration = motionDuration(680);
-    const markY = (movie) => y(Math.min(mode === "roi" ? roiLimit : Infinity, mode === "roi" ? movie.roi : movie.revenue));
+    const markY = (movie) => y(Math.min(mode === "roi" ? roiLimit : Infinity, mode === "roi" ? roiForLogScale(movie.roi) : movie.revenue));
     const circles = svg
       .append("g")
       .selectAll("circle")
@@ -283,7 +291,7 @@ export function createDossierBoard(movies) {
         .join("text")
         .attr("class", "chart-label")
         .attr("x", (movie) => x(movie.budget) + 8)
-        .attr("y", (movie) => y(mode === "roi" ? Math.min(movie.roi, roiLimit) : movie.revenue) - 8)
+        .attr("y", (movie) => y(mode === "roi" ? Math.min(roiForLogScale(movie.roi), roiLimit) : movie.revenue) - 8)
         .text((movie) => movie.title);
       if (revealDuration) {
         labels
@@ -311,7 +319,7 @@ export function createDossierBoard(movies) {
           const [[x0, y0], [x1, y1]] = selection;
           const selected = shown.filter((movie) => {
             const cx = x(movie.budget);
-            const cy = y(mode === "roi" ? Math.min(movie.roi, roiLimit) : movie.revenue);
+            const cy = y(mode === "roi" ? Math.min(roiForLogScale(movie.roi), roiLimit) : movie.revenue);
             return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1;
           });
           const best = d3.greatest(selected, (movie) => movie.roi);

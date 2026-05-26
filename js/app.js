@@ -1,5 +1,5 @@
-import { loadData } from "./data-loader.js?v=20260526-final3";
-import { getState, setState, subscribe } from "./state.js?v=20260526-final3";
+import { loadData } from "./data-loader.js?v=20260526-final4";
+import { getState, setState, subscribe } from "./state.js?v=20260526-final4";
 import {
   DECADES,
   filterMovies,
@@ -9,13 +9,13 @@ import {
   formatPercent,
   formatRoi,
   median,
-} from "./utils.js?v=20260526-final3";
-import { createDossierBoard } from "./viz/dossier-board.js?v=20260526-final3";
-import { createFlow } from "./viz/flow.js?v=20260526-final3";
-import { createProfitabilityMatrix } from "./viz/profitability-matrix.js?v=20260526-final3";
-import { createDynasties } from "./viz/dynasties.js?v=20260526-final3";
-import { createApplause } from "./viz/applause.js?v=20260526-final3";
-import { createDirectors } from "./viz/directors.js?v=20260526-final3";
+} from "./utils.js?v=20260526-final4";
+import { createDossierBoard } from "./viz/dossier-board.js?v=20260526-final4";
+import { createFlow } from "./viz/flow.js?v=20260526-final4";
+import { createProfitabilityMatrix } from "./viz/profitability-matrix.js?v=20260526-final4";
+import { createDynasties } from "./viz/dynasties.js?v=20260526-final4";
+import { createApplause } from "./viz/applause.js?v=20260526-final4";
+import { createDirectors } from "./viz/directors.js?v=20260526-final4";
 
 function text(id, value) {
   const element = document.getElementById(id);
@@ -152,17 +152,13 @@ function setupChrome() {
 
   const toggle = document.getElementById("theme-toggle");
   const themeColor = document.querySelector('meta[name="theme-color"]');
-  const themeKey = "cinescope-theme-v2";
-  const setDarkRoom = (dark, persist = true) => {
+  const setDarkRoom = (dark) => {
     document.body.classList.toggle("dark-room", dark);
     toggle.textContent = dark ? "LIGHT ROOM" : "DARK ROOM";
     toggle.setAttribute("aria-pressed", String(dark));
     themeColor?.setAttribute("content", dark ? "#100d09" : "#f5f0e6");
-    if (persist) {
-      window.localStorage.setItem(themeKey, dark ? "dark" : "light");
-    }
   };
-  setDarkRoom(window.localStorage.getItem(themeKey) === "dark", false);
+  setDarkRoom(false);
   toggle.addEventListener("click", () => {
     setDarkRoom(!document.body.classList.contains("dark-room"));
   });

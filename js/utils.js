@@ -39,6 +39,8 @@ export const TIER_LABELS = {
   Blockbuster: "BLOCK > $60M",
 };
 
+const ROI_LOG_FLOOR = 0.001;
+
 export const COLORS = {
   Action: "#c9843a",
   Drama: "#7a6fbd",
@@ -186,6 +188,10 @@ export function formatRoi(value) {
     return `${Math.round(value).toLocaleString()}x`;
   }
   return `${value.toFixed(1)}x`;
+}
+
+export function roiForLogScale(value) {
+  return Math.max(ROI_LOG_FLOOR, value);
 }
 
 export function formatPercent(value, digits = 0) {

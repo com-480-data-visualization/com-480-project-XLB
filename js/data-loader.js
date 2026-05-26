@@ -1,10 +1,10 @@
 export async function loadData() {
   const files = [
-    ["movies", "data/web/movies.json?v=20260526-final3"],
-    ["franchises", "data/web/franchises.json?v=20260526-final3"],
-    ["directors", "data/web/directors.json?v=20260526-final3"],
-    ["directorPortraits", "data/web/director_portraits.json?v=20260526-final3"],
-    ["summary", "data/web/summary.json?v=20260526-final3"],
+    ["movies", "data/web/movies.json?v=20260526-final4"],
+    ["franchises", "data/web/franchises.json?v=20260526-final4"],
+    ["directors", "data/web/directors.json?v=20260526-final4"],
+    ["directorPortraits", "data/web/director_portraits.json?v=20260526-final4"],
+    ["summary", "data/web/summary.json?v=20260526-final4"],
   ];
 
   const results = await Promise.all(
