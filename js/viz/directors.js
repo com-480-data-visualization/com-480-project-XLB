@@ -9,6 +9,7 @@ import {
   hideTooltip,
   limitText,
   median,
+  motionDuration,
   moveTooltip,
   setActiveButtons,
   showTooltip,
@@ -90,6 +91,16 @@ export function createDirectors(movies, precomputedDirectors) {
           </div>`).join("")}
       </div>
     `;
+    const portfolioDuration = motionDuration(470);
+    d3.select(detail)
+      .selectAll(".portfolio-film i b")
+      .style("transform-origin", "left center")
+      .style("transform", portfolioDuration ? "scaleX(0)" : "scaleX(1)")
+      .transition()
+      .delay((_, index) => portfolioDuration ? 100 + index * 45 : 0)
+      .duration(portfolioDuration)
+      .ease(d3.easeCubicOut)
+      .style("transform", "scaleX(1)");
   }
 
   function render(state) {
@@ -144,6 +155,7 @@ export function createDirectors(movies, precomputedDirectors) {
       .append("svg")
       .attr("viewBox", `0 0 ${width} ${height}`)
       .attr("aria-label", "Ranked director repeated financial performance marquee");
+    const revealDuration = motionDuration(540);
 
     svg
       .append("g")
@@ -167,6 +179,8 @@ export function createDirectors(movies, precomputedDirectors) {
       .selectAll("g")
       .data(marquee)
       .join("g")
+      .attr("class", "director-row")
+      .attr("opacity", revealDuration ? 0 : 1)
       .style("cursor", "pointer")
       .on("mouseenter", (event, director) => {
         showTooltip(event, director.name, [
@@ -179,10 +193,11 @@ export function createDirectors(movies, precomputedDirectors) {
       .on("mousemove", moveTooltip)
       .on("mouseleave", hideTooltip)
       .on("click", (_, director) => {
+        hideTooltip();
         selectedName = director.name;
         render(state);
       });
-    rows
+    const bars = rows
       .append("rect")
       .attr("x", 13)
       .attr("y", (director) => y(director.name) - 4)
@@ -213,24 +228,47 @@ export function createDirectors(movies, precomputedDirectors) {
       .attr("x", margin.left)
       .attr("y", (director) => y(director.name) + y.bandwidth() / 2 - 3)
       .attr("height", 6)
-      .attr("width", (director) => Math.max(1, x(metric.value(director)) - margin.left))
+      .attr("width", (director) => revealDuration ? 0 : Math.max(1, x(metric.value(director)) - margin.left))
       .attr("fill", (director) => COLORS[director.genre] || COLORS.Other)
       .attr("opacity", (director) => director.name === selectedName ? 0.86 : 0.56);
-    rows
+    const caps = rows
       .append("circle")
-      .attr("cx", (director) => x(metric.value(director)))
+      .attr("cx", (director) => revealDuration ? margin.left : x(metric.value(director)))
       .attr("cy", (director) => y(director.name) + y.bandwidth() / 2)
       .attr("r", (director) => director.name === selectedName ? 5 : 3.5)
       .attr("fill", (director) => COLORS[director.genre] || COLORS.Other)
       .attr("stroke", (director) => director.name === selectedName ? "#d4a830" : "var(--paper-2)")
       .attr("stroke-width", 1.2);
-    rows
+    const values = rows
       .append("text")
       .attr("class", "chart-label")
       .attr("x", (director) => x(metric.value(director)) + 9)
       .attr("y", (director) => y(director.name) + y.bandwidth() / 2)
       .attr("dominant-baseline", "middle")
+      .attr("opacity", revealDuration ? 0 : 1)
       .text((director) => metric.format(metric.value(director)));
+    rows
+      .transition()
+      .delay((_, index) => revealDuration ? index * 19 : 0)
+      .duration(motionDuration(280))
+      .attr("opacity", 1);
+    bars
+      .transition()
+      .delay((_, index) => revealDuration ? 70 + index * 19 : 0)
+      .duration(revealDuration)
+      .ease(d3.easeCubicOut)
+      .attr("width", (director) => Math.max(1, x(metric.value(director)) - margin.left));
+    caps
+      .transition()
+      .delay((_, index) => revealDuration ? 70 + index * 19 : 0)
+      .duration(revealDuration)
+      .ease(d3.easeCubicOut)
+      .attr("cx", (director) => x(metric.value(director)));
+    values
+      .transition()
+      .delay((_, index) => revealDuration ? 350 + index * 19 : 0)
+      .duration(motionDuration(260))
+      .attr("opacity", 1);
 
     renderDetail(selected);
   }

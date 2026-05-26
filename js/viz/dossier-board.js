@@ -11,6 +11,7 @@ import {
   formatRoi,
   hideTooltip,
   median,
+  motionDuration,
   moveTooltip,
   regression,
   renderLegend,
@@ -223,33 +224,59 @@ export function createDossierBoard(movies) {
     };
     const baseStroke = (movie) => isMatch(movie) ? "var(--gold)" : "var(--paper-2)";
     const baseStrokeWidth = (movie) => isMatch(movie) ? 1.8 : 0.75;
+    const revealDuration = motionDuration(680);
+    const markY = (movie) => y(Math.min(mode === "roi" ? roiLimit : Infinity, mode === "roi" ? movie.roi : movie.revenue));
     const circles = svg
       .append("g")
       .selectAll("circle")
       .data(shown, (movie) => movie.id)
       .join("circle")
       .attr("cx", (movie) => x(movie.budget))
-      .attr("cy", (movie) => y(Math.min(mode === "roi" ? roiLimit : Infinity, mode === "roi" ? movie.roi : movie.revenue)))
-      .attr("r", (movie) => radius(movie.budget))
+      .attr("cy", revealDuration ? height - margin.bottom : markY)
+      .attr("r", revealDuration ? 0 : radius)
       .attr("fill", (movie) => COLORS[movie.genre])
-      .attr("opacity", baseOpacity)
+      .attr("opacity", revealDuration ? 0 : baseOpacity)
       .attr("stroke", baseStroke)
       .attr("stroke-opacity", 0.84)
       .attr("stroke-width", baseStrokeWidth)
       .style("cursor", "pointer")
       .on("mouseenter", function onEnter(event, movie) {
-        d3.select(this).attr("opacity", 1).attr("stroke", "var(--gold)").attr("stroke-width", 1.7);
+        d3.select(this)
+          .interrupt("hover-focus")
+          .transition("hover-focus")
+          .duration(motionDuration(110))
+          .attr("r", radius(movie.budget) + 2)
+          .attr("opacity", 1)
+          .attr("stroke", "var(--gold)")
+          .attr("stroke-width", 1.7);
         filmTooltip(event, movie);
       })
       .on("mousemove", moveTooltip)
       .on("mouseleave", function onLeave(_, movie) {
-        d3.select(this).attr("opacity", baseOpacity(movie)).attr("stroke", baseStroke(movie)).attr("stroke-width", baseStrokeWidth(movie));
+        d3.select(this)
+          .interrupt("hover-focus")
+          .transition("hover-focus")
+          .duration(motionDuration(130))
+          .attr("r", radius(movie.budget))
+          .attr("opacity", baseOpacity(movie))
+          .attr("stroke", baseStroke(movie))
+          .attr("stroke-width", baseStrokeWidth(movie));
         hideTooltip();
       });
+    if (revealDuration) {
+      circles
+        .transition()
+        .delay((movie) => ((movie.id * 17) % 190))
+        .duration(revealDuration)
+        .ease(d3.easeCubicOut)
+        .attr("cy", markY)
+        .attr("r", radius)
+        .attr("opacity", baseOpacity);
+    }
 
     if (term) {
       const matches = shown.filter((movie) => movie.title.toLowerCase().includes(term)).slice(0, 4);
-      svg
+      const labels = svg
         .append("g")
         .selectAll("text")
         .data(matches)
@@ -258,6 +285,14 @@ export function createDossierBoard(movies) {
         .attr("x", (movie) => x(movie.budget) + 8)
         .attr("y", (movie) => y(mode === "roi" ? Math.min(movie.roi, roiLimit) : movie.revenue) - 8)
         .text((movie) => movie.title);
+      if (revealDuration) {
+        labels
+          .attr("opacity", 0)
+          .transition()
+          .delay(420)
+          .duration(250)
+          .attr("opacity", 1);
+      }
     }
 
     if (brushEnabled) {

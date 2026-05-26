@@ -4,12 +4,14 @@ import {
   TIERS,
   TIER_LABELS,
   d3,
+  drawPaths,
   filterMovies,
   formatInteger,
   formatMoney,
   formatPercent,
   formatRoi,
   median,
+  motionDuration,
   setActiveButtons,
 } from "../utils.js";
 
@@ -225,23 +227,41 @@ export function createFlow(movies, setGenre) {
       .join("path")
       .attr("d", d3.sankeyLinkHorizontal())
       .attr("stroke", (link) => link.source.type === "genre" ? nodeColor(link.source) : nodeColor(link.target))
-      .attr("stroke-opacity", 0.27)
+      .attr("stroke-opacity", motionDuration(1) ? 0.06 : 0.27)
       .attr("stroke-width", (link) => Math.max(1, link.width));
+    drawPaths(linkSelection, 860, (_, index) => index * 8);
+    linkSelection
+      .transition("flow-opacity")
+      .delay(motionDuration(1) ? 120 : 0)
+      .duration(motionDuration(430))
+      .attr("stroke-opacity", 0.27);
 
     const nodeSelection = svg
       .append("g")
       .selectAll("g")
       .data(graph.nodes)
       .join("g")
+      .attr("opacity", motionDuration(1) ? 0 : 1)
+      .attr("transform", motionDuration(1) ? "translate(0, 7)" : null)
       .style("cursor", (node) => node.type === "genre" ? "pointer" : "default")
       .on("mouseenter", (_, node) => {
-        linkSelection.attr("stroke-opacity", (link) => link.source === node || link.target === node ? 0.62 : 0.05);
+        linkSelection
+          .interrupt("flow-opacity")
+          .interrupt("hover-opacity")
+          .transition("hover-opacity")
+          .duration(motionDuration(150))
+          .attr("stroke-opacity", (link) => link.source === node || link.target === node ? 0.62 : 0.05);
         if (node.type === "genre") {
           updateInsight(node.genre, visible);
         }
       })
       .on("mouseleave", () => {
-        linkSelection.attr("stroke-opacity", 0.27);
+        linkSelection
+          .interrupt("flow-opacity")
+          .interrupt("hover-opacity")
+          .transition("hover-opacity")
+          .duration(motionDuration(180))
+          .attr("stroke-opacity", 0.27);
         updateInsight(state.genre === "All" ? null : state.genre, visible);
       })
       .on("click", (_, node) => {
@@ -274,6 +294,13 @@ export function createFlow(movies, setGenre) {
       .attr("dy", "1.15em")
       .attr("text-anchor", (node) => node.type === "outcome" ? "start" : "end")
       .text((node) => `${formatInteger(Math.round(node.value))} FILMS`);
+    nodeSelection
+      .transition()
+      .delay((node, index) => motionDuration(1) ? 100 + index * 20 : 0)
+      .duration(motionDuration(430))
+      .ease(d3.easeCubicOut)
+      .attr("opacity", 1)
+      .attr("transform", null);
   }
 
   return { render };

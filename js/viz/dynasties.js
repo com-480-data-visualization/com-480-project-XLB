@@ -1,12 +1,14 @@
 import {
   COLORS,
   d3,
+  drawPaths,
   formatInteger,
   formatMoney,
   formatPercent,
   formatRoi,
   hideTooltip,
   limitText,
+  motionDuration,
   moveTooltip,
   setActiveButtons,
   showTooltip,
@@ -155,6 +157,7 @@ export function createDynasties(data) {
       : [candidateTicks[0], candidateTicks[Math.floor(candidateTicks.length / 3)], candidateTicks[Math.floor((candidateTicks.length * 2) / 3)], candidateTicks.at(-1)];
     const radius = d3.scaleSqrt().domain(d3.extent(installments, (film) => film.revenue)).range([4, 11]);
     const svg = d3.select(reelContainer).append("svg").attr("viewBox", `0 0 ${width} ${height}`);
+    const reelDuration = motionDuration(660);
     svg
       .append("g")
       .attr("class", "grid")
@@ -168,7 +171,11 @@ export function createDynasties(data) {
       .attr("y2", y(filmMetric(original)))
       .attr("stroke", "#b8a060")
       .attr("stroke-width", 1)
-      .attr("stroke-dasharray", "4 4");
+      .attr("stroke-dasharray", "4 4")
+      .attr("opacity", reelDuration ? 0 : 1)
+      .transition()
+      .duration(motionDuration(320))
+      .attr("opacity", 1);
     svg
       .append("text")
       .attr("class", "zone-label")
@@ -176,7 +183,7 @@ export function createDynasties(data) {
       .attr("y", y(filmMetric(original)) - 7)
       .attr("text-anchor", "end")
       .text(`ORIGINAL · ${formatMetric(filmMetric(original))}`);
-    svg
+    const reelPath = svg
       .append("path")
       .datum(installments)
       .attr("d", d3.line()
@@ -186,6 +193,7 @@ export function createDynasties(data) {
       .attr("fill", "none")
       .attr("stroke", "#c9843a")
       .attr("stroke-width", 2.2);
+    drawPaths(reelPath, 730, 80);
     const nodes = svg
       .append("g")
       .selectAll("g")
@@ -205,19 +213,39 @@ export function createDynasties(data) {
       })
       .on("mousemove", moveTooltip)
       .on("mouseleave", hideTooltip);
-    nodes
+    const nodeCircles = nodes
       .append("circle")
-      .attr("r", (film) => radius(film.revenue))
+      .attr("r", reelDuration ? 0 : (film) => radius(film.revenue))
       .attr("fill", (film) => film.id === original.id ? COLORS[original.genre] || "#c9843a" : filmMetric(film) >= filmMetric(original) ? "#4a9e78" : "#b54a3a")
       .attr("stroke", (film) => film.id === peak.id ? "#d4a830" : "var(--paper-3)")
       .attr("stroke-width", (film) => film.id === peak.id ? 2 : 0.8)
       .attr("opacity", 0.92);
+    nodeCircles
+      .transition()
+      .delay((film) => reelDuration ? 150 + film.order * 74 : 0)
+      .duration(reelDuration)
+      .ease(d3.easeBackOut.overshoot(1.1))
+      .attr("r", (film) => radius(film.revenue));
     nodes
+      .filter((film) => film.id === peak.id)
+      .insert("circle", ":first-child")
+      .attr("class", "pulse-ring")
+      .attr("r", radius(peak.revenue) + 5)
+      .attr("fill", "none")
+      .attr("stroke", "#d4a830")
+      .attr("stroke-width", 1.2);
+    const reelLabels = nodes
       .append("text")
       .attr("class", "chart-label")
       .attr("y", (film) => radius(film.revenue) + 15)
       .attr("text-anchor", "middle")
+      .attr("opacity", reelDuration ? 0 : 1)
       .text((film) => `#${film.order}`);
+    reelLabels
+      .transition()
+      .delay((film) => reelDuration ? 300 + film.order * 74 : 0)
+      .duration(motionDuration(260))
+      .attr("opacity", 1);
     svg
       .append("g")
       .attr("class", "axis")
@@ -300,6 +328,7 @@ export function createDynasties(data) {
       Math.max(x.domain()[0], y.domain()[0]),
       Math.min(x.domain()[1], y.domain()[1]),
     ];
+    const equalityDuration = motionDuration(450);
     svg
       .append("line")
       .attr("x1", x(equalityDomain[0]))
@@ -308,7 +337,11 @@ export function createDynasties(data) {
       .attr("y2", y(equalityDomain[1]))
       .attr("stroke", "#b8a060")
       .attr("stroke-width", 1.5)
-      .attr("stroke-dasharray", "7 5");
+      .attr("stroke-dasharray", "7 5")
+      .attr("opacity", equalityDuration ? 0 : 1)
+      .transition()
+      .duration(equalityDuration)
+      .attr("opacity", 1);
     svg
       .append("text")
       .attr("class", "zone-label")
@@ -347,20 +380,30 @@ export function createDynasties(data) {
       .attr("text-anchor", "middle")
       .text(`SEQUEL ${metricLabel}`);
 
+    const pointDuration = motionDuration(680);
+    const originalMetric = (comparison) => metricValue(comparison, mode)[0];
+    const sequelMetric = (comparison) => metricValue(comparison, mode)[1];
+    const pointOpacity = (comparison) => selectedId && comparison.franchiseId !== selectedId ? 0.28 : 0.78;
     const points = svg
       .append("g")
       .selectAll("circle")
       .data(comparisons)
       .join("circle")
       .attr("cx", (comparison) => x(metricValue(comparison, mode)[0]))
-      .attr("cy", (comparison) => y(metricValue(comparison, mode)[1]))
-      .attr("r", (comparison) => radius(comparison.budget))
+      .attr("cy", (comparison) => pointDuration ? y(originalMetric(comparison)) : y(sequelMetric(comparison)))
+      .attr("r", pointDuration ? 0 : (comparison) => radius(comparison.budget))
       .attr("fill", (comparison) => metricValue(comparison, mode)[1] >= metricValue(comparison, mode)[0] ? "#4a9e78" : "#b54a3a")
-      .attr("opacity", (comparison) => selectedId && comparison.franchiseId !== selectedId ? 0.28 : 0.78)
+      .attr("opacity", pointDuration ? 0 : pointOpacity)
       .attr("stroke", (comparison) => comparison.franchiseId === selectedId ? "#8b6410" : "none")
       .attr("stroke-width", 1.8)
       .style("cursor", "pointer")
-      .on("mouseenter", (event, comparison) => {
+      .on("mouseenter", function onEnter(event, comparison) {
+        d3.select(this)
+          .interrupt("point-focus")
+          .transition("point-focus")
+          .duration(motionDuration(120))
+          .attr("r", radius(comparison.budget) + 2.5)
+          .attr("opacity", 1);
         const [original, sequel] = metricValue(comparison, mode);
         showTooltip(event, comparison.collection, [
           ["Original", limitText(comparison.originalTitle, 25)],
@@ -370,11 +413,28 @@ export function createDynasties(data) {
         ]);
       })
       .on("mousemove", moveTooltip)
-      .on("mouseleave", hideTooltip)
+      .on("mouseleave", function onLeave(_, comparison) {
+        d3.select(this)
+          .interrupt("point-focus")
+          .transition("point-focus")
+          .duration(motionDuration(150))
+          .attr("r", radius(comparison.budget))
+          .attr("opacity", pointOpacity(comparison));
+        hideTooltip();
+      })
       .on("click", (_, comparison) => {
+        hideTooltip();
         selectedId = comparison.franchiseId;
         render(state);
       });
+    points
+      .transition()
+      .delay((_, index) => pointDuration ? (index % 22) * 11 : 0)
+      .duration(pointDuration)
+      .ease(d3.easeCubicOut)
+      .attr("cy", (comparison) => y(sequelMetric(comparison)))
+      .attr("r", (comparison) => radius(comparison.budget))
+      .attr("opacity", pointOpacity);
     points
       .filter((comparison) => comparison.franchiseId === selectedId)
       .raise();

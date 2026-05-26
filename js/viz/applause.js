@@ -11,6 +11,7 @@ import {
   hideTooltip,
   limitText,
   median,
+  motionDuration,
   moveTooltip,
   regression,
   setActiveButtons,
@@ -134,6 +135,7 @@ export function createApplause(movies) {
       .append("svg")
       .attr("viewBox", `0 0 ${width} ${height}`)
       .attr("aria-label", "Commercial ranges across MovieLens audience rating bands");
+    const revealDuration = motionDuration(600);
     svg
       .append("text")
       .attr("class", "chart-label")
@@ -152,7 +154,11 @@ export function createApplause(movies) {
       .attr("y1", margin.top - 10)
       .attr("y2", height - margin.bottom)
       .attr("stroke", "#b8a060")
-      .attr("stroke-dasharray", "5 5");
+      .attr("stroke-dasharray", "5 5")
+      .attr("opacity", revealDuration ? 0 : 1)
+      .transition()
+      .duration(motionDuration(390))
+      .attr("opacity", 1);
     svg
       .append("text")
       .attr("class", "zone-label")
@@ -197,60 +203,94 @@ export function createApplause(movies) {
       .attr("dominant-baseline", "middle")
       .attr("text-anchor", "end")
       .text((band) => `n=${formatInteger(band.films.length)}`);
-    rows
+    const whiskers = rows
       .append("line")
-      .attr("x1", (band) => x(band.q10))
-      .attr("x2", (band) => x(Math.min(band.q90, upper)))
+      .attr("x1", (band) => revealDuration ? x(band.middle) : x(band.q10))
+      .attr("x2", (band) => revealDuration ? x(band.middle) : x(Math.min(band.q90, upper)))
       .attr("y1", (band) => y(band.key) + y.bandwidth() / 2)
       .attr("y2", (band) => y(band.key) + y.bandwidth() / 2)
       .attr("stroke", "var(--line)")
       .attr("stroke-width", 1.1);
-    rows
+    const ranges = rows
       .append("line")
-      .attr("x1", (band) => x(band.q25))
-      .attr("x2", (band) => x(Math.min(band.q75, upper)))
+      .attr("x1", (band) => revealDuration ? x(band.middle) : x(band.q25))
+      .attr("x2", (band) => revealDuration ? x(band.middle) : x(Math.min(band.q75, upper)))
       .attr("y1", (band) => y(band.key) + y.bandwidth() / 2)
       .attr("y2", (band) => y(band.key) + y.bandwidth() / 2)
       .attr("stroke", (band) => band.key === selectedBand ? "#c9843a" : "#8b6410")
       .attr("stroke-width", 12)
       .attr("stroke-linecap", "round")
       .attr("opacity", (band) => band.key === selectedBand ? 0.8 : 0.52);
+    whiskers
+      .transition()
+      .delay((_, index) => revealDuration ? 70 + index * 44 : 0)
+      .duration(revealDuration)
+      .ease(d3.easeCubicOut)
+      .attr("x1", (band) => x(band.q10))
+      .attr("x2", (band) => x(Math.min(band.q90, upper)));
+    ranges
+      .transition()
+      .delay((_, index) => revealDuration ? 100 + index * 44 : 0)
+      .duration(revealDuration)
+      .ease(d3.easeCubicOut)
+      .attr("x1", (band) => x(band.q25))
+      .attr("x2", (band) => x(Math.min(band.q75, upper)));
 
-    ordered.forEach((band) => {
-      svg
+    ordered.forEach((band, bandIndex) => {
+      const dots = svg
         .append("g")
         .selectAll("circle")
         .data(sampleFilms(band.films, metric.value), (movie) => movie.id)
         .join("circle")
-        .attr("cx", (movie) => x(Math.min(metric.value(movie), upper)))
+        .attr("cx", (movie) => revealDuration ? x(band.middle) : x(Math.min(metric.value(movie), upper)))
         .attr("cy", (movie) => {
           const jitter = ((((movie.id * 2654435761) >>> 0) / 4294967295) - 0.5) * (y.bandwidth() - 10);
           return y(band.key) + y.bandwidth() / 2 + jitter;
         })
-        .attr("r", 2.4)
+        .attr("r", revealDuration ? 0 : 2.4)
         .attr("fill", (movie) => COLORS[movie.genre])
         .attr("stroke", "var(--paper-2)")
         .attr("stroke-width", 0.6)
-        .attr("opacity", band.key === selectedBand ? 0.8 : 0.45)
+        .attr("opacity", revealDuration ? 0 : band.key === selectedBand ? 0.8 : 0.45)
         .style("cursor", "pointer")
         .on("mouseenter", (event, movie) => filmTooltip(event, movie))
         .on("mousemove", moveTooltip)
         .on("mouseleave", hideTooltip);
+      dots
+        .transition()
+        .delay((_, index) => revealDuration ? 175 + bandIndex * 42 + (index % 10) * 8 : 0)
+        .duration(revealDuration)
+        .ease(d3.easeCubicOut)
+        .attr("cx", (movie) => x(Math.min(metric.value(movie), upper)))
+        .attr("r", 2.4)
+        .attr("opacity", band.key === selectedBand ? 0.8 : 0.45);
     });
 
-    rows
+    const medians = rows
       .append("path")
       .attr("d", d3.symbol().type(d3.symbolDiamond).size(70))
-      .attr("transform", (band) => `translate(${x(Math.min(band.middle, upper))},${y(band.key) + y.bandwidth() / 2})`)
+      .attr("transform", (band) => `translate(${x(Math.min(band.middle, upper))},${y(band.key) + y.bandwidth() / 2}) scale(${revealDuration ? 0 : 1})`)
       .attr("fill", "#d4a830")
       .attr("stroke", "var(--paper-2)")
       .attr("stroke-width", 1.1);
-    rows
+    medians
+      .transition()
+      .delay((_, index) => revealDuration ? 300 + index * 44 : 0)
+      .duration(motionDuration(420))
+      .ease(d3.easeBackOut.overshoot(1.25))
+      .attr("transform", (band) => `translate(${x(Math.min(band.middle, upper))},${y(band.key) + y.bandwidth() / 2}) scale(1)`);
+    const medianText = rows
       .append("text")
       .attr("class", "chart-label")
       .attr("x", (band) => Math.min(x(Math.min(band.middle, upper)) + 10, width - margin.right - 30))
       .attr("y", (band) => y(band.key) + y.bandwidth() / 2 - 12)
+      .attr("opacity", revealDuration ? 0 : 1)
       .text((band) => metric.format(band.middle));
+    medianText
+      .transition()
+      .delay((_, index) => revealDuration ? 430 + index * 44 : 0)
+      .duration(motionDuration(250))
+      .attr("opacity", 1);
     svg
       .append("g")
       .attr("class", "axis")

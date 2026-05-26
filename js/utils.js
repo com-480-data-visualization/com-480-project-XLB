@@ -53,6 +53,35 @@ export const COLORS = {
 const tooltip = document.getElementById("tooltip");
 const compactNumber = new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 1 });
 const wholeNumber = new Intl.NumberFormat("en-US");
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+export function motionDuration(duration) {
+  return reducedMotion.matches || document.body.classList.contains("preparing-charts") ? 0 : duration;
+}
+
+export function drawPaths(selection, duration = 760, delay = 0) {
+  const activeDuration = motionDuration(duration);
+  if (!activeDuration) {
+    return selection;
+  }
+  selection.each(function drawPath(datum, index) {
+    const path = d3.select(this);
+    const length = this.getTotalLength();
+    const wait = typeof delay === "function" ? delay(datum, index) : delay;
+    path
+      .attr("stroke-dasharray", `${length} ${length}`)
+      .attr("stroke-dashoffset", length)
+      .transition()
+      .delay(wait)
+      .duration(activeDuration)
+      .ease(d3.easeCubicOut)
+      .attr("stroke-dashoffset", 0)
+      .on("end", function clearDrawingMask() {
+        d3.select(this).attr("stroke-dasharray", null).attr("stroke-dashoffset", null);
+      });
+  });
+  return selection;
+}
 
 export function matchesState(movie, state) {
   const genreMatch = state.genre === "All" || movie.genre === state.genre;

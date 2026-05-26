@@ -7,8 +7,12 @@ import {
   formatInteger,
   formatPercent,
   formatRoi,
+  hideTooltip,
   median,
+  motionDuration,
+  moveTooltip,
   setActiveButtons,
+  showTooltip,
 } from "../utils.js";
 
 function kernelDensity(values, thresholds, bandwidth) {
@@ -120,24 +124,52 @@ export function createProfitabilityMatrix(movies) {
       .x1((point) => center + spread(point[1]))
       .y((point) => y(point[0]))(density);
     const svg = d3.select(violin).append("svg").attr("viewBox", `0 0 ${width} ${height}`);
+    const detailDuration = motionDuration(600);
+    const baselineShape = detailDuration
+      ? d3.area()
+        .x0(center)
+        .x1(center)
+        .y((point) => y(point[0]))(baselineDensity)
+      : shape(baselineDensity);
+    const selectedShape = detailDuration
+      ? d3.area()
+        .x0(center)
+        .x1(center)
+        .y((point) => y(point[0]))(cellDensity)
+      : shape(cellDensity);
     svg
       .append("path")
-      .attr("d", shape(baselineDensity))
+      .attr("d", baselineShape)
       .attr("fill", "#c8b898")
+      .attr("opacity", detailDuration ? 0 : 0.32)
+      .transition()
+      .duration(detailDuration)
+      .attr("d", shape(baselineDensity))
       .attr("opacity", 0.32);
     svg
       .append("path")
-      .attr("d", shape(cellDensity))
+      .attr("d", selectedShape)
       .attr("fill", "#c9843a")
+      .attr("opacity", detailDuration ? 0 : 0.62)
+      .transition()
+      .delay(detailDuration ? 80 : 0)
+      .duration(detailDuration)
+      .attr("d", shape(cellDensity))
       .attr("opacity", 0.62);
+    const medianY = y(Math.log10(Math.min(cell.medianRoi, cap)));
     svg
       .append("line")
-      .attr("x1", center - 66)
-      .attr("x2", center + 66)
-      .attr("y1", y(Math.log10(Math.min(cell.medianRoi, cap))))
-      .attr("y2", y(Math.log10(Math.min(cell.medianRoi, cap))))
+      .attr("x1", detailDuration ? center : center - 66)
+      .attr("x2", detailDuration ? center : center + 66)
+      .attr("y1", medianY)
+      .attr("y2", medianY)
       .attr("stroke", "#8b6410")
-      .attr("stroke-width", 1.5);
+      .attr("stroke-width", 1.5)
+      .transition()
+      .delay(detailDuration ? 260 : 0)
+      .duration(motionDuration(360))
+      .attr("x1", center - 66)
+      .attr("x2", center + 66);
     svg
       .append("g")
       .attr("class", "axis")
@@ -211,24 +243,65 @@ export function createProfitabilityMatrix(movies) {
       .selectAll("g")
       .data(cells)
       .join("g");
-    rows
+    const cellDuration = motionDuration(530);
+    const cellX = (cell) => margin.left + TIERS.indexOf(cell.tier) * cellWidth + 2;
+    const cellY = (cell) => margin.top + genres.indexOf(cell.genre) * rowHeight + 2;
+    const cellHeight = rowHeight - 5;
+    const rectangles = rows
       .append("rect")
-      .attr("x", (cell) => margin.left + TIERS.indexOf(cell.tier) * cellWidth + 2)
-      .attr("y", (cell) => margin.top + genres.indexOf(cell.genre) * rowHeight + 2)
+      .attr("x", cellX)
+      .attr("y", (cell) => cellDuration ? cellY(cell) + cellHeight / 2 : cellY(cell))
       .attr("width", cellWidth - 5)
-      .attr("height", rowHeight - 5)
+      .attr("height", cellDuration ? 0 : cellHeight)
       .attr("rx", 2)
       .attr("fill", (cell) => cell.count ? color(mode === "median" ? cell.medianRoi : cell.profitable) : "transparent")
+      .attr("fill-opacity", cellDuration ? 0 : 1)
       .attr("stroke", (cell) => cell === selection ? "#8b6410" : cell.count ? "#e0cfb2" : "#ddd0b0")
       .attr("stroke-width", (cell) => cell === selection ? 2 : 1)
       .style("cursor", (cell) => cell.count ? "pointer" : "default")
+      .on("mouseenter", function onEnter(event, cell) {
+        if (!cell.count) {
+          return;
+        }
+        d3.select(this)
+          .interrupt("cell-focus")
+          .transition("cell-focus")
+          .duration(motionDuration(120))
+          .attr("stroke", "#d4a830")
+          .attr("stroke-width", 2.2);
+        showTooltip(event, `${cell.genre} · ${TIER_LABELS[cell.tier]}`, [
+          ["Films", formatInteger(cell.count)],
+          ["Median ROI", formatRoi(cell.medianRoi)],
+          ["Profitable", formatPercent(cell.profitable)],
+          ["Open", "Click for distribution"],
+        ]);
+      })
+      .on("mousemove", moveTooltip)
+      .on("mouseleave", function onLeave(_, cell) {
+        d3.select(this)
+          .interrupt("cell-focus")
+          .transition("cell-focus")
+          .duration(motionDuration(130))
+          .attr("stroke", cell === selection ? "#8b6410" : cell.count ? "#e0cfb2" : "#ddd0b0")
+          .attr("stroke-width", cell === selection ? 2 : 1);
+        hideTooltip();
+      })
       .on("click", (_, cell) => {
         if (cell.count) {
+          hideTooltip();
           selection = cell;
           render(state);
         }
       });
-    rows
+    rectangles
+      .transition()
+      .delay((cell) => cellDuration ? (genres.indexOf(cell.genre) * 42) + (TIERS.indexOf(cell.tier) * 34) : 0)
+      .duration(cellDuration)
+      .ease(d3.easeCubicOut)
+      .attr("y", cellY)
+      .attr("height", cellHeight)
+      .attr("fill-opacity", 1);
+    const valuesText = rows
       .filter((cell) => cell.count)
       .append("text")
       .attr("x", (cell) => margin.left + TIERS.indexOf(cell.tier) * cellWidth + cellWidth / 2)
@@ -238,15 +311,27 @@ export function createProfitabilityMatrix(movies) {
       .attr("fill", (cell) => (mode === "median" ? cell.medianRoi / maximum : cell.profitable) > 0.56 ? "#faf6ec" : "#4b3923")
       .attr("font-family", "DM Mono, monospace")
       .attr("font-size", 13)
+      .attr("opacity", cellDuration ? 0 : 1)
       .text((cell) => mode === "median" ? formatRoi(cell.medianRoi) : formatPercent(cell.profitable));
-    rows
+    const countsText = rows
       .filter((cell) => cell.count)
       .append("text")
       .attr("class", "chart-label")
       .attr("x", (cell) => margin.left + TIERS.indexOf(cell.tier) * cellWidth + cellWidth / 2)
       .attr("y", (cell) => margin.top + genres.indexOf(cell.genre) * rowHeight + rowHeight - 12)
       .attr("text-anchor", "middle")
+      .attr("opacity", cellDuration ? 0 : 1)
       .text((cell) => `n=${formatInteger(cell.count)}`);
+    valuesText
+      .transition()
+      .delay((cell) => cellDuration ? 250 + (genres.indexOf(cell.genre) * 42) + (TIERS.indexOf(cell.tier) * 34) : 0)
+      .duration(motionDuration(300))
+      .attr("opacity", 1);
+    countsText
+      .transition()
+      .delay((cell) => cellDuration ? 310 + (genres.indexOf(cell.genre) * 42) + (TIERS.indexOf(cell.tier) * 34) : 0)
+      .duration(motionDuration(270))
+      .attr("opacity", 1);
     genres.forEach((genre, index) => {
       svg
         .append("text")

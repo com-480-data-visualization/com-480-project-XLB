@@ -87,10 +87,17 @@ function setupChrome() {
     progress.style.width = `${distance ? (window.scrollY / distance) * 100 : 0}%`;
   }, { passive: true });
 
+  const showElement = (element) => {
+    const firstReveal = !element.classList.contains("visible");
+    element.classList.add("visible");
+    if (firstReveal && element.classList.contains("viz-shell")) {
+      element.dispatchEvent(new CustomEvent("cinescope:view-enter"));
+    }
+  };
   const revealObserver = new IntersectionObserver(
     (entries) => entries.forEach((entry) => {
       if (entry.isIntersecting) {
-        entry.target.classList.add("visible");
+        showElement(entry.target);
         revealObserver.unobserve(entry.target);
       }
     }),
@@ -103,7 +110,7 @@ function setupChrome() {
     if (!section) {
       return;
     }
-    section.querySelectorAll(".reveal").forEach((element) => element.classList.add("visible"));
+    section.querySelectorAll(".reveal").forEach(showElement);
   };
   const openHashSection = (shouldScroll = false) => {
     const section = window.location.hash ? document.getElementById(window.location.hash.slice(1)) : null;
@@ -164,20 +171,30 @@ async function start() {
     const data = await loadData();
     populateStory(data.summary, data.movies);
     const syncControls = bindSharedControls(data.movies);
-    const visualizations = [
-      createDossierBoard(data.movies),
-      createFlow(data.movies, (genre) => setState({ genre })),
-      createProfitabilityMatrix(data.movies),
-      createDynasties(data.franchises),
-      createApplause(data.movies),
-      createDirectors(data.movies, data.directors),
+    const scenes = [
+      { id: "dossier", visualization: createDossierBoard(data.movies) },
+      { id: "flow", visualization: createFlow(data.movies, (genre) => setState({ genre })) },
+      { id: "matrix", visualization: createProfitabilityMatrix(data.movies) },
+      { id: "dynasties", visualization: createDynasties(data.franchises) },
+      { id: "applause", visualization: createApplause(data.movies) },
+      { id: "directors", visualization: createDirectors(data.movies, data.directors) },
     ];
+    const visualizations = scenes.map((scene) => scene.visualization);
     const render = (state) => {
       syncControls(state);
       visualizations.forEach((visualization) => visualization.render(state));
     };
     subscribe(render);
+    document.body.classList.add("preparing-charts");
     render(getState());
+    document.body.classList.remove("preparing-charts");
+    scenes.forEach(({ id, visualization }) => {
+      const shell = document.querySelector(`#${id} .viz-shell`);
+      shell?.addEventListener("cinescope:view-enter", () => visualization.render(getState()), { once: true });
+      if (shell?.classList.contains("visible")) {
+        visualization.render(getState());
+      }
+    });
 
     let timer = null;
     window.addEventListener("resize", () => {
