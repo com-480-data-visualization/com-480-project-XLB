@@ -197,7 +197,7 @@ export function createDirectors(movies, precomputedDirectors) {
         selectedName = director.name;
         render(state);
       });
-    const bars = rows
+    rows
       .append("rect")
       .attr("x", 13)
       .attr("y", (director) => y(director.name) - 4)
@@ -223,7 +223,7 @@ export function createDirectors(movies, precomputedDirectors) {
       .attr("font-family", "DM Mono, monospace")
       .attr("font-size", 10)
       .text((director) => limitText(director.name, 22));
-    rows
+    const bars = rows
       .append("rect")
       .attr("x", margin.left)
       .attr("y", (director) => y(director.name) + y.bandwidth() / 2 - 3)
