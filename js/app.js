@@ -1,4 +1,4 @@
-import { loadData } from "./data-loader.js?v=20260527-final8";
+import { loadData } from "./data-loader.js?v=20260527-final9";
 import { getState, setState, subscribe } from "./state.js?v=20260526-final6";
 import {
   DECADES,
@@ -12,7 +12,7 @@ import {
 import { createDossierBoard } from "./viz/dossier-board.js?v=20260527-final7";
 import { createFlow } from "./viz/flow.js?v=20260526-final6";
 import { createProfitabilityMatrix } from "./viz/profitability-matrix.js?v=20260526-final6";
-import { createDynasties } from "./viz/dynasties.js?v=20260526-final6";
+import { createDynasties } from "./viz/dynasties.js?v=20260527-final9";
 import { createApplause } from "./viz/applause.js?v=20260526-final6";
 import { createDirectors } from "./viz/directors.js?v=20260526-final6";
 

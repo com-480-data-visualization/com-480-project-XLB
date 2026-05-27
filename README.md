@@ -59,7 +59,7 @@ python3 scripts/export_web_data.py
 To refresh the optional contextual imagery used in selected detail panels:
 
 ```bash
-python3 scripts/refresh_movie_posters.py --top-franchises 100 --top-grossing 100 --top-roi 100
+python3 scripts/refresh_movie_posters.py --top-franchises 309 --top-grossing 200 --top-roi 200
 python3 scripts/fetch_director_portraits.py
 python3 scripts/export_web_data.py
 ```
@@ -117,7 +117,7 @@ Open <http://localhost:8080/>.
 | `js/viz/dossier-board.js` | Renders the log-scale film scatter, search, revenue/ROI mode and film dossier. |
 | `js/viz/flow.js` | Renders the budget-to-genre-to-outcome Sankey and linked genre selection. |
 | `js/viz/profitability-matrix.js` | Renders the genre/budget heatmap and selected-cell ROI distribution. |
-| `js/viz/dynasties.js` | Renders all-sequel comparisons and the ordered franchise reel. |
+| `js/viz/dynasties.js` | Renders all-sequel comparisons, collection/title search and the ordered franchise reel. |
 | `js/viz/applause.js` | Renders MovieLens rating-band intervals against revenue or ROI. |
 | `js/viz/directors.js` | Renders repeat-director rankings and the selected portfolio dossier. |
 | `scripts/*.py` | Rebuilds visualization exports and contextual image metadata from the documented inputs. |
@@ -226,14 +226,14 @@ CineScope is built from *The Movies Dataset* (Kaggle/TMDb), enriched with MovieL
 
 The budget threshold removes unstable ROI values created by implausibly tiny recorded costs while retaining genuine low-budget breakouts such as *Paranormal Activity* (`$15,000` recorded budget). After thresholding and ID de-duplication, the financial universe contains **5,317 films**. The website computes aggregated results from all eligible films; only the Dossier Board limits individual plotted marks to a deterministic stratified sample of at most **800** so bubbles remain readable.
 
-Named Dossier examples, the top 100 films by recorded gross, the top 100 by ROI, and eligible installments from the 100 highest-grossing Dynasties collections receive refreshed TMDb poster URLs for contextual hover and reel imagery, with TMDb credited in the interface. The scatter remains data-first: poster images load only in tooltips or the currently opened reel, rather than during the overview plot. Reusable director portraits are fetched from Wikimedia Commons with their licence and source links stored in `data/web/director_portraits.json` and `assets/images/directors/ATTRIBUTION.md`.
+Named Dossier examples, the top 200 films by recorded gross, the top 200 by ROI, and eligible installments from all 309 Dynasties collections receive refreshed TMDb poster URLs for contextual hover and reel imagery, with TMDb credited in the interface. The scatter remains data-first: poster images load only in tooltips or the currently opened reel, rather than during the overview plot. Reusable director portraits are fetched from Wikimedia Commons with their licence and source links stored in `data/web/director_portraits.json` and `assets/images/directors/ATTRIBUTION.md`.
 
 ### Delivered Visualizations
 
 1. **The Dossier Board** is a D3 log-scale scatter plot of budget against revenue or ROI. Genre and decade filters, title search, film tooltips, a break-even line, and named outcome regions let readers start with concrete movies.
 2. **The Flow** is a D3-Sankey view from budget tier to genre to commercial outcome. Width encodes the number of eligible films; hovering traces a path and selecting a genre coordinates the wider story.
 3. **The Profitability Matrix** is a genre-by-budget heatmap toggling median ROI and profitable share. Selecting a cell opens its ROI distribution against the complete current comparison group.
-4. **Dynasties** compares **all** eligible sequels with their original on revenue, ROI, or rating. Selecting a collection opens its chronological franchise reel against the original-film baseline.
+4. **Dynasties** compares **all** eligible sequels with their original on revenue, ROI, or rating. Searching by series or installment title, or selecting a collection, opens its chronological franchise reel against the original-film baseline.
 5. **Applause vs. Receipts** groups sufficiently rated films into audience-rating bands. Each band exposes its revenue or ROI range, middle 50%, median, and hoverable film evidence.
 6. **The Name Above The Title** ranks repeat directors as portfolios by median ROI or total gross, with minimum-film thresholds and a selected-film detail panel.
 

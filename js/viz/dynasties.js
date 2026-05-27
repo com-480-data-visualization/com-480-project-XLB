@@ -26,6 +26,8 @@ export function createDynasties(data) {
   const container = document.getElementById("dynasty-viz");
   const detail = document.getElementById("dynasty-detail");
   const select = document.getElementById("franchise-select");
+  const searchInput = document.getElementById("franchise-search");
+  const suggestions = document.getElementById("franchise-suggestions");
   const count = document.getElementById("dynasty-count");
   const reading = document.getElementById("dynasty-reading");
   let mode = "revenue";
@@ -35,6 +37,7 @@ export function createDynasties(data) {
   ));
   let selectedId = illustratedOpening?.id || data.franchises[0]?.id || null;
   let currentState = { genre: "All", decade: "all" };
+  let visibleFranchises = [];
 
   document.querySelectorAll("[data-dynasty-mode]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -47,6 +50,29 @@ export function createDynasties(data) {
     selectedId = select.value;
     render(currentState);
   });
+  searchInput.addEventListener("input", () => {
+    const match = findFranchise(searchInput.value);
+    if (match && match.id !== selectedId) {
+      selectedId = match.id;
+      render(currentState);
+    }
+  });
+
+  function findFranchise(term) {
+    const query = term.trim().toLowerCase();
+    if (!query) {
+      return null;
+    }
+    const matchesName = (franchise, operation) => operation(franchise.name.toLowerCase(), query);
+    const matchesFilm = (franchise, operation) => franchise.installments.some((film) => (
+      operation(film.title.toLowerCase(), query)
+    ));
+    return visibleFranchises.find((franchise) => matchesName(franchise, (name, value) => name === value))
+      || visibleFranchises.find((franchise) => matchesFilm(franchise, (title, value) => title === value))
+      || visibleFranchises.find((franchise) => matchesName(franchise, (name, value) => name.startsWith(value)))
+      || visibleFranchises.find((franchise) => matchesName(franchise, (name, value) => name.includes(value)))
+      || visibleFranchises.find((franchise) => matchesFilm(franchise, (title, value) => title.includes(value)));
+  }
 
   function metricValue(comparison, type) {
     if (type === "roi") {
@@ -312,10 +338,17 @@ export function createDynasties(data) {
       .filter((comparison) => matchesComparison(comparison, state));
     const comparisons = availableComparisons.filter(eligibleForMode);
     const visibleFranchiseIds = new Set(comparisons.map((comparison) => comparison.franchiseId));
-    const visibleFranchises = data.franchises.filter((franchise) => visibleFranchiseIds.has(franchise.id));
+    visibleFranchises = data.franchises.filter((franchise) => visibleFranchiseIds.has(franchise.id));
+    const searchedFranchise = findFranchise(searchInput.value);
+    if (searchedFranchise) {
+      selectedId = searchedFranchise.id;
+    }
     if (!visibleFranchiseIds.has(selectedId)) {
       selectedId = visibleFranchises[0]?.id || null;
     }
+    suggestions.innerHTML = visibleFranchises
+      .map((franchise) => `<option value="${escapeHtml(franchise.name)}"></option>`)
+      .join("");
     select.innerHTML = visibleFranchises
       .map((franchise) => `<option value="${franchise.id}">${franchise.name}</option>`)
       .join("");

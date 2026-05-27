@@ -735,6 +735,10 @@ section {
   border-color: var(--gold);
 }
 
+.dynasty-search input {
+  width: 194px;
+}
+
 .select-control {
   align-items: center;
   display: flex;
@@ -1641,6 +1645,11 @@ footer a {
     flex: 1;
     max-width: none;
     min-width: 0;
+  }
+
+  .dynasty-search input {
+    flex: 1;
+    width: auto;
   }
 
   .under-chart,
