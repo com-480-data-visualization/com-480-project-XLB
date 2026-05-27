@@ -24,8 +24,7 @@ export function createDossierBoard(movies) {
   const count = document.getElementById("dossier-count");
   const metricLabel = document.getElementById("dossier-metric-label");
   const searchInput = document.getElementById("film-search");
-  const brushToggle = document.getElementById("brush-toggle");
-  const brushResult = document.getElementById("brush-result");
+  const note = document.getElementById("dossier-note");
   const reading = document.getElementById("dossier-reading");
   const allExtent = {
     budget: d3.extent(movies, (movie) => movie.budget),
@@ -33,7 +32,6 @@ export function createDossierBoard(movies) {
   };
 
   let mode = "revenue";
-  let brushEnabled = false;
   let currentState = { genre: "All", decade: "all" };
 
   renderLegend(document.getElementById("dossier-legend"));
@@ -47,15 +45,6 @@ export function createDossierBoard(movies) {
   });
 
   searchInput.addEventListener("input", () => render(currentState));
-  brushToggle.addEventListener("click", () => {
-    brushEnabled = !brushEnabled;
-    brushToggle.classList.toggle("active", brushEnabled);
-    brushToggle.textContent = brushEnabled ? "Clear brush" : "Brush select";
-    brushResult.textContent = brushEnabled
-      ? "Drag across bubbles to open a selection dossier."
-      : "Drag on the chart to inspect a selection of films.";
-    render(currentState);
-  });
 
   function render(state) {
     currentState = state;
@@ -98,15 +87,13 @@ export function createDossierBoard(movies) {
     count.textContent = sample.sampled
       ? `${formatInteger(shown.length)} shown / ${formatInteger(eligible.length)} eligible`
       : `${formatInteger(eligible.length)} eligible films`;
-    if (!brushEnabled) {
-      const samplingNote = sample.sampled
-        ? `Showing a stratified ${formatInteger(shown.length)}-film display sample; summaries use all ${formatInteger(eligible.length)} eligible films. Activate the brush to inspect marks.`
-        : `All ${formatInteger(eligible.length)} matching films are displayed. Activate the brush to inspect a selection.`;
-      const floorNote = mode === "revenue" && pinnedRevenueCount
-        ? ` ${formatInteger(pinnedRevenueCount)} reported grosses below $10K are pinned to the baseline.`
-        : "";
-      brushResult.textContent = `${samplingNote}${floorNote}`;
-    }
+    const samplingNote = sample.sampled
+      ? `Showing a stratified ${formatInteger(shown.length)}-film display sample; summaries use all ${formatInteger(eligible.length)} eligible films. Hover a bubble or search a title to inspect a film.`
+      : `All ${formatInteger(eligible.length)} matching films are displayed. Hover a bubble or search a title to inspect a film.`;
+    const floorNote = mode === "revenue" && pinnedRevenueCount
+      ? ` ${formatInteger(pinnedRevenueCount)} reported grosses below $10K are pinned to the baseline.`
+      : "";
+    note.textContent = `${samplingNote}${floorNote}`;
 
     const svg = d3
       .select(container)
@@ -303,33 +290,6 @@ export function createDossierBoard(movies) {
       }
     }
 
-    if (brushEnabled) {
-      const brush = d3
-        .brush()
-        .extent([[margin.left, margin.top], [width - margin.right, height - margin.bottom]])
-        .on("end", ({ selection }) => {
-          if (!selection) {
-            circles
-              .attr("opacity", baseOpacity)
-              .attr("stroke", baseStroke)
-              .attr("stroke-width", baseStrokeWidth);
-            brushResult.textContent = "Drag across bubbles to open a selection dossier.";
-            return;
-          }
-          const [[x0, y0], [x1, y1]] = selection;
-          const selected = shown.filter((movie) => {
-            const cx = x(movie.budget);
-            const cy = y(mode === "roi" ? Math.min(roiForLogScale(movie.roi), roiLimit) : movie.revenue);
-            return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1;
-          });
-          const best = d3.greatest(selected, (movie) => movie.roi);
-          circles.attr("opacity", (movie) => selected.includes(movie) ? 0.9 : 0.08);
-          brushResult.textContent = selected.length
-            ? `${formatInteger(selected.length)} shown films selected; best return: ${best.title} at ${formatRoi(best.roi)}.`
-            : "No displayed films in this selection.";
-        });
-      svg.append("g").attr("class", "brush").call(brush);
-    }
   }
 
   return { render };

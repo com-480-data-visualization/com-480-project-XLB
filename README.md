@@ -114,7 +114,7 @@ Open <http://localhost:8080/>.
 | `js/data-loader.js` | Loads compact JSON resources needed by the browser application. |
 | `js/state.js` | Holds the shared genre and decade selection and publishes changes to coordinated views. |
 | `js/utils.js` | Supplies shared number formatting, tooltips, sampling, scales and statistical helpers. |
-| `js/viz/dossier-board.js` | Renders the log-scale film scatter, search, revenue/ROI mode, brush and film dossier. |
+| `js/viz/dossier-board.js` | Renders the log-scale film scatter, search, revenue/ROI mode and film dossier. |
 | `js/viz/flow.js` | Renders the budget-to-genre-to-outcome Sankey and linked genre selection. |
 | `js/viz/profitability-matrix.js` | Renders the genre/budget heatmap and selected-cell ROI distribution. |
 | `js/viz/dynasties.js` | Renders all-sequel comparisons and the ordered franchise reel. |
@@ -230,7 +230,7 @@ Named Dossier examples and eligible installments from the 100 highest-grossing D
 
 ### Delivered Visualizations
 
-1. **The Dossier Board** is a D3 log-scale scatter plot of budget against revenue or ROI. Genre and decade filters, title search, brush inspection, film tooltips, a break-even line, and named outcome regions let readers start with concrete movies.
+1. **The Dossier Board** is a D3 log-scale scatter plot of budget against revenue or ROI. Genre and decade filters, title search, film tooltips, a break-even line, and named outcome regions let readers start with concrete movies.
 2. **The Flow** is a D3-Sankey view from budget tier to genre to commercial outcome. Width encodes the number of eligible films; hovering traces a path and selecting a genre coordinates the wider story.
 3. **The Profitability Matrix** is a genre-by-budget heatmap toggling median ROI and profitable share. Selecting a cell opens its ROI distribution against the complete current comparison group.
 4. **Dynasties** compares **all** eligible sequels with their original on revenue, ROI, or rating. Selecting a collection opens its chronological franchise reel against the original-film baseline.
@@ -242,6 +242,8 @@ Named Dossier examples and eligible installments from the 100 highest-grossing D
 The persistent genre and decade controls update every relevant view. Scene-level metric switches let users distinguish total box office from gross return, while hover cards and drill-down panels preserve identifiable films behind aggregates.
 
 The story tests a series of familiar promises: spend more, select the right genre, extend a successful franchise, win audience approval, or hire a recognised director. The Dossier Board exposes the wide spread of outcomes behind comparable budgets. The Flow and Profitability Matrix then show that genre and scale operate together, with Horror leading the displayed genres in median return. Dynasties tests inherited success more directly: across **573** eligible sequel-to-original comparisons in **309** collections, only **46.6%** of sequels outgross their original. Applause vs. Receipts adds a second definition of success: MovieLens rating and logged gross revenue show almost no association in this sample (`r = 0.017`). Together, the views support the concluding claim that cinema offers several paths to success, but no dependable formula.
+
+Top-billed cast remains visible in each available film dossier as contextual evidence. CineScope does not rank performers as an independent driver: an actor's appearances co-occur with budget, franchise, director and role context, so attributing a film's receipts to isolated actor influence would claim more than this observational design supports.
 
 ### Technical Implementation And Intended Usage
 

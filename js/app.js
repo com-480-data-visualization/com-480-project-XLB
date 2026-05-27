@@ -9,7 +9,7 @@ import {
   formatRoi,
   median,
 } from "./utils.js?v=20260526-final6";
-import { createDossierBoard } from "./viz/dossier-board.js?v=20260526-final6";
+import { createDossierBoard } from "./viz/dossier-board.js?v=20260527-final7";
 import { createFlow } from "./viz/flow.js?v=20260526-final6";
 import { createProfitabilityMatrix } from "./viz/profitability-matrix.js?v=20260526-final6";
 import { createDynasties } from "./viz/dynasties.js?v=20260526-final6";

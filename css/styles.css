@@ -1436,6 +1436,11 @@ section {
   margin: 0;
 }
 
+.methodology .scope-note {
+  color: var(--ink-soft);
+  margin: 18px 0 0;
+}
+
 .methodology .asset-note {
   color: var(--muted);
   font: 10px / 1.7 var(--mono);
