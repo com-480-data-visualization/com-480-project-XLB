@@ -3,10 +3,9 @@
 
 The downloaded metadata contains poster paths that may become stale after
 TMDb image changes. By default this script resolves a curated set of
-recognisable examples used during interaction; `--top-franchises` adds
-eligible installments for the leading collections by total gross, while
-`--all` expands to the complete financial universe. The cache is consumed by
-export_web_data.py.
+recognisable examples used during interaction. Optional ranked selections
+add evidence for the budget/ROI board and franchise reel without loading
+posters for every film. The cache is consumed by export_web_data.py.
 """
 
 from __future__ import annotations
@@ -52,6 +51,36 @@ CURATED_TITLES = {
     "Skyfall",
     "Beauty and the Beast",
     "Frozen",
+    "Pulp Fiction",
+    "La La Land",
+    "Interstellar",
+    "Forrest Gump",
+    "The Shawshank Redemption",
+    "Whiplash",
+    "Get Out",
+    "Gladiator",
+    "Gravity",
+    "The Revenant",
+    "Django Unchained",
+    "The Wolf of Wall Street",
+    "Fight Club",
+    "Good Will Hunting",
+    "The Social Network",
+    "Arrival",
+    "Moonlight",
+    "The Silence of the Lambs",
+    "Slumdog Millionaire",
+    "Saving Private Ryan",
+    "Schindler's List",
+    "The Grand Budapest Hotel",
+    "The Sixth Sense",
+    "Black Swan",
+    "The Truman Show",
+    "The Departed",
+    "American Beauty",
+    "The Prestige",
+    "Memento",
+    "The Green Mile",
 }
 
 
@@ -101,6 +130,20 @@ def main() -> None:
         metavar="N",
         help="Resolve headline examples and installments from the top N collections by total gross.",
     )
+    parser.add_argument(
+        "--top-grossing",
+        type=int,
+        default=0,
+        metavar="N",
+        help="Resolve the top N eligible films by recorded worldwide gross.",
+    )
+    parser.add_argument(
+        "--top-roi",
+        type=int,
+        default=0,
+        metavar="N",
+        help="Resolve the top N eligible films by recorded return on investment.",
+    )
     parser.add_argument("--all", action="store_true", help="Resolve all eligible films rather than the curated evidence set.")
     parser.add_argument("--limit", type=int, help="Resolve only this many uncached films for testing.")
     parser.add_argument("--refresh", action="store_true", help="Refresh URLs already stored in the cache.")
@@ -118,19 +161,33 @@ def main() -> None:
             for franchise in franchises[: args.top_franchises]
             for film in franchise["installments"]
         }
+    ranked_ids = {
+        movie["id"]
+        for movie in sorted(movies, key=lambda movie: movie["revenue"], reverse=True)[
+            : args.top_grossing
+        ]
+    }
+    ranked_ids.update(
+        movie["id"]
+        for movie in sorted(movies, key=lambda movie: movie["roi"], reverse=True)[
+            : args.top_roi
+        ]
+    )
     candidates = (
         movies
         if args.all
         else [
             movie
             for movie in movies
-            if movie["title"] in CURATED_TITLES or movie["id"] in dynasty_ids
+            if movie["title"] in CURATED_TITLES
+            or movie["id"] in dynasty_ids
+            or movie["id"] in ranked_ids
         ]
     )
     queue = [
         (movie["id"], movie["title"])
         for movie in candidates
-        if args.refresh or str(movie["id"]) not in cache
+        if args.refresh or not cache.get(str(movie["id"]))
     ]
     if args.limit is not None:
         queue = queue[: args.limit]

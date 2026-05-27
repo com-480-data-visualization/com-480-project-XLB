@@ -1,4 +1,4 @@
-import { loadData } from "./data-loader.js?v=20260526-final6";
+import { loadData } from "./data-loader.js?v=20260527-final8";
 import { getState, setState, subscribe } from "./state.js?v=20260526-final6";
 import {
   DECADES,
