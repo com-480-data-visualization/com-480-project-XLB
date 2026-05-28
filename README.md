@@ -4,9 +4,9 @@
 
 The website is live at [CineScope](https://com-480-data-visualization.github.io/com-480-project-XLB/).
                      
-Watch the screencast on YouTube: [https://www.youtube.com/watch?v=Yn4Pk5wTq4g](https://www.youtube.com/watch?v=Yn4Pk5wTq4g)
+Watch the screencast on YouTube: [screencast](https://www.youtube.com/watch?v=Yn4Pk5wTq4g)
 
-The process book [process_book_XLB.pdf](process_book_XLB.pdf).
+The process book [process book](process_book_XLB.pdf).
 
 | Student's name | SCIPER |
 | --- | --- |
