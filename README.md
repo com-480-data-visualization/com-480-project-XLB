@@ -196,15 +196,15 @@ Following the feedback highlighting the potential of *The Flow* and *Dynasties*,
 
 ### Live Website
 
-**[com-480-data-visualization.github.io/com-480-project-XLB](https://com-480-data-visualization.github.io/com-480-project-XLB/)**
+**[cinescope](https://com-480-data-visualization.github.io/com-480-project-XLB/)**
 
 ### Screencast
 
-Watch the screencast on YouTube: [https://www.youtube.com/watch?v=Yn4Pk5wTq4g](https://www.youtube.com/watch?v=Yn4Pk5wTq4g)
+Watch the screencast on YouTube: [screencast](https://www.youtube.com/watch?v=Yn4Pk5wTq4g)
 
 ### Process Book
 
-The full design journey from Milestone 2 sketches to final visual forms, data decisions, challenges, and peer-assessment is in [process_book_XLB.pdf](process_book_XLB.pdf).
+The full design journey from Milestone 2 sketches to final visual forms, data decisions, challenges, and peer-assessment is in [process book](process_book_XLB.pdf).
 
 ### Six Views
 
